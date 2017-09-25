@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.BorrowRepaymentMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.BorrowRepayment">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="repayment_status" property="repaymentStatus"
+			jdbcType="INTEGER" />
+		<result column="web_status" property="webStatus" jdbcType="INTEGER" />
+		<result column="repayment_sequence" property="repaymentSequence"
+			jdbcType="INTEGER" />
+		<result column="borrow_id" property="borrowId" jdbcType="INTEGER" />
+		<result column="repayment_time" property="repaymentTime"
+			jdbcType="TIMESTAMP" />
+		<result column="repayment_paidtime" property="repaymentPaidtime"
+			jdbcType="TIMESTAMP" />
+		<result column="repayment_amount" property="repaymentAmount"
+			jdbcType="DECIMAL" />
+		<result column="repayment_realamount" property="repaymentRealamount"
+			jdbcType="DECIMAL" />
+		<result column="late_days" property="lateDays" jdbcType="INTEGER" />
+		<result column="late_interest" property="lateInterest"
+			jdbcType="DECIMAL" />
+		<result column="repayment_interest" property="repaymentInterest"
+			jdbcType="DECIMAL" />
+		<result column="repayment_principal" property="repaymentPrincipal"
+			jdbcType="DECIMAL" />
+		<result column="overdue_fee" property="overdueFee" jdbcType="DECIMAL" />
+		<result column="reminder_fee" property="reminderFee" jdbcType="DECIMAL" />
+		<result column="repayment_addtime" property="repaymentAddtime"
+			jdbcType="INTEGER" />
+		<result column="repayed_user_id" property="repayedUserId"
+			jdbcType="INTEGER" />
+		<result column="repayment_addip" property="repaymentAddip"
+			jdbcType="VARCHAR" />
+		<result column="current_period" property="currentPeriod"
+			jdbcType="INTEGER" />
+		<result column="total_period" property="totalPeriod"
+			jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<collection property="borrowRepossessedlist" column="id"
+			ofType="com.rbao.east.entity.BorrowRepossessed" select="com.rbao.east.mapper.BorrowRepossessedMapper.selectByRepayId" />
+		<collection property="borrowOverdueRepossessedlist" column="id"
+			ofType="com.rbao.east.entity.BorrowRepossessed" select="com.rbao.east.mapper.BorrowRepossessedMapper.selectByRepayIdOverdue" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, repayment_status, web_status, repayment_sequence, borrow_id,
+		repayment_time,
+		repayment_paidtime, repayment_amount, repayment_realamount, late_days, late_interest,
+		repayment_interest, repayment_principal, overdue_fee, reminder_fee,
+		repayment_addtime,
+		repayment_addip,repayed_user_id,remark
+	</sql>
+	
+	<!-- 垫付还款统计 -->
+	<select id="reparmentSummary" parameterType="Map" resultType="Map">
+		SELECT
+			rb.id 'borrow_id',
+		    borrow_user.user_account,
+		    rb.borrow_title,
+		    users.user_account 'users',
+		    rbr.repayment_realamount,
+		    rbr.current_period curPer, 
+			rbr.total_period  tolPer,
+		    rbr.repayment_time,
+		    rbr.repayment_paidtime
+		FROM
+		    rb_user users,
+		    rb_borrow_repayment rbr,
+		    rb_borrow rb,
+		    rb_user borrow_user
+		WHERE
+		    rbr.borrow_id = rb.id
+		    AND rbr.repayed_user_id != rb.user_id
+		    AND users.id = rbr.repayed_user_id
+		    AND rb.user_id = borrow_user.id
+		    <if test="user_account != null">
+		    	AND borrow_user.user_account LIKE CONCAT('%', #{user_account}, '%')
+		    </if>
+		    <if test="users != null">
+		    	AND users.user_account LIKE CONCAT('%', #{users}, '%')
+		    </if>
+		    <if test="repayment_paidtime_begin != null">
+		   		<![CDATA[	AND DATE_FORMAT(rbr.repayment_paidtime, '%y-%m-%d') >= #{repayment_paidtime_begin}	]]>
+		   	</if>
+		   	<if test="repayment_paidtime_end != null">
+		   		<![CDATA[	AND DATE_FORMAT(rbr.repayment_paidtime, '%y-%m-%d') <= #{repayment_paidtime_end}	]]>
+		   	</if>
+	</select>
+	
+	<!-- 垫付还款统计 -->
+	<select id="getRepaymentTotalCount" parameterType="Map" resultType="Map">
+		SELECT
+		    COUNT(*)
+		FROM
+		    rb_user users,
+		    rb_borrow_repayment rbr,
+		    rb_borrow rb,
+		    rb_user borrow_user
+		WHERE
+		    rbr.borrow_id = rb.id
+		    AND rbr.repayed_user_id != rb.user_id
+		    AND users.id = rbr.repayed_user_id
+		    AND rb.user_id = borrow_user.id
+		    <if test="user_account != null">
+		    	AND borrow_user.user_account LIKE CONCAT('%', #{user_account}, '%')
+		    </if>
+		    <if test="users != null">
+		    	AND users.user_account LIKE CONCAT('%', #{users}, '%')
+		    </if>
+		    <if test="repayment_paidtime_begin != null">
+		   		<![CDATA[	AND DATE_FORMAT(rbr.repayment_paidtime, '%y-%m-%d') >= #{repayment_paidtime_begin}	]]>
+		   	</if>
+		   	<if test="repayment_paidtime_end != null">
+		   		<![CDATA[	AND DATE_FORMAT(rbr.repayment_paidtime, '%y-%m-%d') <= #{repayment_paidtime_end}	]]>
+		   	</if>
+	</select>
+	
+	<select id="selectRepayments" resultType="Map" parameterType="Map">
+	SELECT br.id id,
+		br.repayment_status repaymentStatus,
+		br.current_period currentPeriod,
+		br.total_period totalPeriod,
+		br.repayment_time repaymentTime,
+		br.repayment_paidtime repaymentPaidtime,
+		br.repayment_amount repaymentAmount,
+		br.repayment_realamount repaymentRealamount,
+		br.repayment_principal repaymentPrincipal,
+		br.repayment_interest repaymentInterest,
+		u.user_account userAccount,
+		b.borrow_title borrowTitle,
+		b.borrow_no borrowNo
+	FROM rb_borrow_repayment br INNER JOIN rb_borrow b ON br.borrow_id = b.id INNER JOIN rb_user u ON b.user_id = u.id
+	WHERE 1=1
+	<if test="repaymentStatus != null and repaymentStatus != ''">
+		AND repayment_status = #{repaymentStatus}
+	</if>
+	<if test="beginTime !=null and beginTime !=''">
+    <![CDATA[	and  br.repayment_time >=  #{beginTime }  ]]>
+	</if>
+	<if test="endTime !=null and endTime !=''">
+    <![CDATA[	and br.repayment_time <=  #{endTime }  ]]>
+	</if>
+	ORDER BY br.repayment_paidtime desc,br.repayment_time
+	</select>
+	
+	<select id="countRepayments" resultType="int" parameterType="Map">
+	SELECT count(*)
+	FROM rb_borrow_repayment br INNER JOIN rb_borrow b ON br.borrow_id = b.id INNER JOIN rb_user u ON b.user_id = u.id
+	WHERE 1=1
+	<if test="repaymentStatus != null and repaymentStatus !=''">
+		AND repayment_status = #{repaymentStatus}
+	</if>
+	<if test="beginTime !=null and beginTime !=''">
+    <![CDATA[	and  br.repayment_time >=  #{beginTime }  ]]>
+	</if>
+	<if test="endTime !=null and endTime !=''">
+    <![CDATA[	and br.repayment_time <=  #{endTime }  ]]>
+	</if>
+	</select>
+	
+	<!-- 提前还款 -->
+	<select id="selectForwardRepayment" resultType="int">
+	SELECT COUNT(1) FROM rb_borrow_repayment
+	WHERE repayment_status=2  AND repayment_time > repayment_paidtime
+	</select>
+	
+	<!-- 最近待还 -->
+	<select id="selectWaitRepayment" resultMap="BaseResultMap" parameterType="Map">
+		SELECT 
+		  br.*
+		FROM
+		  rb_borrow_repayment br 
+		  INNER JOIN rb_borrow b 
+		    ON br.borrow_id = b.id 
+		WHERE 1 = 1
+		<if test="userId != null and userId !=''">
+			AND b.user_id = #{userId}
+		</if>
+		  AND (
+		    br.repayment_status = 1 
+		    OR br.repayment_status = 3
+		  ) 
+		ORDER BY br.repayment_time ASC 
+	</select>
+	
+	<select id="findAutoBorrowRepayment" resultMap="BaseResultMap" parameterType="map">
+			SELECT repay.*
+			FROM
+  				rb_borrow_repayment repay,rb_borrow b,rb_borrow_type btype
+  			WHERE repay.borrow_id=b.id AND b.bid_kind=btype.ID  
+			AND <![CDATA[repay.repayment_time <= DATE_add(NOW(),  INTERVAL '0 0:20:0' DAY_SECOND)]]> 
+<!-- 去除自动手动标志 -->
+<!-- 			<if test="onlySelfType != null"> -->
+<!-- 			and btype.REPAY_TYPE !=#{onlySelfType} -->
+<!-- 			</if> -->
+			<if test="inStatus != null" >
+    		and	repayment_status in 
+				<foreach item="item" index="index" collection="inStatus" open="(" separator="," close=")">  
+						  #{item}  
+				</foreach>  
+    </if>
+	</select>
+	
+	<select id="getRepaymentByBorrowId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		SELECT * FROM rb_borrow_repayment
+		WHERE borrow_id=#{borrowId}
+	</select>
+	
+	
+	<select id="getRepayingCount" parameterType="map" resultType="java.lang.Integer">
+		SELECT count(1) FROM rb_borrow_repayment br
+		LEFT JOIN rb_borrow b ON br.borrow_id=b.id
+		WHERE br.repayment_status=#{status} AND b.user_id=${userId}
+		<if test="type != null">
+		<choose>
+			<when test="type == 'forward'">
+			 	AND br.repayment_time > br.repayment_paidtime
+			</when>
+			<when test="type == 'carry'">
+				AND br.repayment_paidtime > br.repayment_time
+			</when>
+			<when test="type == 'forwardOverdue'">
+				AND br.repayment_paidtime > br.repayment_time AND <![CDATA[late_days <= 30]]> 
+			</when>
+			<when test="type == 'carryOverdue'">
+				AND br.repayment_paidtime > br.repayment_time AND <![CDATA[late_days > 30]]> 
+			</when>
+		</choose>
+		</if>
+	</select>
+	
+	
+	<!-- 还款明细 -->
+	<select id="selectBorrowRepayment" resultType="Map" parameterType="Map">
+ 	SELECT b.id bId,b.annual_interest_rate annualInterestRate, b.borrow_title borrowTitle, r.id repayId, r.current_period currentPeriod, r.repayment_status repaymentStatus,
+r.total_period totalPeriod, DATE_FORMAT(r.repayment_time,'%Y-%m-%d') repaymentTime, r.repayment_interest repaymentInterest,
+r.repayment_amount repaymentAmount, r.late_days lateDays, r.late_interest lateInterest 
+FROM rb_borrow_repayment r, rb_borrow b WHERE r.borrow_id = b.id
+ 	<if test="userId != null and userId != ''">
+				and b.user_id = #{userId}
+	</if>
+	<if test="borrowTitle != null and borrowTitle != ''">
+				and b.borrow_title like CONCAT('%', #{borrowTitle}, '%')
+	</if>
+	<if test="repaymentStatus != null and repaymentStatus != ''">
+				and r.repayment_status = #{repaymentStatus}
+	</if>
+	<if test="beginTime !=null and beginTime !=''">
+    <![CDATA[	and DATE_FORMAT(r.repayment_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+		</if>
+		<if test="endTime !=null and endTime !=''">
+    
+    <![CDATA[	and DATE_FORMAT(r.repayment_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+		</if>
+	order by r.repayment_time
+ </select>
+ <select id="countBorrowRepayment" resultType="int" parameterType="Map">
+ 	SELECT count(*) 
+FROM rb_borrow_repayment r, rb_borrow b WHERE r.borrow_id = b.id
+ 	<if test="userId != null and userId != ''">
+				and b.user_id = #{userId}
+	</if>
+	<if test="borrowTitle != null and borrowTitle != ''">
+				and b.borrow_title like CONCAT('%', #{borrowTitle}, '%')
+	</if>
+	<if test="repaymentStatus != null and repaymentStatus != ''">
+				and r.repayment_status = #{repaymentStatus}
+	</if>
+	<if test="beginTime !=null and beginTime !=''">
+    <![CDATA[	and DATE_FORMAT(r.repayment_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+		</if>
+		<if test="endTime !=null and endTime !=''">
+    
+    <![CDATA[	and DATE_FORMAT(r.repayment_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+		</if>
+	order by r.repayment_time
+ </select>
+	
+	<select id="selectSumByKindAndStatus" resultType="java.math.BigDecimal"
+		parameterType="Map">
+		SELECT SUM(repay.repayment_amount ) sumAmount FROM rb_borrow_repayment
+		repay,rb_borrow b,rb_borrow_type btype WHERE
+		repay.borrow_id = b.id and b.bid_kind = btype.id
+		 and b.user_id = #{userId}
+		<if test="borrowKindsCode != null">
+			and btype.CODE in
+			<foreach item="item" index="index" collection="borrowKindsCode"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="inStatus != null">
+			AND repay.repayment_status in
+			<foreach item="item" index="index" collection="inStatus"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="map">
+		SELECT * FROM rb_borrow_repayment WHERE <![CDATA[repayment_time<NOW()]]>
+		AND repayment_status!=#{repaymentStatus} 
+	</select>
+
+
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		*
+		from rb_borrow_repayment
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_borrow_repayment
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.BorrowRepayment">
+		insert into rb_borrow_repayment (id, repayment_status, web_status,
+		repayment_sequence, borrow_id, repayment_time,
+		repayment_paidtime, repayment_amount, repayment_realamount,
+		late_days, late_interest, repayment_interest,
+		repayment_principal, overdue_fee, reminder_fee,
+		repayment_addtime, repayment_addip)
+		values (#{id,jdbcType=INTEGER}, #{repaymentStatus,jdbcType=INTEGER},
+		#{webStatus,jdbcType=INTEGER},
+		#{repaymentSequence,jdbcType=INTEGER}, #{borrowId,jdbcType=INTEGER}, #{repaymentTime,jdbcType=TIMESTAMP},
+		#{repaymentPaidtime,jdbcType=TIMESTAMP},
+		#{repaymentAmount,jdbcType=DECIMAL},
+		#{repaymentRealamount,jdbcType=DECIMAL},
+		#{lateDays,jdbcType=INTEGER}, #{lateInterest,jdbcType=DECIMAL},
+		#{repaymentInterest,jdbcType=DECIMAL},
+		#{repaymentPrincipal,jdbcType=DECIMAL},
+		#{overdueFee,jdbcType=DECIMAL}, #{reminderFee,jdbcType=DECIMAL},
+		#{repaymentAddtime,jdbcType=INTEGER},
+		#{repaymentAddip,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.BorrowRepayment"
+	useGeneratedKeys="true" keyProperty="id"
+	>
+		insert into rb_borrow_repayment
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="repaymentStatus != null">
+				repayment_status,
+			</if>
+			<if test="webStatus != null">
+				web_status,
+			</if>
+			<if test="repaymentSequence != null">
+				repayment_sequence,
+			</if>
+			<if test="borrowId != null">
+				borrow_id,
+			</if>
+			<if test="repaymentTime != null">
+				repayment_time,
+			</if>
+			<if test="repaymentPaidtime != null">
+				repayment_paidtime,
+			</if>
+			<if test="repaymentAmount != null">
+				repayment_amount,
+			</if>
+			<if test="repaymentRealamount != null">
+				repayment_realamount,
+			</if>
+			<if test="lateDays != null">
+				late_days,
+			</if>
+			<if test="lateInterest != null">
+				late_interest,
+			</if>
+			<if test="repaymentInterest != null">
+				repayment_interest,
+			</if>
+			<if test="repaymentPrincipal != null">
+				repayment_principal,
+			</if>
+			<if test="overdueFee != null">
+				overdue_fee,
+			</if>
+			<if test="reminderFee != null">
+				reminder_fee,
+			</if>
+			<if test="repaymentAddtime != null">
+				repayment_addtime,
+			</if>
+			<if test="repaymentAddip != null">
+				repayment_addip,
+			</if>
+			<if test="currentPeriod != null">
+				current_period,
+			</if>
+			<if test="totalPeriod != null">
+				total_period,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="repaymentStatus != null">
+				#{repaymentStatus,jdbcType=INTEGER},
+			</if>
+			<if test="webStatus != null">
+				#{webStatus,jdbcType=INTEGER},
+			</if>
+			<if test="repaymentSequence != null">
+				#{repaymentSequence,jdbcType=INTEGER},
+			</if>
+			<if test="borrowId != null">
+				#{borrowId,jdbcType=INTEGER},
+			</if>
+			<if test="repaymentTime != null">
+				#{repaymentTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="repaymentPaidtime != null">
+				#{repaymentPaidtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="repaymentAmount != null">
+				#{repaymentAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="repaymentRealamount != null">
+				#{repaymentRealamount,jdbcType=DECIMAL},
+			</if>
+			<if test="lateDays != null">
+				#{lateDays,jdbcType=INTEGER},
+			</if>
+			<if test="lateInterest != null">
+				#{lateInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="repaymentInterest != null">
+				#{repaymentInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="repaymentPrincipal != null">
+				#{repaymentPrincipal,jdbcType=DECIMAL},
+			</if>
+			<if test="overdueFee != null">
+				#{overdueFee,jdbcType=DECIMAL},
+			</if>
+			<if test="reminderFee != null">
+				#{reminderFee,jdbcType=DECIMAL},
+			</if>
+			<if test="repaymentAddtime != null">
+				#{repaymentAddtime,jdbcType=INTEGER},
+			</if>
+			<if test="repaymentAddip != null">
+				#{repaymentAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="currentPeriod != null">
+				#{currentPeriod,jdbcType=INTEGER},
+			</if>
+			<if test="totalPeriod != null">
+				#{totalPeriod,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.BorrowRepayment">
+		update rb_borrow_repayment
+		<set>
+			<if test="repaymentStatus != null">
+				repayment_status = #{repaymentStatus,jdbcType=INTEGER},
+			</if>
+			<if test="webStatus != null">
+				web_status = #{webStatus,jdbcType=INTEGER},
+			</if>
+			<if test="repaymentSequence != null">
+				repayment_sequence = #{repaymentSequence,jdbcType=INTEGER},
+			</if>
+			<if test="borrowId != null">
+				borrow_id = #{borrowId,jdbcType=INTEGER},
+			</if>
+			<if test="repaymentTime != null">
+				repayment_time = #{repaymentTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="repaymentPaidtime != null">
+				repayment_paidtime = #{repaymentPaidtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="repaymentAmount != null">
+				repayment_amount = #{repaymentAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="repaymentRealamount != null">
+				repayment_realamount = #{repaymentRealamount,jdbcType=DECIMAL},
+			</if>
+			<if test="lateDays != null">
+				late_days = #{lateDays,jdbcType=INTEGER},
+			</if>
+			<if test="lateInterest != null">
+				late_interest = #{lateInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="repaymentInterest != null">
+				repayment_interest = #{repaymentInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="repaymentPrincipal != null">
+				repayment_principal = #{repaymentPrincipal,jdbcType=DECIMAL},
+			</if>
+			<if test="overdueFee != null">
+				overdue_fee = #{overdueFee,jdbcType=DECIMAL},
+			</if>
+			<if test="reminderFee != null">
+				reminder_fee = #{reminderFee,jdbcType=DECIMAL},
+			</if>
+			<if test="repaymentAddtime != null">
+				repayment_addtime = #{repaymentAddtime,jdbcType=INTEGER},
+			</if>
+			<if test="repaymentAddip != null">
+				repayment_addip = #{repaymentAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="repayedUserId != null">
+				repayed_user_id = #{repayedUserId,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.BorrowRepayment">
+		update rb_borrow_repayment
+		set repayment_status = #{repaymentStatus,jdbcType=INTEGER},
+		web_status = #{webStatus,jdbcType=INTEGER},
+		repayment_sequence = #{repaymentSequence,jdbcType=INTEGER},
+		borrow_id = #{borrowId,jdbcType=INTEGER},
+		repayment_time = #{repaymentTime,jdbcType=TIMESTAMP},
+		repayment_paidtime = #{repaymentPaidtime,jdbcType=TIMESTAMP},
+		repayment_amount = #{repaymentAmount,jdbcType=DECIMAL},
+		repayment_realamount = #{repaymentRealamount,jdbcType=DECIMAL},
+		late_days = #{lateDays,jdbcType=INTEGER},
+		late_interest = #{lateInterest,jdbcType=DECIMAL},
+		repayment_interest = #{repaymentInterest,jdbcType=DECIMAL},
+		repayment_principal = #{repaymentPrincipal,jdbcType=DECIMAL},
+		overdue_fee = #{overdueFee,jdbcType=DECIMAL},
+		reminder_fee = #{reminderFee,jdbcType=DECIMAL},
+		repayment_addtime = #{repaymentAddtime,jdbcType=INTEGER},
+		repayment_addip = #{repaymentAddip,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

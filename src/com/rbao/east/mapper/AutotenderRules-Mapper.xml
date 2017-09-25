@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.AutotenderRulesMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.AutotenderRules" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="rules_status" property="rulesStatus" jdbcType="INTEGER" />
+    <result column="tender_money" property="tenderMoney" jdbcType="DECIMAL" />
+    <result column="repay_type" property="repayType" jdbcType="INTEGER" />
+    <result column="period_type" property="periodType" jdbcType="INTEGER" />
+    <result column="period_begin" property="periodBegin" jdbcType="INTEGER" />
+    <result column="period_end" property="periodEnd" jdbcType="INTEGER" />
+    <result column="apr_status" property="aprStatus" jdbcType="INTEGER" />
+    <result column="apr_min" property="aprMin" jdbcType="DECIMAL" />
+    <result column="apr_max" property="aprMax" jdbcType="DECIMAL" />
+    <result column="reward_type" property="rewardType" jdbcType="INTEGER" />
+    <result column="reward" property="reward" jdbcType="DECIMAL" />
+    <result column="borrow_type" property="borrowType" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="queue_time" property="queueTime" jdbcType="TIMESTAMP" />
+    <result column="tender_times" property="tenderTimes" jdbcType="INTEGER" />
+    <result column="last_tender_time" property="lastTenderTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, rules_status, tender_money, repay_type, period_type, period_begin, period_end, 
+    apr_status, apr_min, apr_max, reward_type, reward, borrow_type, update_time, queue_time, 
+    tender_times, last_tender_time
+  </sql>
+  <!-- 自动投标有效余额合计 -->
+  <select id="selectEffAutoMoney" resultType="BigDecimal">
+  SELECT  SUM(IF(ar.tender_money>=ua.available_money,ar.tender_money,ua.available_money)) AS effAutoMoney 
+FROM rb_autotender_rules ar INNER JOIN rb_user_account ua ON ar.user_id = ua.user_id WHERE rules_status = 1
+  </select>
+  
+  <!-- 自动投标设置额度合计 -->
+  <select id="selectAllTenderMoney" resultType="BigDecimal">
+  SELECT SUM(tender_money) FROM rb_autotender_rules WHERE rules_status = 1
+  </select>
+  
+  <!-- 查询自动投标队列 -->
+	<select id="getAutoQueue" resultMap="BaseResultMap" parameterType="com.rbao.east.entity.User">
+            SELECT * FROM rb_autotender_rules 
+            WHERE rules_status = 1 AND queue_time IS NOT NULL
+				ORDER BY queue_time ASC
+	</select>
+	<select id="getTotalRank" resultType="map" parameterType="map">
+        <![CDATA[ SELECT 
+					  COUNT(*) cont,
+					  IFNULL(SUM(tender_money),0.00) money 
+					FROM
+					  rb_autotender_rules a 
+					WHERE a.queue_time < #{queueTime } ]]>
+					  AND a.rules_status = 1 
+	</select>
+	<select id="getRank" resultType="map" parameterType="map">
+       SELECT  COUNT(*) cont,
+				  IFNULL(SUM(tender_money),0.00) money 
+				FROM
+				  rb_autotender_rules a ,rb_user_account c 
+				WHERE 
+					a.user_id = c.user_id
+				<if test="minMoney != null" >
+					AND c.available_money > #{minMoney }
+				</if>
+				<if test="queueTime != null" >
+				 <![CDATA[	AND a.queue_time < #{queueTime }]]>
+				 </if>
+				    AND a.rules_status = 1  
+	</select>
+	<!-- 通过id查询 -->
+	<select id="getByUserId" parameterType="int" resultMap="BaseResultMap">
+            select * from rb_autotender_rules where user_id = #{userId}
+	</select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_autotender_rules
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_autotender_rules
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByUserId" parameterType="java.lang.Integer">
+  	delete from rb_autotender_rules where user_id=#{userId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.AutotenderRules" >
+    insert into rb_autotender_rules (id, user_id, rules_status, 
+      tender_money, repay_type, period_type, 
+      period_begin, period_end, apr_status, 
+      apr_min, apr_max, reward_type, 
+      reward, borrow_type, update_time, 
+      queue_time, tender_times, last_tender_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{rulesStatus,jdbcType=INTEGER}, 
+      #{tenderMoney,jdbcType=DECIMAL}, #{repayType,jdbcType=INTEGER}, #{periodType,jdbcType=INTEGER}, 
+      #{periodBegin,jdbcType=INTEGER}, #{periodEnd,jdbcType=INTEGER}, #{aprStatus,jdbcType=INTEGER}, 
+      #{aprMin,jdbcType=DECIMAL}, #{aprMax,jdbcType=DECIMAL}, #{rewardType,jdbcType=INTEGER}, 
+      #{reward,jdbcType=DECIMAL}, #{borrowType,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{queueTime,jdbcType=TIMESTAMP}, #{tenderTimes,jdbcType=INTEGER}, #{lastTenderTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.AutotenderRules" >
+    insert into rb_autotender_rules
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="rulesStatus != null" >
+        rules_status,
+      </if>
+      <if test="tenderMoney != null" >
+        tender_money,
+      </if>
+      <if test="repayType != null" >
+        repay_type,
+      </if>
+      <if test="periodType != null" >
+        period_type,
+      </if>
+      <if test="periodBegin != null" >
+        period_begin,
+      </if>
+      <if test="periodEnd != null" >
+        period_end,
+      </if>
+      <if test="aprStatus != null" >
+        apr_status,
+      </if>
+      <if test="aprMin != null" >
+        apr_min,
+      </if>
+      <if test="aprMax != null" >
+        apr_max,
+      </if>
+      <if test="rewardType != null" >
+        reward_type,
+      </if>
+      <if test="reward != null" >
+        reward,
+      </if>
+      <if test="borrowType != null" >
+        borrow_type,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="queueTime != null" >
+        queue_time,
+      </if>
+      <if test="tenderTimes != null" >
+        tender_times,
+      </if>
+      <if test="lastTenderTime != null" >
+        last_tender_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="rulesStatus != null" >
+        #{rulesStatus,jdbcType=INTEGER},
+      </if>
+      <if test="tenderMoney != null" >
+        #{tenderMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="repayType != null" >
+        #{repayType,jdbcType=INTEGER},
+      </if>
+      <if test="periodType != null" >
+        #{periodType,jdbcType=INTEGER},
+      </if>
+      <if test="periodBegin != null" >
+        #{periodBegin,jdbcType=INTEGER},
+      </if>
+      <if test="periodEnd != null" >
+        #{periodEnd,jdbcType=INTEGER},
+      </if>
+      <if test="aprStatus != null" >
+        #{aprStatus,jdbcType=INTEGER},
+      </if>
+      <if test="aprMin != null" >
+        #{aprMin,jdbcType=DECIMAL},
+      </if>
+      <if test="aprMax != null" >
+        #{aprMax,jdbcType=DECIMAL},
+      </if>
+      <if test="rewardType != null" >
+        #{rewardType,jdbcType=INTEGER},
+      </if>
+      <if test="reward != null" >
+        #{reward,jdbcType=DECIMAL},
+      </if>
+      <if test="borrowType != null" >
+        #{borrowType,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="queueTime != null" >
+        #{queueTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tenderTimes != null" >
+        #{tenderTimes,jdbcType=INTEGER},
+      </if>
+      <if test="lastTenderTime != null" >
+        #{lastTenderTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.AutotenderRules" >
+    update rb_autotender_rules
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="rulesStatus != null" >
+        rules_status = #{rulesStatus,jdbcType=INTEGER},
+      </if>
+      <if test="tenderMoney != null" >
+        tender_money = #{tenderMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="repayType != null" >
+        repay_type = #{repayType,jdbcType=INTEGER},
+      </if>
+      <if test="periodType != null" >
+        period_type = #{periodType,jdbcType=INTEGER},
+      </if>
+      <if test="periodBegin != null" >
+        period_begin = #{periodBegin,jdbcType=INTEGER},
+      </if>
+      <if test="periodEnd != null" >
+        period_end = #{periodEnd,jdbcType=INTEGER},
+      </if>
+      <if test="aprStatus != null" >
+        apr_status = #{aprStatus,jdbcType=INTEGER},
+      </if>
+      <if test="aprMin != null" >
+        apr_min = #{aprMin,jdbcType=DECIMAL},
+      </if>
+      <if test="aprMax != null" >
+        apr_max = #{aprMax,jdbcType=DECIMAL},
+      </if>
+      <if test="rewardType != null" >
+        reward_type = #{rewardType,jdbcType=INTEGER},
+      </if>
+      <if test="reward != null" >
+        reward = #{reward,jdbcType=DECIMAL},
+      </if>
+      <if test="borrowType != null" >
+        borrow_type = #{borrowType,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="queueTime != null" >
+        queue_time = #{queueTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tenderTimes != null" >
+        tender_times = #{tenderTimes,jdbcType=INTEGER},
+      </if>
+      <if test="lastTenderTime != null" >
+        last_tender_time = #{lastTenderTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.AutotenderRules" >
+    update rb_autotender_rules
+    set user_id = #{userId,jdbcType=INTEGER},
+      rules_status = #{rulesStatus,jdbcType=INTEGER},
+      tender_money = #{tenderMoney,jdbcType=DECIMAL},
+      repay_type = #{repayType,jdbcType=INTEGER},
+      period_type = #{periodType,jdbcType=INTEGER},
+      period_begin = #{periodBegin,jdbcType=INTEGER},
+      period_end = #{periodEnd,jdbcType=INTEGER},
+      apr_status = #{aprStatus,jdbcType=INTEGER},
+      apr_min = #{aprMin,jdbcType=DECIMAL},
+      apr_max = #{aprMax,jdbcType=DECIMAL},
+      reward_type = #{rewardType,jdbcType=INTEGER},
+      reward = #{reward,jdbcType=DECIMAL},
+      borrow_type = #{borrowType,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      queue_time = #{queueTime,jdbcType=TIMESTAMP},
+      tender_times = #{tenderTimes,jdbcType=INTEGER},
+      last_tender_time = #{lastTenderTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

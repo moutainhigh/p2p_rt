@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.ChannelExchangeMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.ChannelExchange">
+		<result column="user_tel" property="userTel" jdbcType="VARCHAR" />
+		<result column="user_addtime" property="userAddtime" jdbcType="TIMESTAMP" />
+		<result column="tender_amount" property="tenderAmount" jdbcType="DECIMAL" />
+		 <result column="tender_addtime" property="tenderAddtime" jdbcType="TIMESTAMP" />		 
+	</resultMap>
+
+	<!-- 投资用户统计 -->
+	<select id="tenderUserCount" resultType="Map">
+		
+	SELECT u.user_phone,u.id,u.user_addtime,b.tender_amount,b.tender_addtime 
+			FROM rb_user u,
+			rb_borrow_tender b ,
+			(select user_id ids from rb_recommend where rb_recommend.recommend_userid=16205) tt
+			where b.user_id=u.id and u.id=tt.ids and  b.tender_addtime is not NULL 
+			group  by u.id
+	</select>
+</mapper>

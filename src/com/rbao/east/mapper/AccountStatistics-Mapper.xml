@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.AccountStatisticsMapper">
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache" />
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.AccountStatistics">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="statistics_addtime" property="statisticsAddtime"
+			jdbcType="DATE" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="user_realname" property="userRealname"
+			jdbcType="VARCHAR" />
+		<result column="all_money" property="allMoney" jdbcType="DECIMAL" />
+		<result column="available_money" property="availableMoney"
+			jdbcType="DECIMAL" />
+		<result column="unavailable_money" property="unavailableMoney"
+			jdbcType="DECIMAL" />
+		<result column="wait_repossessed_capital" property="waitRepossessedCapital"
+			jdbcType="DECIMAL" />
+		<result column="wait_repay_capital" property="waitRepayCapital"
+			jdbcType="DECIMAL" />
+		<result column="wait_repossessed_interest" property="waitRepossessedInterest"
+			jdbcType="DECIMAL" />
+		<result column="wait_repay_interest" property="waitRepayInterest"
+			jdbcType="DECIMAL" />
+		<result column="pay_reward" property="payReward" jdbcType="DECIMAL" />
+		<result column="pay_interest" property="payInterest" jdbcType="DECIMAL" />
+		<result column="get_reward" property="getReward" jdbcType="DECIMAL" />
+		<result column="get_interest" property="getInterest" jdbcType="DECIMAL" />
+		<result column="worth_money" property="worthMoney" jdbcType="DECIMAL" />
+		<result column="tender_amount" property="tenderAmount"
+			jdbcType="DECIMAL" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, statistics_addtime, user_id, user_name, user_realname,
+		all_money,
+		available_money,
+		unavailable_money, wait_repossessed_capital,
+		wait_repay_capital,
+		wait_repossessed_interest,
+		wait_repay_interest,
+		pay_reward, pay_interest, get_reward, get_interest,
+		worth_money,tender_amount
+	</sql>
+
+	<select id="getTotalCount" resultType="int" parameterType="Map">
+		select count(*) from rb_account_statistics
+		<where>
+			<if test="userName != null and userName != ''">
+				user_name like CONCAT('%', #{userName}, '%')
+			</if>
+			<if test="userRealname != null and userRealname != ''">
+				and user_realname like CONCAT('%', #{userRealname}, '%')
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+			    		<![CDATA[	and DATE_FORMAT(statistics_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+				    	<![CDATA[	and DATE_FORMAT(statistics_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+		</where>
+	</select>
+
+	<!-- 分页 -->
+	<select id="getPageAccountStatistics" resultMap="BaseResultMap"
+		parameterType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_account_statistics
+		<where>
+			<if test="userName != null and userName != ''">
+				user_name like CONCAT('%', #{userName}, '%')
+			</if>
+			<if test="userRealname != null and userRealname != ''">
+				and user_realname like CONCAT('%', #{userRealname}, '%')
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+			    		<![CDATA[	and DATE_FORMAT(statistics_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+				    	<![CDATA[	and DATE_FORMAT(statistics_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+		</where>
+		order by statistics_addtime desc,id desc
+	</select>
+	<select id="getAllInterestAndReward" parameterType="map" resultType="java.lang.String">
+		 SELECT SUM(prepare_amount) FROM rb_borrow_repossessed
+		 WHERE repossessed_status=1 OR repossessed_status=3
+	</select>
+	
+	
+	<select id="getAllAccountStatistics" resultMap="BaseResultMap"
+		parameterType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_account_statistics
+		<where>
+			<if test="userName != null and userName != ''">
+				user_name like CONCAT('%', #{userName}, '%')
+			</if>
+			<if test="userRealname != null and userRealname != ''">
+				and user_realname like CONCAT('%', #{userRealname}, '%')
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+			    		<![CDATA[	and DATE_FORMAT(statistics_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+				    	<![CDATA[	and DATE_FORMAT(statistics_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+		</where>
+		order by statistics_addtime desc
+	</select>
+
+	<!-- 根据id查询 -->
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_account_statistics
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<!-- 根据userid查询 -->
+	<select id="selectByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_account_statistics
+		where user_id = #{userId,jdbcType=INTEGER}
+		and
+		<![CDATA[	DATE_FORMAT(statistics_addtime,'%Y-%m-%d') =  #{countDate }  ]]>
+	</select>
+
+	<!-- 根据id删除 -->
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		rb_account_statistics
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="com.rbao.east.entity.AccountStatistics">
+		insert into
+		rb_account_statistics (id, statistics_addtime, user_id,
+		user_name,
+		user_realname, all_money,
+		available_money, unavailable_money,
+		wait_repossessed_capital,
+		wait_repay_capital,
+		wait_repossessed_interest,
+		wait_repay_interest, pay_reward,
+		pay_interest,
+		get_reward, get_interest, worth_money,tender_amount
+		)
+		values
+		(#{id,jdbcType=INTEGER}, #{statisticsAddtime,jdbcType=DATE},
+		#{userId,jdbcType=INTEGER},
+		#{userName,jdbcType=VARCHAR},
+		#{userRealname,jdbcType=VARCHAR}, #{allMoney,jdbcType=DECIMAL},
+		#{availableMoney,jdbcType=DECIMAL},
+		#{unavailableMoney,jdbcType=DECIMAL},
+		#{waitRepossessedCapital,jdbcType=DECIMAL},
+		#{waitRepayCapital,jdbcType=DECIMAL},
+		#{waitRepossessedInterest,jdbcType=DECIMAL},
+		#{waitRepayInterest,jdbcType=DECIMAL}, #{payReward,jdbcType=DECIMAL},
+		#{payInterest,jdbcType=DECIMAL},
+		#{getReward,jdbcType=DECIMAL},
+		#{getInterest,jdbcType=DECIMAL}, #{worthMoney,jdbcType=DECIMAL},
+		#{tenderAmount,jdbcType=DECIMAL})
+		)
+	</insert>
+
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.AccountStatistics">
+		insert into rb_account_statistics
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="statisticsAddtime != null">
+				statistics_addtime,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="userName != null">
+				user_name,
+			</if>
+			<if test="userRealname != null">
+				user_realname,
+			</if>
+			<if test="allMoney != null">
+				all_money,
+			</if>
+			<if test="availableMoney != null">
+				available_money,
+			</if>
+			<if test="unavailableMoney != null">
+				unavailable_money,
+			</if>
+			<if test="waitRepossessedCapital != null">
+				wait_repossessed_capital,
+			</if>
+			<if test="waitRepayCapital != null">
+				wait_repay_capital,
+			</if>
+			<if test="waitRepossessedInterest != null">
+				wait_repossessed_interest,
+			</if>
+			<if test="waitRepayInterest != null">
+				wait_repay_interest,
+			</if>
+			<if test="payReward != null">
+				pay_reward,
+			</if>
+			<if test="payInterest != null">
+				pay_interest,
+			</if>
+			<if test="getReward != null">
+				get_reward,
+			</if>
+			<if test="getInterest != null">
+				get_interest,
+			</if>
+			<if test="worthMoney != null">
+				worth_money,
+			</if>
+			<if test="tenderAmount != null">
+				tender_amount,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="statisticsAddtime != null">
+				#{statisticsAddtime,jdbcType=DATE},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="userRealname != null">
+				#{userRealname,jdbcType=VARCHAR},
+			</if>
+			<if test="allMoney != null">
+				#{allMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="availableMoney != null">
+				#{availableMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="unavailableMoney != null">
+				#{unavailableMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepossessedCapital != null">
+				#{waitRepossessedCapital,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepayCapital != null">
+				#{waitRepayCapital,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepossessedInterest != null">
+				#{waitRepossessedInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepayInterest != null">
+				#{waitRepayInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="payReward != null">
+				#{payReward,jdbcType=DECIMAL},
+			</if>
+			<if test="payInterest != null">
+				#{payInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="getReward != null">
+				#{getReward,jdbcType=DECIMAL},
+			</if>
+			<if test="getInterest != null">
+				#{getInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="worthMoney != null">
+				#{worthMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="tenderAmount != null">
+				#{tenderAmount,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 选择性更新 -->
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.AccountStatistics">
+		update rb_account_statistics
+		<set>
+			<if test="statisticsAddtime != null">
+				statistics_addtime = #{statisticsAddtime,jdbcType=DATE},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="userName != null">
+				user_name = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="userRealname != null">
+				user_realname = #{userRealname,jdbcType=VARCHAR},
+			</if>
+			<if test="allMoney != null">
+				all_money = #{allMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="availableMoney != null">
+				available_money = #{availableMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="unavailableMoney != null">
+				unavailable_money = #{unavailableMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepossessedCapital != null">
+				wait_repossessed_capital =
+				#{waitRepossessedCapital,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepayCapital != null">
+				wait_repay_capital =
+				#{waitRepayCapital,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepossessedInterest != null">
+				wait_repossessed_interest =
+				#{waitRepossessedInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepayInterest != null">
+				wait_repay_interest =
+				#{waitRepayInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="payReward != null">
+				pay_reward = #{payReward,jdbcType=DECIMAL},
+			</if>
+			<if test="payInterest != null">
+				pay_interest = #{payInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="getReward != null">
+				get_reward = #{getReward,jdbcType=DECIMAL},
+			</if>
+			<if test="getInterest != null">
+				get_interest = #{getInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="worthMoney != null">
+				worth_money = #{worthMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="tenderAmount != null">
+				tender_amount = #{tenderAmount,jdbcType=DECIMAL},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 更新所有 -->
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.AccountStatistics">
+		update
+		rb_account_statistics
+		set statistics_addtime =
+		#{statisticsAddtime,jdbcType=DATE},
+		user_id =
+		#{userId,jdbcType=INTEGER},
+		user_name = #{userName,jdbcType=VARCHAR},
+		user_realname = #{userRealname,jdbcType=VARCHAR},
+		all_money =
+		#{allMoney,jdbcType=DECIMAL},
+		available_money =
+		#{availableMoney,jdbcType=DECIMAL},
+		unavailable_money =
+		#{unavailableMoney,jdbcType=DECIMAL},
+		wait_repossessed_capital =
+		#{waitRepossessedCapital,jdbcType=DECIMAL},
+		wait_repay_capital =
+		#{waitRepayCapital,jdbcType=DECIMAL},
+		wait_repossessed_interest =
+		#{waitRepossessedInterest,jdbcType=DECIMAL},
+		wait_repay_interest =
+		#{waitRepayInterest,jdbcType=DECIMAL},
+		pay_reward =
+		#{payReward,jdbcType=DECIMAL},
+		pay_interest =
+		#{payInterest,jdbcType=DECIMAL},
+		get_reward =
+		#{getReward,jdbcType=DECIMAL},
+		get_interest =
+		#{getInterest,jdbcType=DECIMAL},
+		worth_money =
+		#{worthMoney,jdbcType=DECIMAL},
+		tender_amount =
+		#{tenderAmount,jdbcType=DECIMAL}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+</mapper>

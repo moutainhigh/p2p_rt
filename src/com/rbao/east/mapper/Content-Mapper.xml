@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.ContentMapper">
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" />
+	<cache-ref namespace="com.rbao.east.mapper.ContentChannelMapper" />-->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.Content">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="channel_ids" property="channelIds" jdbcType="VARCHAR" />
+		<result column="content_title" property="contentTitle"
+			jdbcType="VARCHAR" />
+		<result column="content_status" property="contentStatus"
+			jdbcType="INTEGER" />
+		<result column="content_summary" property="contentSummary"
+			jdbcType="VARCHAR" />
+		<result column="content_add_datetime" property="contentAddDatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="content_author" property="contentAuthor"
+			jdbcType="VARCHAR" />
+		<result column="content_update_datetime" property="contentUpdateDatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="content_create_user" property="contentCreateUser"
+			jdbcType="VARCHAR" />
+		<result column="content_update_user" property="contentUpdateUser"
+			jdbcType="VARCHAR" />
+		<result column="content_source" property="contentSource"
+			jdbcType="VARCHAR" />
+		<result column="external_link_title" property="externalLinkTitle"
+			jdbcType="VARCHAR" />
+		<result column="content_source_link" property="contentSourceLink"
+			jdbcType="VARCHAR" />
+		<result column="content_publish_time" property="contentPublishTime"
+			jdbcType="TIMESTAMP" />
+		<result column="content_click" property="contentClick"
+			jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap id="ResultMapWithBLOBs" type="com.rbao.east.entity.Content"
+		extends="BaseResultMap">
+		<result column="content_txt" property="contentTxt" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id, channel_ids, content_title, content_status, content_summary,
+		content_add_datetime,
+		content_author, content_update_datetime, content_create_user, content_update_user,
+		content_source, external_link_title, content_source_link,
+		content_publish_time,content_click
+	</sql>
+	<sql id="Blob_Column_List">
+		content_txt
+	</sql>
+	<select id="selectTotalCount" resultType="int" parameterType="Map">
+		select count(*) from rb_content c,rb_channel ch, rb_content_channel cc
+		where c.id = cc.content_id AND ch.id = cc.channel_id
+
+		<if test="channelIds !=null">
+			and cc.channel_id=${channelIds}
+		</if>
+		<if test="contentTitle !=null and contentTitle !='' ">
+			and c.content_title like CONCAT('%', #{contentTitle}, '%')
+		</if>
+		<if test="contentStatus !=null  ">
+			and c.content_status=#{contentStatus}
+		</if>
+		<if test="contentSummary !=null and contentSummary !='' ">
+			and c.content_summary=#{contentSummary}
+		</if>
+		<if test="contentAddDatetime !=null and contentAddDatetime !='' ">
+			and c.content_add_datetime=#{contentAddDatetime}
+		</if>
+		<if test="contentAuthor !=null and contentAuthor !='' ">
+			and c.content_author=#{contentAuthor}
+		</if>
+		<if test="contentTxt !=null and contentTxt !='' ">
+			and c.content_txt=#{contentTxt}
+		</if>
+		<if test="contentUpdateDatetime !=null  ">
+			and c.content_update_datetime=#{contentUpdateDatetime}
+		</if>
+		<if test="contentCreateUser !=null and contentCreateUser !='' ">
+			and c.content_create_user=#{contentCreateUser}
+		</if>
+		<if test="contentUpdateUser !=null and contentUpdateUser !='' ">
+			and c.content_update_user=#{contentUpdateUser}
+		</if>
+		<if test="contentSource !=null and contentSource !='' ">
+			and c.content_source=#{contentSource}
+		</if>
+		<if test="externalLinkTitle !=null and externalLinkTitle !='' ">
+			and c.external_link_title=#{externalLinkTitle}
+		</if>
+		<if test="contentSourceLink !=null ">
+			and c.content_source_link=#{contentSourceLink}
+		</if>
+		<if test="contentPublishTime !=null">
+			and c.content_publish_time=#{contentPublishTime}
+		</if>
+		ORDER BY   cc.content_sequence  ASC ,  c.id desc
+	</select>
+
+	<select id="selectByEntity" resultType="Map" parameterType="Map">
+		select c.id contentId, c.content_title
+		contentTitle,c.content_publish_time
+		contentPublishTime,ch.channel_title channelTitle,cc.content_sequence
+		contentSequence,cc.channel_id channelId
+		from rb_content c,rb_channel ch, rb_content_channel cc where 1=1
+		and c.id = cc.content_id AND ch.id = cc.channel_id
+
+		<if test="channelIds !=null">
+			and cc.channel_id=${channelIds}
+		</if>
+		<if test="contentTitle !=null and contentTitle !='' ">
+			and c.content_title like CONCAT('%', #{contentTitle}, '%')
+		</if>
+		<if test="contentStatus !=null  ">
+			and c.content_status=#{contentStatus}
+		</if>
+		<if test="contentSummary !=null and contentSummary !='' ">
+			and c.content_summary=#{contentSummary}
+		</if>
+		<if test="contentAddDatetime !=null and contentAddDatetime !='' ">
+			and c.content_add_datetime=#{contentAddDatetime}
+		</if>
+		<if test="contentAuthor !=null and contentAuthor !='' ">
+			and c.content_author=#{contentAuthor}
+		</if>
+		<if test="contentTxt !=null and contentTxt !='' ">
+			and c.content_txt=#{contentTxt}
+		</if>
+		<if test="contentUpdateDatetime !=null  ">
+			and c.content_update_datetime=#{contentUpdateDatetime}
+		</if>
+		<if test="contentCreateUser !=null and contentCreateUser !='' ">
+			and c.content_create_user=#{contentCreateUser}
+		</if>
+		<if test="contentUpdateUser !=null and contentUpdateUser !='' ">
+			and c.content_update_user=#{contentUpdateUser}
+		</if>
+		<if test="contentSource !=null and contentSource !='' ">
+			and c.content_source=#{contentSource}
+		</if>
+		<if test="externalLinkTitle !=null and externalLinkTitle !='' ">
+			and c.external_link_title=#{externalLinkTitle}
+		</if>
+		<if test="contentSourceLink !=null ">
+			and c.content_source_link=#{contentSourceLink}
+		</if>
+		<if test="contentPublishTime !=null">
+			and c.content_publish_time=#{contentPublishTime}
+		</if>
+
+		ORDER BY   cc.content_sequence  ASC ,  c.id desc
+	</select>
+	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from rb_content
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectByChannelId" resultMap="ResultMapWithBLOBs" parameterType="com.rbao.east.entity.Content" >
+    SELECT c.*,ch.channel_title channelTitle,cc.content_sequence contentSequence,cc.channel_id channelId 
+     FROM rb_content c,rb_channel ch, rb_content_channel cc  WHERE 1=1 
+     AND c.id = cc.content_id AND ch.id = cc.channel_id 
+    <if test="channelIds !=null">
+       and  cc.channel_id=#{channelIds}
+     </if>
+  </select>
+ <!--  首页查询网络公告 -->
+  <select id="selectByChannelIdsStatus" resultType="map"  parameterType="map" >
+     <![CDATA[SELECT c.*,cc.* 
+     FROM rb_content c INNER JOIN rb_content_channel cc ON c.id=cc.content_id 
+      
+       WHERE c.content_publish_time<=NOW()
+    ]]>
+    <if test="channelIds !=null">
+       and  cc.channel_id =#{channelIds}
+     </if>
+       <if test="contentStatus !=null">
+       AND c.content_status=1
+     </if>
+     order by c.content_publish_time desc ,c.id desc
+  </select>
+  <select id="showContentByPage" parameterType="map" resultType="java.util.HashMap">
+	<![CDATA[ SELECT c.*,ch.channel_title channelTitle,ch.channel_content channelContent,cc.content_sequence contentSequence,cc.channel_id channelId ,a.attach_path
+     FROM   rb_content c INNER JOIN rb_content_channel cc ON c.id = cc.content_id
+			INNER JOIN rb_channel ch ON cc.channel_id = ch.id
+			
+			LEFT JOIN rb_attach a  ON a.attach_relate_id =c.id AND a.attach_tablename = #{attachTablename}
+			
+			WHERE  c.content_publish_time <= NOW()
+      ]]>
+    <if test="channelId !=null">
+       and  cc.channel_id=#{channelId}
+     </if>
+     <if test="contentStatus !=null">
+       and  c.content_status=#{contentStatus}
+     </if>
+	    GROUP BY c.id
+	    ORDER BY  c.content_publish_time DESC
+	</select>
+
+	<select id="showContentByPageTotalCount" parameterType="map"
+		resultType="java.lang.Integer">
+	<![CDATA[ SELECT COUNT(DISTINCT(c.id)) FROM   rb_content c INNER JOIN rb_content_channel cc ON c.id = cc.content_id
+			INNER JOIN rb_channel ch ON cc.channel_id = ch.id
+			
+			LEFT JOIN rb_attach a  ON a.attach_relate_id =c.id AND a.attach_tablename = 'rb_content'
+			where c.content_publish_time <= NOW()
+       ]]>
+    <if test="channelId !=null">
+       and  cc.channel_id=#{channelId}
+     </if>
+      <if test="contentStatus !=null">
+       and  c.content_status=#{contentStatus}
+     </if>
+      ORDER BY  c.content_publish_time DESC
+	</select>
+ <!--  首页图片,合作伙伴 -->
+  <select id="selectBychannelIdPicFri" parameterType="java.lang.String" resultType="map">
+	<![CDATA[SELECT c.*,a.attach_path
+ 	FROM rb_content_channel cc 
+ 	INNER JOIN rb_channel ch ON cc.channel_id=ch.id
+	INNER JOIN rb_content c ON cc.content_id= c.id 
+	LEFT JOIN rb_attach a ON a.attach_relate_id=c.id
+	LEFT JOIN rb_content_channel rch on c.id = rch.content_id
+	WHERE  ch.channel_code=#{channelCode} and c.content_publish_time <= NOW()  
+	and c.content_status=1 
+	ORDER BY rch.content_sequence 
+	]]>
+     
+	</select>
+  
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_content
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.Content">
+		insert into rb_content (id, channel_ids, content_title,
+		content_status, content_summary, content_add_datetime,
+		content_author, content_update_datetime,
+		content_create_user, content_update_user, content_source,
+		external_link_title, content_source_link, content_publish_time,
+		content_txt)
+		values (#{id,jdbcType=INTEGER}, #{channelIds,jdbcType=VARCHAR},
+		#{contentTitle,jdbcType=VARCHAR},
+		#{contentStatus,jdbcType=INTEGER}, #{contentSummary,jdbcType=VARCHAR},
+		#{contentAddDatetime,jdbcType=TIMESTAMP},
+		#{contentAuthor,jdbcType=VARCHAR},
+		#{contentUpdateDatetime,jdbcType=TIMESTAMP},
+		#{contentCreateUser,jdbcType=VARCHAR},
+		#{contentUpdateUser,jdbcType=VARCHAR},
+		#{contentSource,jdbcType=VARCHAR},
+		#{externalLinkTitle,jdbcType=VARCHAR},
+		#{contentSourceLink,jdbcType=VARCHAR},
+		#{contentPublishTime,jdbcType=TIMESTAMP},
+		#{contentTxt,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.Content"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into rb_content
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="channelIds != null">
+				channel_ids,
+			</if>
+			<if test="contentTitle != null">
+				content_title,
+			</if>
+			<if test="contentStatus != null">
+				content_status,
+			</if>
+			<if test="contentSummary != null">
+				content_summary,
+			</if>
+			<if test="contentAddDatetime != null">
+				content_add_datetime,
+			</if>
+			<if test="contentAuthor != null">
+				content_author,
+			</if>
+			<if test="contentUpdateDatetime != null">
+				content_update_datetime,
+			</if>
+			<if test="contentCreateUser != null">
+				content_create_user,
+			</if>
+			<if test="contentUpdateUser != null">
+				content_update_user,
+			</if>
+			<if test="contentSource != null">
+				content_source,
+			</if>
+			<if test="externalLinkTitle != null">
+				external_link_title,
+			</if>
+			<if test="contentSourceLink != null">
+				content_source_link,
+			</if>
+			<if test="contentPublishTime != null">
+				content_publish_time,
+			</if>
+			<if test="contentTxt != null">
+				content_txt,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="channelIds != null">
+				#{channelIds,jdbcType=VARCHAR},
+			</if>
+			<if test="contentTitle != null">
+				#{contentTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="contentStatus != null">
+				#{contentStatus,jdbcType=INTEGER},
+			</if>
+			<if test="contentSummary != null">
+				#{contentSummary,jdbcType=VARCHAR},
+			</if>
+			<if test="contentAddDatetime != null">
+				#{contentAddDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="contentAuthor != null">
+				#{contentAuthor,jdbcType=VARCHAR},
+			</if>
+			<if test="contentUpdateDatetime != null">
+				#{contentUpdateDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="contentCreateUser != null">
+				#{contentCreateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="contentUpdateUser != null">
+				#{contentUpdateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="contentSource != null">
+				#{contentSource,jdbcType=VARCHAR},
+			</if>
+			<if test="externalLinkTitle != null">
+				#{externalLinkTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="contentSourceLink != null">
+				#{contentSourceLink,jdbcType=VARCHAR},
+			</if>
+			<if test="contentPublishTime != null">
+				#{contentPublishTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="contentTxt != null">
+				#{contentTxt,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.Content">
+		update rb_content
+		<set>
+			<if test="channelIds != null">
+				channel_ids = #{channelIds,jdbcType=VARCHAR},
+			</if>
+			<if test="contentTitle != null">
+				content_title = #{contentTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="contentStatus != null">
+				content_status = #{contentStatus,jdbcType=INTEGER},
+			</if>
+			<if test="contentSummary != null">
+				content_summary = #{contentSummary,jdbcType=VARCHAR},
+			</if>
+			<if test="contentAddDatetime != null">
+				content_add_datetime = #{contentAddDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="contentAuthor != null">
+				content_author = #{contentAuthor,jdbcType=VARCHAR},
+			</if>
+			<if test="contentUpdateDatetime != null">
+				content_update_datetime = #{contentUpdateDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="contentCreateUser != null">
+				content_create_user = #{contentCreateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="contentUpdateUser != null">
+				content_update_user = #{contentUpdateUser,jdbcType=VARCHAR},
+			</if>
+			<if test="contentSource != null">
+				content_source = #{contentSource,jdbcType=VARCHAR},
+			</if>
+			<if test="externalLinkTitle != null">
+				external_link_title = #{externalLinkTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="contentSourceLink != null">
+				content_source_link = #{contentSourceLink,jdbcType=VARCHAR},
+			</if>
+			<if test="contentPublishTime != null">
+				content_publish_time = #{contentPublishTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="contentTxt != null">
+				content_txt = #{contentTxt,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.rbao.east.entity.Content">
+		update rb_content
+		set channel_ids = #{channelIds,jdbcType=VARCHAR},
+		content_title = #{contentTitle,jdbcType=VARCHAR},
+		content_status = #{contentStatus,jdbcType=INTEGER},
+		content_summary = #{contentSummary,jdbcType=VARCHAR},
+		content_add_datetime = #{contentAddDatetime,jdbcType=TIMESTAMP},
+		content_author = #{contentAuthor,jdbcType=VARCHAR},
+		content_update_datetime = #{contentUpdateDatetime,jdbcType=TIMESTAMP},
+		content_create_user = #{contentCreateUser,jdbcType=VARCHAR},
+		content_update_user = #{contentUpdateUser,jdbcType=VARCHAR},
+		content_source = #{contentSource,jdbcType=VARCHAR},
+		external_link_title = #{externalLinkTitle,jdbcType=VARCHAR},
+		content_source_link = #{contentSourceLink,jdbcType=VARCHAR},
+		content_publish_time = #{contentPublishTime,jdbcType=TIMESTAMP},
+		content_txt = #{contentTxt,jdbcType=LONGVARCHAR},
+		content_click=#{contentClick,jdbc=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.Content">
+		update rb_content
+		set channel_ids = #{channelIds,jdbcType=VARCHAR},
+		content_title = #{contentTitle,jdbcType=VARCHAR},
+		content_status = #{contentStatus,jdbcType=INTEGER},
+		content_summary = #{contentSummary,jdbcType=VARCHAR},
+		content_add_datetime = #{contentAddDatetime,jdbcType=TIMESTAMP},
+		content_author = #{contentAuthor,jdbcType=VARCHAR},
+		content_update_datetime = #{contentUpdateDatetime,jdbcType=TIMESTAMP},
+		content_create_user = #{contentCreateUser,jdbcType=VARCHAR},
+		content_update_user = #{contentUpdateUser,jdbcType=VARCHAR},
+		content_source = #{contentSource,jdbcType=VARCHAR},
+		external_link_title = #{externalLinkTitle,jdbcType=VARCHAR},
+		content_source_link = #{contentSourceLink,jdbcType=VARCHAR},
+		content_publish_time = #{contentPublishTime,jdbcType=TIMESTAMP},
+		content_click=#{contentClick,jdbc=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyForNumber" parameterType="com.rbao.east.entity.Content">
+		update rb_content
+		set 
+		content_click=content_click+1
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

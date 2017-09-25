@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.LotteryPrizeMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.LotteryPrize" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="disc" property="disc" jdbcType="VARCHAR" />
+    <result column="point_start" property="pointStart" jdbcType="INTEGER" />
+    <result column="point_end" property="pointEnd" jdbcType="INTEGER" />
+    <result column="probability" property="probability" jdbcType="INTEGER" />
+    <result column="prize_type" property="prizeType" jdbcType="INTEGER" />
+    <result column="prize_value" property="prizeValue" jdbcType="INTEGER" />
+    <result column="total_amount" property="totalAmount" jdbcType="INTEGER" />
+    <result column="win_amount" property="winAmount" jdbcType="INTEGER" />
+    <result column="vsion" property="vsion" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="flag1" property="flag1" jdbcType="INTEGER" />
+    <result column="remk" property="remk" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  
+  
+  
+    <select id="selectByEntity" resultMap="BaseResultMap" parameterType="map">
+  		SELECT * from rb_lottery_prize where 1=1 
+  		<if test="disc !=null">
+  			and disc like CONCAT('%',#{disc},'%')
+  		</if>
+		
+		  		
+  		
+  		order by probability asc,id desc
+  		
+  		
+  
+  
+  
+  </select>
+  
+  
+  
+  
+    <select id="getAll" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from rb_lottery_prize 
+    
+    order by probability asc
+  </select>
+  
+  <select id="getAvbPrizes" resultMap="BaseResultMap" parameterType="map">
+    select 
+    <include refid="Base_Column_List" />
+    from rb_lottery_prize 
+    
+    where total_amount IS NULL OR total_amount > win_amount
+    <if test="prizeType != null">
+      and prize_type = #{prizeType }
+    </if>
+    order by probability desc
+  </select>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <sql id="Base_Column_List" >
+    id, disc, point_start, point_end, probability, prize_type, prize_value, total_amount, 
+    win_amount, vsion, status, flag1, remk
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_lottery_prize
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_lottery_prize
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.LotteryPrize" >
+    insert into rb_lottery_prize (id, disc, point_start, 
+      point_end, probability, prize_type, 
+      prize_value, total_amount, win_amount, 
+      vsion, status, flag1, 
+      remk)
+    values (#{id,jdbcType=INTEGER}, #{disc,jdbcType=VARCHAR}, #{pointStart,jdbcType=INTEGER}, 
+      #{pointEnd,jdbcType=INTEGER}, #{probability,jdbcType=INTEGER}, #{prizeType,jdbcType=INTEGER}, 
+      #{prizeValue,jdbcType=INTEGER}, #{totalAmount,jdbcType=INTEGER}, #{winAmount,jdbcType=INTEGER}, 
+      #{vsion,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{flag1,jdbcType=INTEGER}, 
+      #{remk,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.LotteryPrize" >
+    insert into rb_lottery_prize
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="disc != null" >
+        disc,
+      </if>
+      <if test="pointStart != null" >
+        point_start,
+      </if>
+      <if test="pointEnd != null" >
+        point_end,
+      </if>
+      <if test="probability != null" >
+        probability,
+      </if>
+      <if test="prizeType != null" >
+        prize_type,
+      </if>
+      <if test="prizeValue != null" >
+        prize_value,
+      </if>
+      <if test="totalAmount != null" >
+        total_amount,
+      </if>
+      <if test="winAmount != null" >
+        win_amount,
+      </if>
+      <if test="vsion != null" >
+        vsion,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="flag1 != null" >
+        flag1,
+      </if>
+      <if test="remk != null" >
+        remk,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="disc != null" >
+        #{disc,jdbcType=VARCHAR},
+      </if>
+      <if test="pointStart != null" >
+        #{pointStart,jdbcType=INTEGER},
+      </if>
+      <if test="pointEnd != null" >
+        #{pointEnd,jdbcType=INTEGER},
+      </if>
+      <if test="probability != null" >
+        #{probability,jdbcType=INTEGER},
+      </if>
+      <if test="prizeType != null" >
+        #{prizeType,jdbcType=INTEGER},
+      </if>
+      <if test="prizeValue != null" >
+        #{prizeValue,jdbcType=INTEGER},
+      </if>
+      <if test="totalAmount != null" >
+        #{totalAmount,jdbcType=INTEGER},
+      </if>
+      <if test="winAmount != null" >
+        #{winAmount,jdbcType=INTEGER},
+      </if>
+      <if test="vsion != null" >
+        #{vsion,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="flag1 != null" >
+        #{flag1,jdbcType=INTEGER},
+      </if>
+      <if test="remk != null" >
+        #{remk,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.LotteryPrize" >
+    update rb_lottery_prize
+    <set >
+      <if test="disc != null" >
+        disc = #{disc,jdbcType=VARCHAR},
+      </if>
+      <if test="pointStart != null" >
+        point_start = #{pointStart,jdbcType=INTEGER},
+      </if>
+      <if test="pointEnd != null" >
+        point_end = #{pointEnd,jdbcType=INTEGER},
+      </if>
+      <if test="probability != null" >
+        probability = #{probability,jdbcType=INTEGER},
+      </if>
+      <if test="prizeType != null" >
+        prize_type = #{prizeType,jdbcType=INTEGER},
+      </if>
+      <if test="prizeValue != null" >
+        prize_value = #{prizeValue,jdbcType=INTEGER},
+      </if>
+      <if test="totalAmount != null" >
+        total_amount = #{totalAmount,jdbcType=INTEGER},
+      </if>
+      <if test="winAmount != null" >
+        win_amount = #{winAmount,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="flag1 != null" >
+        flag1 = #{flag1,jdbcType=INTEGER},
+      </if>
+      <if test="remk != null" >
+        remk = #{remk,jdbcType=VARCHAR},
+      </if>
+      vsion = vsion +1
+    </set>
+    where id = #{id,jdbcType=INTEGER} and vsion = #{vsion,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.LotteryPrize" >
+    update rb_lottery_prize
+    set disc = #{disc,jdbcType=VARCHAR},
+      point_start = #{pointStart,jdbcType=INTEGER},
+      point_end = #{pointEnd,jdbcType=INTEGER},
+      probability = #{probability,jdbcType=INTEGER},
+      prize_type = #{prizeType,jdbcType=INTEGER},
+      prize_value = #{prizeValue,jdbcType=INTEGER},
+      total_amount = #{totalAmount,jdbcType=INTEGER},
+      win_amount = #{winAmount,jdbcType=INTEGER},
+      vsion = #{vsion,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      flag1 = #{flag1,jdbcType=INTEGER},
+      remk = #{remk,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

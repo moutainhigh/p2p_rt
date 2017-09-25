@@ -1,0 +1,447 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.ShopGoodsMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.ShopGoods" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+    <result column="goods_code" property="goodsCode" jdbcType="VARCHAR" />
+    <result column="category_code" property="categoryCode" jdbcType="VARCHAR" />
+    <result column="total_count" property="totalCount" jdbcType="INTEGER" />
+    <result column="sell_count" property="sellCount" jdbcType="INTEGER" />
+    <result column="require_credit" property="requireCredit" jdbcType="INTEGER" />
+    <result column="goods_summary" property="goodsSummary" jdbcType="VARCHAR" />
+    <result column="log_path" property="logPath" jdbcType="VARCHAR" />
+    <result column="order_by" property="orderBy" jdbcType="INTEGER" />
+    <result column="is_enable" property="isEnable" jdbcType="INTEGER" />
+    <result column="publish_time" property="publishTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="vsion" property="vsion" jdbcType="INTEGER" />
+    <result column="flag2" property="flag2" jdbcType="INTEGER" />
+    <result column="misc1" property="misc1" jdbcType="VARCHAR" />
+    <result column="misc2" property="misc2" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.rbao.east.entity.ShopGoods" extends="BaseResultMap" >
+    <result column="goods_detail" property="goodsDetail" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, goods_name, goods_code, category_code, total_count, sell_count, require_credit, 
+    goods_summary, log_path, order_by, is_enable, publish_time, create_time, update_time, 
+    vsion, flag2, misc1, misc2
+  </sql>
+  <sql id="Blob_Column_List" >
+    goods_detail
+  </sql>
+  
+  
+  
+  <!-- 自定义SQL begin -->
+  <select id="selectcountByCategoryCode" resultType="int" parameterType="string" >
+		    SELECT count(1)
+			FROM rb_shop_goods g
+	        where g.category_code = #{ctCode,jdbcType=VARCHAR}
+	    
+  </select>
+  <select id="selectAdminPage" resultType="map" parameterType="map" >
+		    SELECT 
+				g.id id,
+				g.log_path logPath,
+				c.category_name categoryName,
+				g.goods_name gName,
+				g.goods_code gCode,
+				g.require_credit reqCredit,
+				g.total_count totalCount,
+				g.sell_count sellCount,
+				g.order_by orderBy,
+				g.is_enable isEnable,
+				g.publish_time publishTime,
+				g.create_time createTime,
+				g.update_time updateTime
+			FROM rb_shop_goods g,rb_shop_category c 
+			WHERE g.category_code = c.category_code
+		<if test="ctCode != null" >
+	        and g.category_code = #{ctCode,jdbcType=VARCHAR}
+	    </if>
+	    <if test="goodsName != null" >
+	        and g.goods_name like CONCAT('%', #{goodsName}, '%')
+	    </if>
+	    <if test="goodsCode != null" >
+	        and g.goods_code = #{goodsCode,jdbcType=VARCHAR}
+	    </if>
+	    
+	    <if test="isEnable != null" >
+	        and (g.is_enable = #{isEnable,jdbcType=INTEGER}
+	        <if test="isEnable == 1" ><!-- 查询可用时，需要限制分类也可用 -->
+	        	and c.is_enable = 1
+	        </if>
+	        <if test="isEnable == 0" ><!-- 查询不可用时，包括分类也不可用 -->
+	        	or c.is_enable = 0
+	        </if>
+	        )
+	    </if>
+	    <if test="pubTime_beg !=null">
+	    	<![CDATA[	and DATE_FORMAT(g.publish_time,'%Y-%m-%d') >=  #{pubTime_beg }  ]]>
+		</if>
+		<if test="pubTime_end !=null">
+			<![CDATA[	and DATE_FORMAT(g.publish_time,'%Y-%m-%d') <=  #{pubTime_end }  ]]>
+		</if>
+		<if test="remainCount_beg !=null">
+	    	<![CDATA[	and g.total_count - g.sell_count >=  #{remainCount_beg }  ]]>
+		</if>
+		<if test="remainCount_end !=null">
+	    	<![CDATA[	and g.total_count - g.sell_count <=  #{remainCount_end }  ]]>
+		</if>
+		
+		<if test="reqCredit != null">
+			<choose>
+				<when test="reqCredit == 1">
+					AND <![CDATA[ g.require_credit < 1000 ]]>
+				</when>
+				<when test="reqCredit == 15">
+					AND <![CDATA[ g.require_credit >= 1000 AND g.require_credit < 2000 ]]>
+				</when>
+				<when test="reqCredit == 510">
+					AND <![CDATA[ g.require_credit >= 2000 AND g.require_credit < 3000 ]]>
+				</when>
+				<when test="reqCredit == 1050">
+					AND <![CDATA[ g.require_credit >= 3000 AND g.require_credit < 5000 ]]>
+				</when>
+				<when test="reqCredit == 50100">
+					AND <![CDATA[ g.require_credit >= 5000 AND g.require_credit < 10000 ]]>
+				</when>
+				
+				<when test="reqCredit == 100">
+					AND <![CDATA[  g.require_credit >= 10000 AND g.require_credit < 20000 ]]>
+				</when>
+				<when test="reqCredit == 200">
+					AND <![CDATA[ g.require_credit > 20000 ]]>
+				</when>
+			</choose>
+  		</if>
+		ORDER BY g.order_by ASC, g.id DESC
+  </select>
+  <select id="selectByCode" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from rb_shop_goods
+    where goods_code = #{code,jdbcType=VARCHAR}
+  </select>
+  <!-- 自定义SQL end -->
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from rb_shop_goods
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_shop_goods
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.ShopGoods" >
+    insert into rb_shop_goods (id, goods_name, goods_code, 
+      category_code, total_count, sell_count, 
+      require_credit, goods_summary, log_path, 
+      order_by, is_enable, publish_time, 
+      create_time, update_time, vsion, 
+      flag2, misc1, misc2, 
+      goods_detail)
+    values (#{id,jdbcType=INTEGER}, #{goodsName,jdbcType=VARCHAR}, #{goodsCode,jdbcType=VARCHAR}, 
+      #{categoryCode,jdbcType=VARCHAR}, #{totalCount,jdbcType=INTEGER}, #{sellCount,jdbcType=INTEGER}, 
+      #{requireCredit,jdbcType=INTEGER}, #{goodsSummary,jdbcType=VARCHAR}, #{logPath,jdbcType=VARCHAR}, 
+      #{orderBy,jdbcType=INTEGER}, #{isEnable,jdbcType=INTEGER}, #{publishTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{vsion,jdbcType=INTEGER}, 
+      #{flag2,jdbcType=INTEGER}, #{misc1,jdbcType=VARCHAR}, #{misc2,jdbcType=VARCHAR}, 
+      #{goodsDetail,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.ShopGoods" >
+    insert into rb_shop_goods
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="goodsName != null" >
+        goods_name,
+      </if>
+      <if test="goodsCode != null" >
+        goods_code,
+      </if>
+      <if test="categoryCode != null" >
+        category_code,
+      </if>
+      <if test="totalCount != null" >
+        total_count,
+      </if>
+      <if test="sellCount != null" >
+        sell_count,
+      </if>
+      <if test="requireCredit != null" >
+        require_credit,
+      </if>
+      <if test="goodsSummary != null" >
+        goods_summary,
+      </if>
+      <if test="logPath != null" >
+        log_path,
+      </if>
+      <if test="orderBy != null" >
+        order_by,
+      </if>
+      <if test="isEnable != null" >
+        is_enable,
+      </if>
+      <if test="publishTime != null" >
+        publish_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="vsion != null" >
+        vsion,
+      </if>
+      <if test="flag2 != null" >
+        flag2,
+      </if>
+      <if test="misc1 != null" >
+        misc1,
+      </if>
+      <if test="misc2 != null" >
+        misc2,
+      </if>
+      <if test="goodsDetail != null" >
+        goods_detail,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="goodsName != null" >
+        #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsCode != null" >
+        #{goodsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryCode != null" >
+        #{categoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="totalCount != null" >
+        #{totalCount,jdbcType=INTEGER},
+      </if>
+      <if test="sellCount != null" >
+        #{sellCount,jdbcType=INTEGER},
+      </if>
+      <if test="requireCredit != null" >
+        #{requireCredit,jdbcType=INTEGER},
+      </if>
+      <if test="goodsSummary != null" >
+        #{goodsSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="logPath != null" >
+        #{logPath,jdbcType=VARCHAR},
+      </if>
+      <if test="orderBy != null" >
+        #{orderBy,jdbcType=INTEGER},
+      </if>
+      <if test="isEnable != null" >
+        #{isEnable,jdbcType=INTEGER},
+      </if>
+      <if test="publishTime != null" >
+        #{publishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="vsion != null" >
+        #{vsion,jdbcType=INTEGER},
+      </if>
+      <if test="flag2 != null" >
+        #{flag2,jdbcType=INTEGER},
+      </if>
+      <if test="misc1 != null" >
+        #{misc1,jdbcType=VARCHAR},
+      </if>
+      <if test="misc2 != null" >
+        #{misc2,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsDetail != null" >
+        #{goodsDetail,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.ShopGoods" >
+    update rb_shop_goods
+    <set >
+      <if test="goodsName != null" >
+        goods_name = #{goodsName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsCode != null" >
+        goods_code = #{goodsCode,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryCode != null" >
+        category_code = #{categoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="totalCount != null" >
+        total_count = #{totalCount,jdbcType=INTEGER},
+      </if>
+      <if test="sellCount != null" >
+        sell_count = #{sellCount,jdbcType=INTEGER},
+      </if>
+      <if test="requireCredit != null" >
+        require_credit = #{requireCredit,jdbcType=INTEGER},
+      </if>
+      <if test="goodsSummary != null" >
+        goods_summary = #{goodsSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="logPath != null" >
+        log_path = #{logPath,jdbcType=VARCHAR},
+      </if>
+      <if test="orderBy != null" >
+        order_by = #{orderBy,jdbcType=INTEGER},
+      </if>
+      <if test="isEnable != null" >
+        is_enable = #{isEnable,jdbcType=INTEGER},
+      </if>
+      <if test="publishTime != null" >
+        publish_time = #{publishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="flag2 != null" >
+        flag2 = #{flag2,jdbcType=INTEGER},
+      </if>
+      <if test="misc1 != null" >
+        misc1 = #{misc1,jdbcType=VARCHAR},
+      </if>
+      <if test="misc2 != null" >
+        misc2 = #{misc2,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsDetail != null" >
+        goods_detail = #{goodsDetail,jdbcType=LONGVARCHAR},
+      </if>
+      vsion = vsion+1,
+    </set>
+    where id = #{id,jdbcType=INTEGER} and vsion = #{vsion,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.rbao.east.entity.ShopGoods" >
+    update rb_shop_goods
+    set goods_name = #{goodsName,jdbcType=VARCHAR},
+      goods_code = #{goodsCode,jdbcType=VARCHAR},
+      category_code = #{categoryCode,jdbcType=VARCHAR},
+      total_count = #{totalCount,jdbcType=INTEGER},
+      sell_count = #{sellCount,jdbcType=INTEGER},
+      require_credit = #{requireCredit,jdbcType=INTEGER},
+      goods_summary = #{goodsSummary,jdbcType=VARCHAR},
+      log_path = #{logPath,jdbcType=VARCHAR},
+      order_by = #{orderBy,jdbcType=INTEGER},
+      is_enable = #{isEnable,jdbcType=INTEGER},
+      publish_time = #{publishTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      vsion = #{vsion,jdbcType=INTEGER},
+      flag2 = #{flag2,jdbcType=INTEGER},
+      misc1 = #{misc1,jdbcType=VARCHAR},
+      misc2 = #{misc2,jdbcType=VARCHAR},
+      goods_detail = #{goodsDetail,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.ShopGoods" >
+    update rb_shop_goods
+    set goods_name = #{goodsName,jdbcType=VARCHAR},
+      goods_code = #{goodsCode,jdbcType=VARCHAR},
+      category_code = #{categoryCode,jdbcType=VARCHAR},
+      total_count = #{totalCount,jdbcType=INTEGER},
+      sell_count = #{sellCount,jdbcType=INTEGER},
+      require_credit = #{requireCredit,jdbcType=INTEGER},
+      goods_summary = #{goodsSummary,jdbcType=VARCHAR},
+      log_path = #{logPath,jdbcType=VARCHAR},
+      order_by = #{orderBy,jdbcType=INTEGER},
+      is_enable = #{isEnable,jdbcType=INTEGER},
+      publish_time = #{publishTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      vsion = #{vsion,jdbcType=INTEGER},
+      flag2 = #{flag2,jdbcType=INTEGER},
+      misc1 = #{misc1,jdbcType=VARCHAR},
+      misc2 = #{misc2,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="selectShopCategory" resultType="map" parameterType="map">
+  	SELECT 
+				g.id id,
+				g.log_path logPath,
+				c.category_name categoryName,
+				g.category_code categoryCode,
+				g.goods_name gName,
+				g.goods_code gCode,
+				g.goods_detail gDetail,
+				g.require_credit reqCredit,
+				g.total_count totalCount,
+				g.sell_count sellCount,
+				g.order_by orderBy,
+				g.is_enable isEnable,
+				g.publish_time publishTime,
+				g.create_time createTime,
+				g.update_time updateTime
+			FROM rb_shop_goods g,rb_shop_category c 
+			WHERE g.category_code = c.category_code
+		<if test="gId != null">
+			and g.id = #{gId}
+		</if>
+		<if test="ctCode != null" >
+	        and g.category_code = #{ctCode,jdbcType=VARCHAR}
+	    </if>
+	    <if test="goodsName != null" >
+	        and g.goods_name like CONCAT('%', #{goodsName}, '%')
+	    </if>
+	    <if test="goodsCode != null" >
+	        and g.goods_code = #{goodsCode,jdbcType=VARCHAR}
+	    </if>
+	    <if test="isEnable != null" >
+	        and (g.is_enable = #{isEnable,jdbcType=INTEGER}
+	        <if test="isEnable == 1" ><!-- 查询可用时，需要限制分类也可用 -->
+	        	and c.is_enable = 1
+	        </if>
+	        <if test="isEnable == 0" ><!-- 查询不可用时，包括分类也不可用 -->
+	        	or c.is_enable = 0
+	        </if>
+	        )
+	    </if>
+	    <if test="pubTime_beg !=null">
+	    	<![CDATA[	and DATE_FORMAT(g.publish_time,'%Y-%m-%d') >=  #{pubTime_beg }  ]]>
+		</if>
+		<if test="pubTime_end !=null">
+			<![CDATA[	and DATE_FORMAT(g.publish_time,'%Y-%m-%d') <=  #{pubTime_end }  ]]>
+		</if>
+		<if test="remainCount_beg !=null">
+	    	<![CDATA[	and g.total_count - g.sell_count >=  #{remainCount_beg }  ]]>
+		</if>
+		<if test="remainCount_end !=null">
+	    	<![CDATA[	and g.total_count - g.sell_count <=  #{remainCount_end }  ]]>
+		</if>
+  </select>
+</mapper>

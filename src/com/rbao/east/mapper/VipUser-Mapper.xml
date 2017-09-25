@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.VipUserMapper">
+	<!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache" />-->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.VipUser">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="vip_card" property="vipCard" jdbcType="VARCHAR" />
+		<result column="vip_month_num" property="vipMonthNum" jdbcType="INTEGER" />
+		<result column="vip_start_date" property="vipStartDate"
+			jdbcType="TIMESTAMP" />
+		<result column="vip_end_date" property="vipEndDate" jdbcType="TIMESTAMP" />
+		<result column="vip_status" property="vipStatus" jdbcType="INTEGER" />
+		<result column="vip_freeze_time" property="vipFreezeTime"
+			jdbcType="INTEGER" />
+		<result column="vip_freeze_times" property="vipFreezeTimes"
+			jdbcType="INTEGER" />
+		<result column="vip_add_datetime" property="vipAddDatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="vip_add_ip" property="vipAddIp" jdbcType="VARCHAR" />
+		<result column="vip_update_datetime" property="vipUpdateDatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="vip_update_ip" property="vipUpdateIp" jdbcType="VARCHAR" />
+		<result column="vip_operator_id" property="vipOperatorId"
+			jdbcType="INTEGER" />
+		<result column="vip_remarks" property="vipRemarks" jdbcType="VARCHAR" />
+		<result column="vip_customer" property="vipCustomer" jdbcType="INTEGER" />
+		<association property="user" column="user_id"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+		<association property="userCustomer" column="vip_customer"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, vip_card, vip_month_num, vip_start_date, vip_end_date,
+		vip_status, vip_freeze_time,
+		vip_freeze_times, vip_add_datetime, vip_add_ip, vip_update_datetime, vip_update_ip,
+		vip_operator_id, vip_remarks, vip_customer
+	</sql>
+	
+	<update id="updateVipStatusByEndDate" parameterType="map">
+		UPDATE rb_vip_user
+		SET vip_status = #{vipStatus,jdbcType=INTEGER}
+		WHERE  
+		<![CDATA[ vip_status = 1 ]]> AND
+		<![CDATA[ vip_end_date < #{vipEndDate,jdbcType=TIMESTAMP} ]]>
+	</update>
+	
+	<select id="selectVipEndUser" resultMap="BaseResultMap" parameterType="Map" >
+		select
+		<include refid="Base_Column_List" />
+		from rb_vip_user
+		where
+		vip_status=${vipStatus}
+	</select>
+	
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_vip_user
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+	<select id="selectVipUserByCustomerIdList" resultMap="BaseResultMap"
+		parameterType="Map" fetchSize="200">
+		SELECT v.* FROM rb_vip_user v LEFT JOIN rb_user u ON v.user_id = u.id
+		where 1=1
+		<if test="vipCustomer!=null and vipCustomer!=''">
+			and v.vip_customer=${vipCustomer}
+		</if>
+		<if test="vipStatus!=null and vipStatus!=''">
+			and v.vip_status=${vipStatus}
+		</if>
+		<if test="userAccount != null and userAccount != ''">
+			and u.user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="userRealname!=null and userRealname!=''">
+			and u.user_realname like CONCAT('%', #{userRealname}, '%')
+		</if>
+		order by v.id desc
+	</select>
+	<select id="selectVipUserByCustomerIdCount" resultType="int"
+		parameterType="Map" fetchSize="200">
+		SELECT count(*) FROM rb_vip_user v LEFT JOIN rb_user u ON v.user_id =
+		u.id where 1=1
+		<if test="vipCustomer!=null and vipCustomer!=''">
+			and v.vip_customer=${vipCustomer}
+		</if>
+		<if test="vipStatus!=null and vipStatus!=''">
+			and v.vip_status=${vipStatus}
+		</if>
+		<if test="userAccount != null and userAccount != ''">
+			and u.user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="userRealname!=null and userRealname!=''">
+			and u.user_realname like CONCAT('%', #{userRealname}, '%')
+		</if>
+		order by v.id desc
+	</select>
+	
+	<select id="selectByUserId" resultMap="BaseResultMap" parameterType="com.rbao.east.entity.VipUser">
+		select * from rb_vip_user where 1=1 
+		<if test="userId!=null and userId != ''">
+			and user_id=#{userId}
+		</if>
+		<if test="vipStatus!=null">
+			and vip_status=#{vipStatus}
+		</if>
+	
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_vip_user
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByUserId" parameterType="java.lang.Integer">
+		delete from rb_vip_user
+		where user_id = #{userId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.VipUser">
+		insert into rb_vip_user (id, user_id, vip_card,
+		vip_month_num, vip_start_date, vip_end_date,
+		vip_status, vip_freeze_time, vip_freeze_times,
+		vip_add_datetime, vip_add_ip, vip_update_datetime,
+		vip_update_ip, vip_operator_id, vip_remarks,
+		vip_customer)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{vipCard,jdbcType=VARCHAR},
+		#{vipMonthNum,jdbcType=INTEGER}, #{vipStartDate,jdbcType=TIMESTAMP}, #{vipEndDate,jdbcType=TIMESTAMP},
+		#{vipStatus,jdbcType=INTEGER}, #{vipFreezeTime,jdbcType=INTEGER},
+		#{vipFreezeTimes,jdbcType=INTEGER},
+		#{vipAddDatetime,jdbcType=TIMESTAMP}, #{vipAddIp,jdbcType=VARCHAR},
+		#{vipUpdateDatetime,jdbcType=TIMESTAMP},
+		#{vipUpdateIp,jdbcType=VARCHAR}, #{vipOperatorId,jdbcType=INTEGER},
+		#{vipRemarks,jdbcType=VARCHAR},
+		#{vipCustomer,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.VipUser">
+		insert into rb_vip_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="vipCard != null">
+				vip_card,
+			</if>
+			<if test="vipMonthNum != null">
+				vip_month_num,
+			</if>
+			<if test="vipStartDate != null">
+				vip_start_date,
+			</if>
+			<if test="vipEndDate != null">
+				vip_end_date,
+			</if>
+			<if test="vipStatus != null">
+				vip_status,
+			</if>
+			<if test="vipFreezeTime != null">
+				vip_freeze_time,
+			</if>
+			<if test="vipFreezeTimes != null">
+				vip_freeze_times,
+			</if>
+			<if test="vipAddDatetime != null">
+				vip_add_datetime,
+			</if>
+			<if test="vipAddIp != null">
+				vip_add_ip,
+			</if>
+			<if test="vipUpdateDatetime != null">
+				vip_update_datetime,
+			</if>
+			<if test="vipUpdateIp != null">
+				vip_update_ip,
+			</if>
+			<if test="vipOperatorId != null">
+				vip_operator_id,
+			</if>
+			<if test="vipRemarks != null">
+				vip_remarks,
+			</if>
+			<if test="vipCustomer != null">
+				vip_customer,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="vipCard != null">
+				#{vipCard,jdbcType=VARCHAR},
+			</if>
+			<if test="vipMonthNum != null">
+				#{vipMonthNum,jdbcType=INTEGER},
+			</if>
+			<if test="vipStartDate != null">
+				#{vipStartDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="vipEndDate != null">
+				#{vipEndDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="vipStatus != null">
+				#{vipStatus,jdbcType=INTEGER},
+			</if>
+			<if test="vipFreezeTime != null">
+				#{vipFreezeTime,jdbcType=INTEGER},
+			</if>
+			<if test="vipFreezeTimes != null">
+				#{vipFreezeTimes,jdbcType=INTEGER},
+			</if>
+			<if test="vipAddDatetime != null">
+				#{vipAddDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="vipAddIp != null">
+				#{vipAddIp,jdbcType=VARCHAR},
+			</if>
+			<if test="vipUpdateDatetime != null">
+				#{vipUpdateDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="vipUpdateIp != null">
+				#{vipUpdateIp,jdbcType=VARCHAR},
+			</if>
+			<if test="vipOperatorId != null">
+				#{vipOperatorId,jdbcType=INTEGER},
+			</if>
+			<if test="vipRemarks != null">
+				#{vipRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="vipCustomer != null">
+				#{vipCustomer,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.VipUser">
+		update rb_vip_user
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="vipCard != null">
+				vip_card = #{vipCard,jdbcType=VARCHAR},
+			</if>
+			<if test="vipMonthNum != null">
+				vip_month_num = #{vipMonthNum,jdbcType=INTEGER},
+			</if>
+			<if test="vipStartDate != null">
+				vip_start_date = #{vipStartDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="vipEndDate != null">
+				vip_end_date = #{vipEndDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="vipStatus != null">
+				vip_status = #{vipStatus,jdbcType=INTEGER},
+			</if>
+			<if test="vipFreezeTime != null">
+				vip_freeze_time = #{vipFreezeTime,jdbcType=INTEGER},
+			</if>
+			<if test="vipFreezeTimes != null">
+				vip_freeze_times = #{vipFreezeTimes,jdbcType=INTEGER},
+			</if>
+			<if test="vipAddDatetime != null">
+				vip_add_datetime = #{vipAddDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="vipAddIp != null">
+				vip_add_ip = #{vipAddIp,jdbcType=VARCHAR},
+			</if>
+			<if test="vipUpdateDatetime != null">
+				vip_update_datetime = #{vipUpdateDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="vipUpdateIp != null">
+				vip_update_ip = #{vipUpdateIp,jdbcType=VARCHAR},
+			</if>
+			<if test="vipOperatorId != null">
+				vip_operator_id = #{vipOperatorId,jdbcType=INTEGER},
+			</if>
+			<if test="vipRemarks != null">
+				vip_remarks = #{vipRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="vipCustomer != null">
+				vip_customer = #{vipCustomer,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.VipUser">
+		update rb_vip_user
+		set user_id = #{userId,jdbcType=INTEGER},
+		vip_card = #{vipCard,jdbcType=VARCHAR},
+		vip_month_num = #{vipMonthNum,jdbcType=INTEGER},
+		vip_start_date = #{vipStartDate,jdbcType=TIMESTAMP},
+		vip_end_date = #{vipEndDate,jdbcType=TIMESTAMP},
+		vip_status = #{vipStatus,jdbcType=INTEGER},
+		vip_freeze_time = #{vipFreezeTime,jdbcType=INTEGER},
+		vip_freeze_times = #{vipFreezeTimes,jdbcType=INTEGER},
+		vip_add_datetime = #{vipAddDatetime,jdbcType=TIMESTAMP},
+		vip_add_ip = #{vipAddIp,jdbcType=VARCHAR},
+		vip_update_datetime = #{vipUpdateDatetime,jdbcType=TIMESTAMP},
+		vip_update_ip = #{vipUpdateIp,jdbcType=VARCHAR},
+		vip_operator_id = #{vipOperatorId,jdbcType=INTEGER},
+		vip_remarks = #{vipRemarks,jdbcType=VARCHAR},
+		vip_customer = #{vipCustomer,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.AttachMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.Attach">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="attach_title" property="attachTitle" jdbcType="VARCHAR" />
+		<result column="attach_real_title" property="attachRealTitle"
+			jdbcType="VARCHAR" />
+		<result column="attach_file_type" property="attachFileType"
+			jdbcType="VARCHAR" />
+		<result column="attach_sequence" property="attachSequence"
+			jdbcType="INTEGER" />
+		<result column="attach_path" property="attachPath" jdbcType="VARCHAR" />
+		<result column="attach_tablename" property="attachTablename"
+			jdbcType="VARCHAR" />
+		<result column="attach_relate_id" property="attachRelateId"
+			jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, attach_title, attach_real_title, attach_file_type, attach_sequence,
+		attach_path,
+		attach_tablename, attach_relate_id
+	</sql>
+	<select id="selectByAttach" resultMap="BaseResultMap"
+		parameterType="com.rbao.east.entity.Attach">
+		select
+		*
+		from rb_attach
+		where 1=1
+		<if test="attachTablename != null">
+			and attach_tablename = #{attachTablename}
+		</if>
+		<if test="attachRelateId != null">
+			and attach_relate_id = #{attachRelateId,jdbcType=INTEGER}
+		</if>
+	</select>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_attach
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_attach
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByContentIdAndTableName" parameterType="com.rbao.east.entity.Attach">
+		delete from rb_attach
+		where 1=1
+		<if test="attachRelateId != null">
+			and attach_relate_id = #{attachRelateId,jdbcType=INTEGER}
+		</if>
+		<if test="attachTablename != null">
+			and attach_tablename = #{attachTablename}
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.Attach">
+		insert into rb_attach (id, attach_title, attach_real_title,
+		attach_file_type, attach_sequence, attach_path,
+		attach_tablename, attach_relate_id)
+		values (#{id,jdbcType=INTEGER}, #{attachTitle,jdbcType=VARCHAR},
+		#{attachRealTitle,jdbcType=VARCHAR},
+		#{attachFileType,jdbcType=VARCHAR},
+		#{attachSequence,jdbcType=INTEGER}, #{attachPath,jdbcType=VARCHAR},
+		#{attachTablename,jdbcType=VARCHAR},
+		#{attachRelateId,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.Attach">
+		insert into rb_attach
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="attachTitle != null">
+				attach_title,
+			</if>
+			<if test="attachRealTitle != null">
+				attach_real_title,
+			</if>
+			<if test="attachFileType != null">
+				attach_file_type,
+			</if>
+			<if test="attachSequence != null">
+				attach_sequence,
+			</if>
+			<if test="attachPath != null">
+				attach_path,
+			</if>
+			<if test="attachTablename != null">
+				attach_tablename,
+			</if>
+			<if test="attachRelateId != null">
+				attach_relate_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="attachTitle != null">
+				#{attachTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="attachRealTitle != null">
+				#{attachRealTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="attachFileType != null">
+				#{attachFileType,jdbcType=VARCHAR},
+			</if>
+			<if test="attachSequence != null">
+				#{attachSequence,jdbcType=INTEGER},
+			</if>
+			<if test="attachPath != null">
+				#{attachPath,jdbcType=VARCHAR},
+			</if>
+			<if test="attachTablename != null">
+				#{attachTablename,jdbcType=VARCHAR},
+			</if>
+			<if test="attachRelateId != null">
+				#{attachRelateId,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.Attach">
+		update rb_attach
+		<set>
+			<if test="attachTitle != null">
+				attach_title = #{attachTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="attachRealTitle != null">
+				attach_real_title = #{attachRealTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="attachFileType != null">
+				attach_file_type = #{attachFileType,jdbcType=VARCHAR},
+			</if>
+			<if test="attachSequence != null">
+				attach_sequence = #{attachSequence,jdbcType=INTEGER},
+			</if>
+			<if test="attachPath != null">
+				attach_path = #{attachPath,jdbcType=VARCHAR},
+			</if>
+			<if test="attachTablename != null">
+				attach_tablename = #{attachTablename,jdbcType=VARCHAR},
+			</if>
+			<if test="attachRelateId != null">
+				attach_relate_id = #{attachRelateId,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.Attach">
+		update rb_attach
+		set attach_title = #{attachTitle,jdbcType=VARCHAR},
+		attach_real_title = #{attachRealTitle,jdbcType=VARCHAR},
+		attach_file_type = #{attachFileType,jdbcType=VARCHAR},
+		attach_sequence = #{attachSequence,jdbcType=INTEGER},
+		attach_path = #{attachPath,jdbcType=VARCHAR},
+		attach_tablename = #{attachTablename,jdbcType=VARCHAR},
+		attach_relate_id = #{attachRelateId,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

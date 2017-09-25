@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.CreditLogMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.CreditLog">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="credit_type_id" property="creditTypeId"
+			jdbcType="INTEGER" />
+		<result column="credit_operate_type" property="creditOperateType"
+			jdbcType="INTEGER" />
+		<result column="credit_operate_value" property="creditOperateValue"
+			jdbcType="INTEGER" />
+		<result column="credit_operate_remark" property="creditOperateRemark"
+			jdbcType="VARCHAR" />
+		<result column="credit_operate_datetime" property="creditOperateDatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="credit_operate_ip" property="creditOperateIp"
+			jdbcType="VARCHAR" />
+		<result column="credit_operater" property="creditOperater"
+			jdbcType="INTEGER" />
+
+		<association property="user" column="user_id"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey"></association>
+		<association property="operUser" column="credit_operater"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey"></association>
+		<association property="creditType" column="credit_type_id"
+			javaType="com.rbao.east.entity.CreditType" select="com.rbao.east.mapper.CreditTypeMapper.selectByPrimaryKey"></association>
+	</resultMap>
+	
+	<resultMap id="BaseResultMap2" type="com.rbao.east.entity.CreditLog">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="credit_type_id" property="creditTypeId"
+			jdbcType="INTEGER" />
+		<result column="credit_operate_type" property="creditOperateType"
+			jdbcType="INTEGER" />
+		<result column="credit_operate_value" property="creditOperateValue"
+			jdbcType="INTEGER" />
+		<result column="credit_operate_remark" property="creditOperateRemark"
+			jdbcType="VARCHAR" />
+		<result column="credit_operate_datetime" property="creditOperateDatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="credit_operate_ip" property="creditOperateIp"
+			jdbcType="VARCHAR" />
+		<result column="credit_operater" property="creditOperater"
+			jdbcType="INTEGER" />
+
+		<result column="user_name" property="user.userAccount" 
+			jdbcType="VARCHAR" />	
+		<result column="credit_operater2" property="operUser.userAccount" 
+			jdbcType="VARCHAR" />	
+		<result column="credit_name" property="creditType.creditName" 
+			jdbcType="VARCHAR" />	
+			
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		id, user_id, credit_type_id, credit_operate_type, credit_operate_value,
+		credit_operate_remark,
+		credit_operate_datetime, credit_operate_ip, credit_operater
+	</sql>
+	<!-- 条数查询 -->
+	<select id="selectTotalCount" resultType="int" parameterType="Map">
+		SELECT count(*) from rb_credit_log log where 1=1
+		<if test="userAccount != null and userAccount != ''">
+			and exists (select 1 from rb_user u where u.id = log.user_id and
+			u.user_account like CONCAT('%', #{userAccount}, '%'))
+		</if>
+		ORDER BY credit_operate_datetime DESC
+	</select>
+	<!-- 分页查询 -->
+<!-- 	<select id="selectCreditLog" resultMap="BaseResultMap" parameterType="Map">
+		select * from rb_credit_log log where 1=1
+		<if test="userAccount != null and userAccount != ''">
+			and exists (select 1 from rb_user u where u.id = log.user_id and
+			u.user_account like CONCAT('%', #{userAccount}, '%'))
+		</if>
+
+		ORDER BY credit_operate_datetime DESC
+	</select> -->
+	
+	
+	<!-- 分页查询 -->
+	<select id="selectCreditLog" resultMap="BaseResultMap2" parameterType="Map">
+		SELECT
+			log.*, u1.user_account user_name,
+			u2.user_account credit_operater2,
+			t.credit_name
+		FROM
+			rb_credit_log log
+		LEFT JOIN rb_user u1 ON log.user_id = u1.id
+		LEFT JOIN rb_user u2 ON log.credit_operater = u2.id
+		LEFT JOIN rb_credit_type t ON log.credit_type_id = t.id
+			
+		where 1=1
+		<if test="userAccount != null and userAccount != ''">
+			and exists (select 1 from rb_user u where u.id = log.user_id and
+			u.user_account like CONCAT('%', #{userAccount}, '%'))
+		</if>
+
+		ORDER BY credit_operate_datetime DESC
+	</select>
+	
+	<!-- 通过userid查询 -->
+	<select id="selectByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_credit_log
+		where user_id = #{userId}
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_credit_log
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_credit_log
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.CreditLog">
+		insert into rb_credit_log (id, user_id, credit_type_id,
+		credit_operate_type, credit_operate_value,
+		credit_operate_remark, credit_operate_datetime,
+		credit_operate_ip, credit_operater)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{creditTypeId,jdbcType=INTEGER},
+		#{creditOperateType,jdbcType=INTEGER},
+		#{creditOperateValue,jdbcType=INTEGER},
+		#{creditOperateRemark,jdbcType=VARCHAR},
+		#{creditOperateDatetime,jdbcType=TIMESTAMP},
+		#{creditOperateIp,jdbcType=VARCHAR},
+		#{creditOperater,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.CreditLog">
+		insert into rb_credit_log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="creditTypeId != null">
+				credit_type_id,
+			</if>
+			<if test="creditOperateType != null">
+				credit_operate_type,
+			</if>
+			<if test="creditOperateValue != null">
+				credit_operate_value,
+			</if>
+			<if test="creditOperateRemark != null">
+				credit_operate_remark,
+			</if>
+			<if test="creditOperateDatetime != null">
+				credit_operate_datetime,
+			</if>
+			<if test="creditOperateIp != null">
+				credit_operate_ip,
+			</if>
+			<if test="creditOperater != null">
+				credit_operater,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="creditTypeId != null">
+				#{creditTypeId,jdbcType=INTEGER},
+			</if>
+			<if test="creditOperateType != null">
+				#{creditOperateType,jdbcType=INTEGER},
+			</if>
+			<if test="creditOperateValue != null">
+				#{creditOperateValue,jdbcType=INTEGER},
+			</if>
+			<if test="creditOperateRemark != null">
+				#{creditOperateRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="creditOperateDatetime != null">
+				#{creditOperateDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creditOperateIp != null">
+				#{creditOperateIp,jdbcType=VARCHAR},
+			</if>
+			<if test="creditOperater != null">
+				#{creditOperater,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.CreditLog">
+		update rb_credit_log
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="creditTypeId != null">
+				credit_type_id = #{creditTypeId,jdbcType=INTEGER},
+			</if>
+			<if test="creditOperateType != null">
+				credit_operate_type = #{creditOperateType,jdbcType=INTEGER},
+			</if>
+			<if test="creditOperateValue != null">
+				credit_operate_value = #{creditOperateValue,jdbcType=INTEGER},
+			</if>
+			<if test="creditOperateRemark != null">
+				credit_operate_remark = #{creditOperateRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="creditOperateDatetime != null">
+				credit_operate_datetime = #{creditOperateDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creditOperateIp != null">
+				credit_operate_ip = #{creditOperateIp,jdbcType=VARCHAR},
+			</if>
+			<if test="creditOperater != null">
+				credit_operater = #{creditOperater,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.CreditLog">
+		update rb_credit_log
+		set user_id = #{userId,jdbcType=INTEGER},
+		credit_type_id = #{creditTypeId,jdbcType=INTEGER},
+		credit_operate_type = #{creditOperateType,jdbcType=INTEGER},
+		credit_operate_value = #{creditOperateValue,jdbcType=INTEGER},
+		credit_operate_remark = #{creditOperateRemark,jdbcType=VARCHAR},
+		credit_operate_datetime = #{creditOperateDatetime,jdbcType=TIMESTAMP},
+		credit_operate_ip = #{creditOperateIp,jdbcType=VARCHAR},
+		credit_operater = #{creditOperater,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	
+	<select id="selectCreditLogNew" resultMap="BaseResultMap" parameterType="Map">
+		select log.*,ct.credit_name creditName from rb_credit_log log inner join rb_credit_type ct on  log.credit_type_id=ct.id where 1=1
+		
+		<if test="userId != null and userId != ''">
+			and user_id = #{userId}
+		</if>
+		ORDER BY credit_operate_datetime DESC
+	</select>
+	
+	<select id="selectTotalCountNew" resultType="int" parameterType="Map">
+		SELECT count(log.id)  from rb_credit_log log inner join rb_credit_type ct on  log.credit_type_id=ct.id where 1=1
+		
+		<if test="userId != null and userId != ''">
+			and user_id = #{userId}
+		</if>
+		ORDER BY credit_operate_datetime DESC
+	</select>
+</mapper>

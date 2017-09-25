@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.UserCreditMapper">
+	 
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.UserCredit">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="credit_value" property="creditValue" jdbcType="INTEGER" />
+		<result column="credit_value_usable" property="creditValueUsable" jdbcType="INTEGER" />
+		<result column="credit_operator" property="creditOperator"
+			jdbcType="INTEGER" />
+		<result column="credit_add_ip" property="creditAddIp" jdbcType="VARCHAR" />
+		<result column="credit_add_time" property="creditAddTime"
+			jdbcType="TIMESTAMP" />
+		<result column="credit_update_ip" property="creditUpdateIp"
+			jdbcType="VARCHAR" />
+		<result column="credit_update_time" property="creditUpdateTime"
+			jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, credit_value, credit_operator, credit_add_ip,credit_value_usable,
+		credit_add_time, credit_update_ip,
+		credit_update_time
+	</sql>
+	<!-- 查询条数 -->
+	<select id="selectTotalCount" resultType="int"
+		parameterType="com.rbao.east.entity.UserCredit">
+		SELECT count(*) FROM rb_user_credit c
+		LEFT JOIN rb_user oper ON c.credit_operator = oper.id INNER JOIN rb_user u
+		ON c.user_id = u.id INNER JOIN
+		rb_credit_rank r ON
+		c.credit_value BETWEEN r.rank_mincredit AND r.rank_maxcredit WHERE 1=1
+		<if test="userAccount != null and userAccount != ''">
+			and u.user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		order by c.id desc
+	</select> 
+	<!-- 分页查询 -->
+	<select id="selectByEntity" resultType="Map"
+		parameterType="com.rbao.east.entity.UserCredit">
+		SELECT r.rank_icon rankIcon ,c.id id ,c.user_id cUserId,u.user_account
+		uUserAccount, c.credit_value creditValue, c.credit_operator
+		creditOperator,c.credit_value_usable creditValueUsable,
+		oper.user_account operUserAccount,c.credit_add_ip creditAddIp, c.credit_add_time
+		creditAddTime, c.credit_update_ip creditUpdateIp,
+		c.credit_update_time creditUpdateTime FROM rb_user_credit c
+		LEFT JOIN rb_user oper ON c.credit_operator = oper.id INNER JOIN rb_user u
+		ON c.user_id = u.id INNER JOIN
+		rb_credit_rank r ON
+		c.credit_value BETWEEN r.rank_mincredit AND r.rank_maxcredit WHERE 1=1
+		<if test="userAccount != null and userAccount != ''">
+			and u.user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		order by c.id desc
+	</select>
+	<!-- 通过userid查询 -->
+	<select id="selectByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user_credit
+		where user_id = #{userId}
+	</select>
+	<select id="selectByUserIdForUpdate" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user_credit
+		where user_id = #{userId} for update
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user_credit
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="getCreditByUserId" resultType="Map"
+		parameterType="map">
+		SELECT 
+		  cr.rank_icon rankIcon ,uc.credit_value creditValue,uc.credit_value_usable creditValueUsable
+		FROM
+		  rb_credit_rank cr ,rb_user_credit uc
+		WHERE 
+		<![CDATA[uc.credit_value >= cr.rank_mincredit
+		AND uc.credit_value <= cr.rank_maxcredit ]]>
+		AND  uc.user_id =#{userId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_user_credit
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.UserCredit">
+		insert into rb_user_credit (id, user_id, credit_value,
+		credit_operator, credit_add_ip, credit_add_time,
+		credit_update_ip, credit_update_time)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{creditValue,jdbcType=INTEGER},
+		#{creditOperator,jdbcType=INTEGER}, #{creditAddIp,jdbcType=VARCHAR}, #{creditAddTime,jdbcType=TIMESTAMP},
+		#{creditUpdateIp,jdbcType=VARCHAR},
+		#{creditUpdateTime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.UserCredit">
+		insert into rb_user_credit
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="creditValue != null">
+				credit_value,
+			</if>
+			<if test="creditOperator != null">
+				credit_operator,
+			</if>
+			<if test="creditAddIp != null">
+				credit_add_ip,
+			</if>
+			<if test="creditAddTime != null">
+				credit_add_time,
+			</if>
+			<if test="creditUpdateIp != null">
+				credit_update_ip,
+			</if>
+			<if test="creditUpdateTime != null">
+				credit_update_time,
+			</if>
+			<if test="creditValueUsable != null">
+				credit_value_usable,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="creditValue != null">
+				#{creditValue,jdbcType=INTEGER},
+			</if>
+			<if test="creditOperator != null">
+				#{creditOperator,jdbcType=INTEGER},
+			</if>
+			<if test="creditAddIp != null">
+				#{creditAddIp,jdbcType=VARCHAR},
+			</if>
+			<if test="creditAddTime != null">
+				#{creditAddTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creditUpdateIp != null">
+				#{creditUpdateIp,jdbcType=VARCHAR},
+			</if>
+			<if test="creditUpdateTime != null">
+				#{creditUpdateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creditValueUsable != null">
+				#{creditValueUsable,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.UserCredit">
+		update rb_user_credit
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="creditValue != null">
+				credit_value = #{creditValue,jdbcType=INTEGER},
+			</if>
+			<if test="creditOperator != null">
+				credit_operator = #{creditOperator,jdbcType=INTEGER},
+			</if>
+			<if test="creditAddIp != null">
+				credit_add_ip = #{creditAddIp,jdbcType=VARCHAR},
+			</if>
+			<if test="creditAddTime != null">
+				credit_add_time = #{creditAddTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creditUpdateIp != null">
+				credit_update_ip = #{creditUpdateIp,jdbcType=VARCHAR},
+			</if>
+			<if test="creditUpdateTime != null">
+				credit_update_time = #{creditUpdateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creditValueUsable != null">
+				credit_value_usable = #{creditValueUsable,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.UserCredit">
+		update rb_user_credit
+		set user_id = #{userId,jdbcType=INTEGER},
+		credit_value = #{creditValue,jdbcType=INTEGER},
+		credit_operator = #{creditOperator,jdbcType=INTEGER},
+		credit_add_ip = #{creditAddIp,jdbcType=VARCHAR},
+		credit_add_time = #{creditAddTime,jdbcType=TIMESTAMP},
+		credit_update_ip = #{creditUpdateIp,jdbcType=VARCHAR},
+		credit_update_time = #{creditUpdateTime,jdbcType=TIMESTAMP}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.OperatorLogMapper">
+ 	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.OperatorLog">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="log_userid" property="logUserid" jdbcType="VARCHAR" />
+		<result column="operator_return" property="operatorReturn"
+			jdbcType="VARCHAR" />
+		<result column="operator_title" property="operatorTitle"
+			jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="operator_ip" property="operatorIp" jdbcType="VARCHAR" />
+		<result column="operator_category" property="operatorCategory"
+			jdbcType="INTEGER" />
+		<result column="link_url" property="linkUrl" jdbcType="VARCHAR" />
+		<result column="operator_status" property="operatorStatus"
+			jdbcType="INTEGER" />
+		<result column="operator_params" property="operatorParams"
+			jdbcType="VARCHAR" />
+		<result column="operator_type" property="operatorType"
+			jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, log_userid, operator_return, operator_title,
+		create_time,
+		operator_ip, operator_category,
+		link_url, operator_status,
+		operator_params, operator_type
+	</sql>
+	
+	<!-- 统计用户登陆数量 -->
+	<select id="summaryLoginCount" resultType="int">
+		SELECT COUNT(*) FROM rb_operator_log WHERE operator_type = 2
+		AND operator_category = 1
+		<![CDATA[ AND DATE_FORMAT(create_time, '%y-%m-%d') = DATE_FORMAT(now(), '%y-%m-%d') ]]>
+	</select>
+	
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_operator_log
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectTotalCount" resultType="int" parameterType="Map">
+		SELECT count(id) from rb_operator_log where 1=1
+		<if test="operatorType != null and operatorType != ''">
+			and operator_type = #{operatorType,jdbcType=INTEGER}
+		</if>
+		<if test="operatorCategory != null and operatorCategory != ''">
+			and operator_category =
+			#{operatorCategory,jdbcType=INTEGER}
+		</if>
+		<if test="userAccount != null and userAccount != ''">
+			and log_userid =
+			#{userAccount,jdbcType=VARCHAR}
+		</if>
+
+	</select>
+	<!-- 分页查询 -->
+	<select id="selectOperatorLog" resultMap="BaseResultMap"
+		parameterType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_operator_log where 1=1
+		<if test="operatorType != null and operatorType != ''">
+			and operator_type = #{operatorType,jdbcType=INTEGER}
+		</if>
+		<if test="operatorCategory != null and operatorCategory != ''">
+			and operator_category =
+			#{operatorCategory,jdbcType=INTEGER}
+		</if>
+		<if test="userAccount != null and userAccount != ''">
+			and log_userid =
+			#{userAccount,jdbcType=VARCHAR}
+		</if>
+		ORDER BY ID DESC
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		rb_operator_log
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.OperatorLog">
+		insert into rb_operator_log
+		(id, log_userid, operator_return,
+		operator_title, create_time,
+		operator_ip,
+		operator_category, link_url, operator_status,
+		operator_params, operator_type)
+		values (#{id,jdbcType=INTEGER},
+		#{logUserid,jdbcType=VARCHAR},
+		#{operatorReturn,jdbcType=VARCHAR},
+		#{operatorTitle,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+		#{operatorIp,jdbcType=VARCHAR},
+		#{operatorCategory,jdbcType=INTEGER},
+		#{linkUrl,jdbcType=VARCHAR},
+		#{operatorStatus,jdbcType=INTEGER},
+		#{operatorParams,jdbcType=VARCHAR}, #{operatorType,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.OperatorLog">
+		insert into rb_operator_log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="logUserid != null">
+				log_userid,
+			</if>
+			<if test="operatorReturn != null">
+				operator_return,
+			</if>
+			<if test="operatorTitle != null">
+				operator_title,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="operatorIp != null">
+				operator_ip,
+			</if>
+			<if test="operatorCategory != null">
+				operator_category,
+			</if>
+			<if test="linkUrl != null">
+				link_url,
+			</if>
+			<if test="operatorStatus != null">
+				operator_status,
+			</if>
+			<if test="operatorParams != null">
+				operator_params,
+			</if>
+			<if test="operatorType != null">
+				operator_type,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="logUserid != null">
+				#{logUserid,jdbcType=VARCHAR},
+			</if>
+			<if test="operatorReturn != null">
+				#{operatorReturn,jdbcType=VARCHAR},
+			</if>
+			<if test="operatorTitle != null">
+				#{operatorTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="operatorIp != null">
+				#{operatorIp,jdbcType=VARCHAR},
+			</if>
+			<if test="operatorCategory != null">
+				#{operatorCategory,jdbcType=INTEGER},
+			</if>
+			<if test="linkUrl != null">
+				#{linkUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="operatorStatus != null">
+				#{operatorStatus,jdbcType=INTEGER},
+			</if>
+			<if test="operatorParams != null">
+				#{operatorParams,jdbcType=VARCHAR},
+			</if>
+			<if test="operatorType != null">
+				#{operatorType,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.OperatorLog">
+		update rb_operator_log
+		<set>
+			<if test="logUserid != null">
+				log_userid = #{logUserid,jdbcType=VARCHAR},
+			</if>
+			<if test="operatorReturn != null">
+				operator_return = #{operatorReturn,jdbcType=VARCHAR},
+			</if>
+			<if test="operatorTitle != null">
+				operator_title = #{operatorTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="operatorIp != null">
+				operator_ip = #{operatorIp,jdbcType=VARCHAR},
+			</if>
+			<if test="operatorCategory != null">
+				operator_category = #{operatorCategory,jdbcType=INTEGER},
+			</if>
+			<if test="linkUrl != null">
+				link_url = #{linkUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="operatorStatus != null">
+				operator_status = #{operatorStatus,jdbcType=INTEGER},
+			</if>
+			<if test="operatorParams != null">
+				operator_params = #{operatorParams,jdbcType=VARCHAR},
+			</if>
+			<if test="operatorType != null">
+				operator_type = #{operatorType,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.OperatorLog">
+		update
+		rb_operator_log
+		set log_userid = #{logUserid,jdbcType=VARCHAR},
+		operator_return = #{operatorReturn,jdbcType=VARCHAR},
+		operator_title =
+		#{operatorTitle,jdbcType=VARCHAR},
+		create_time =
+		#{createTime,jdbcType=TIMESTAMP},
+		operator_ip =
+		#{operatorIp,jdbcType=VARCHAR},
+		operator_category =
+		#{operatorCategory,jdbcType=INTEGER},
+		link_url =
+		#{linkUrl,jdbcType=VARCHAR},
+		operator_status =
+		#{operatorStatus,jdbcType=INTEGER},
+		operator_params =
+		#{operatorParams,jdbcType=VARCHAR},
+		operator_type =
+		#{operatorType,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="selectLoginDays" resultType="java.util.Date" parameterType="Map">
+	SELECT DISTINCT DATE_FORMAT(create_time,'%Y-%m-%d') days FROM rb_operator_log 
+	
+	WHERE operator_category = '1' AND operator_type = '2'
+	
+	<if test="userId != null">
+	AND log_userid = #{userId}
+	</if>
+	<if test="beginTimeStr !=null">
+    <![CDATA[	and DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%S') >=  #{beginTimeStr }  ]]>
+    
+	</if>
+	
+	order by id desc
+	</select>
+</mapper>

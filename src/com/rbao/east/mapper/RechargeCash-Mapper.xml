@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.RechargeCashMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.RechargeCash" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="recharge_id" property="rechargeId" jdbcType="INTEGER" />
+    <result column="cash_id" property="cashId" jdbcType="INTEGER" />
+    <result column="cash_fee_amount" property="cashFeeAmount" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <select id="selectSumByRechargeId" resultType="java.math.BigDecimal" parameterType="java.lang.Integer" >
+    select 
+    IFNULL(sum(cash_fee_amount),0) sumFeeAmount
+    from rb_recharge_cash
+    where recharge_id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByRechargeId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_recharge_cash
+    where recharge_id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByCashId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_recharge_cash
+    where cash_id = #{id,jdbcType=INTEGER}
+  </select>
+   <delete id="deleteByCashId" parameterType="java.lang.Integer" >
+    delete from rb_recharge_cash
+    where cash_id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <sql id="Base_Column_List" >
+    id, user_id, recharge_id, cash_id, cash_fee_amount, create_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_recharge_cash
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_recharge_cash
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.RechargeCash" >
+    insert into rb_recharge_cash (id, user_id, recharge_id, 
+      cash_id, cash_fee_amount, create_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{rechargeId,jdbcType=INTEGER}, 
+      #{cashId,jdbcType=INTEGER}, #{cashFeeAmount,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.RechargeCash" >
+    insert into rb_recharge_cash
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="rechargeId != null" >
+        recharge_id,
+      </if>
+      <if test="cashId != null" >
+        cash_id,
+      </if>
+      <if test="cashFeeAmount != null" >
+        cash_fee_amount,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="rechargeId != null" >
+        #{rechargeId,jdbcType=INTEGER},
+      </if>
+      <if test="cashId != null" >
+        #{cashId,jdbcType=INTEGER},
+      </if>
+      <if test="cashFeeAmount != null" >
+        #{cashFeeAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.RechargeCash" >
+    update rb_recharge_cash
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="rechargeId != null" >
+        recharge_id = #{rechargeId,jdbcType=INTEGER},
+      </if>
+      <if test="cashId != null" >
+        cash_id = #{cashId,jdbcType=INTEGER},
+      </if>
+      <if test="cashFeeAmount != null" >
+        cash_fee_amount = #{cashFeeAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.RechargeCash" >
+    update rb_recharge_cash
+    set user_id = #{userId,jdbcType=INTEGER},
+      recharge_id = #{rechargeId,jdbcType=INTEGER},
+      cash_id = #{cashId,jdbcType=INTEGER},
+      cash_fee_amount = #{cashFeeAmount,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

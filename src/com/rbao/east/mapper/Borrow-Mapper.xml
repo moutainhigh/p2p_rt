@@ -1,0 +1,1875 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.BorrowMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.Borrow" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="site_id" property="siteId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="borrow_title" property="borrowTitle" jdbcType="VARCHAR" />
+    <result column="borrow_status" property="borrowStatus" jdbcType="INTEGER" />
+    <result column="borrow_sequence" property="borrowSequence" jdbcType="INTEGER" />
+    <result column="borrow_hits" property="borrowHits" jdbcType="INTEGER" />
+    <result column="vouch_award" property="vouchAward" jdbcType="VARCHAR" />
+    <result column="vouch_user" property="vouchUser" jdbcType="VARCHAR" />
+    <result column="vouch_amount" property="vouchAmount" jdbcType="VARCHAR" />
+    <result column="vouch_times" property="vouchTimes" jdbcType="INTEGER" />
+    <result column="publish_datetime" property="publishDatetime" jdbcType="TIMESTAMP" />
+    <result column="verify_trial_user" property="verifyTrialUser" jdbcType="INTEGER" />
+    <result column="verify_trial_time" property="verifyTrialTime" jdbcType="TIMESTAMP" />
+    <result column="verify_trial_remark" property="verifyTrialRemark" jdbcType="VARCHAR" />
+    <result column="verify_review_user" property="verifyReviewUser" jdbcType="INTEGER" />
+    <result column="verify_review_time" property="verifyReviewTime" jdbcType="TIMESTAMP" />
+    <result column="allow_tender_time" property="allowTenderTime" jdbcType="TIMESTAMP" />
+    <result column="verify_review_remark" property="verifyReviewRemark" jdbcType="VARCHAR" />
+    <result column="repayment_user" property="repaymentUser" jdbcType="INTEGER" />
+    <result column="repayment_amount" property="repaymentAmount" jdbcType="DECIMAL" />
+    <result column="monthly_repayment" property="monthlyRepayment" jdbcType="DECIMAL" />
+    <result column="paid_amount" property="paidAmount" jdbcType="DECIMAL" />
+    <result column="paid_interest" property="paidInterest" jdbcType="DECIMAL" />
+    <result column="repayment_time" property="repaymentTime" jdbcType="TIMESTAMP" />
+    <result column="success_time" property="successTime" jdbcType="TIMESTAMP" />
+    <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+    <result column="payment_amount" property="paymentAmount" jdbcType="DECIMAL" />
+    <result column="borrow_use" property="borrowUse" jdbcType="VARCHAR" />
+    <result column="borrow_time_limit" property="borrowTimeLimit" jdbcType="INTEGER" />
+    <result column="repayment_style" property="repaymentStyle" jdbcType="INTEGER" />
+    <result column="tender_sum" property="tenderSum" jdbcType="DECIMAL" />
+    <result column="borrow_sum" property="borrowSum" jdbcType="DECIMAL" />
+    <result column="tender_times" property="tenderTimes" jdbcType="INTEGER" />
+    <result column="annual_interest_rate" property="annualInterestRate" jdbcType="DECIMAL" />
+    <result column="min_amount" property="minAmount" jdbcType="DECIMAL" />
+    <result column="max_amount" property="maxAmount" jdbcType="DECIMAL" />
+    <result column="valid_time" property="validTime" jdbcType="INTEGER" />
+    <result column="tender_award" property="tenderAward" jdbcType="VARCHAR" />
+    <result column="part_amount" property="partAmount" jdbcType="DECIMAL" />
+    <result column="proportion_rate" property="proportionRate" jdbcType="DECIMAL" />
+    <result column="amount_per_copies" property="amountPerCopies" jdbcType="DECIMAL" />
+    <result column="is_false" property="isFalse" jdbcType="INTEGER" />
+    <result column="open_account" property="openAccount" jdbcType="INTEGER" />
+    <result column="open_borrow" property="openBorrow" jdbcType="INTEGER" />
+    <result column="open_tender" property="openTender" jdbcType="INTEGER" />
+    <result column="open_credit" property="openCredit" jdbcType="INTEGER" />
+    <result column="borrow_addtime" property="borrowAddtime" jdbcType="TIMESTAMP" />
+    <result column="borrow_addip" property="borrowAddip" jdbcType="VARCHAR" />
+    <result column="bid_kind" property="bidKind" jdbcType="INTEGER" />
+    <result column="tender_password" property="tenderPassword" jdbcType="VARCHAR" />
+    <result column="is_day" property="isDay" jdbcType="INTEGER" />
+    <result column="pay_datetime" property="payDatetime" jdbcType="VARCHAR" />
+  	<result column="user_type_id" property="userTypeId" jdbcType="INTEGER" />
+  	<result column="bid_rank" property="bidRank" jdbcType="INTEGER" />
+    <result column="credit_type" property="creditType" jdbcType="INTEGER" />
+  	<result column="borrow_no" property="borrowNo"  jdbcType="VARCHAR"/>
+  	<result column="agreement_path" property="agreementPath"  jdbcType="VARCHAR"/>
+  	<result column="borrow_content" property="borrowContent" jdbcType="LONGVARCHAR" />
+  	<result column="min_wait_repossess" property="minWaitRepossess" jdbcType="DECIMAL" />
+  	<result column="borrow_picture" property="borrowPicture" jdbcType="VARCHAR" />
+  	<association property="user" column="user_id" javaType="com.rbao.east.entity.User" 
+  		select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  	<association property="trialUser" column="verify_trial_user" javaType="com.rbao.east.entity.User" 
+  		select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  	<association property="reviewUser" column="verify_review_user" javaType="com.rbao.east.entity.User" 
+  		select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  	<association property="lastRepaymentUser" column="repayment_user" javaType="com.rbao.east.entity.User" 
+  		select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  	<association property="vouchUsr" column="vouch_user" javaType="com.rbao.east.entity.User" 
+  		select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  	<association property="borrowType" column="bid_kind" javaType="com.rbao.east.entity.BorrowType" 
+  		select="com.rbao.east.mapper.BorrowTypeMapper.selectByPrimaryKey" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.rbao.east.entity.Borrow" extends="BaseResultMap" >
+    <result column="borrow_content" property="borrowContent" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, site_id, user_id, borrow_title, borrow_status, borrow_sequence, borrow_hits, 
+    vouch_award, vouch_user, vouch_amount, vouch_times, publish_datetime, verify_trial_user, 
+    verify_trial_time, verify_trial_remark, verify_review_user, verify_review_time, verify_review_remark, 
+    repayment_user, repayment_amount, monthly_repayment, paid_amount, paid_interest, 
+    repayment_time, success_time, end_time, payment_amount, borrow_use, borrow_time_limit, 
+    repayment_style, tender_sum, borrow_sum, tender_times, annual_interest_rate, min_amount, 
+    max_amount, valid_time, tender_award, part_amount, proportion_rate, is_false, open_account, 
+    open_borrow, open_tender, open_credit, borrow_addtime, borrow_addip, bid_kind, tender_password, 
+    is_day, pay_datetime,user_type_id,bid_rank,credit_type,borrow_no,borrow_picture
+  </sql>
+  <sql id="Blob_Column_List" >
+    borrow_content
+  </sql>
+  
+  <!-- 借款数据统计-按省份 -->
+  <select id="borrowSummaryByProvince" parameterType="String" resultType="Map">
+  	SELECT
+	    CASE
+	        WHEN ru.user_province='' THEN '其他'
+	        WHEN ru.user_province IS NULL THEN '其他'
+	        ELSE ru.user_province
+	    END AS 'province',
+	    IFNULL(SUM(rb.borrow_sum), 0.00) 'money',
+	    SUM(IF(rb.borrow_sum, 1, 0)) 'count'
+	FROM
+	    rb_user ru,rb_borrow rb
+	WHERE
+	    ru.id = rb.user_id AND YEAR(rb.borrow_addtime) = YEAR(#{date})
+	GROUP BY
+	    ru.user_province
+  </select>
+  
+  <!-- 借款数据统计-按期限 -->
+  <select id="borrowSummaryByDate" parameterType="String" resultType="Map">
+  	SELECT
+	    d.dic_name 'borrow_limit',
+	    IFNULL(SUM(r.borrow_sum), 0.00) 'money',
+	    SUM(IF(r.id, 1, 0)) 'count'
+	FROM
+	    rb_dictionary d INNER JOIN rb_dictionary dp ON dp.id = d.parent_id AND dp.dic_code = 'borrow_limit' LEFT JOIN rb_borrow r ON d.dic_code = r.borrow_time_limit AND YEAR(r.borrow_addtime) = YEAR(#{date})
+	GROUP BY
+	    borrow_limit
+	ORDER BY
+	    d.dic_code
+  </select>
+  
+  <!-- 借款数据统计-按产品类型 -->
+  <select id="borrowSummaryByType" parameterType="String" resultType="Map">
+  	SELECT
+	    IFNULL(rt.name,'合计') 'name',
+	    SUM(IF(rb.id, 1, 0)) 'count',
+	    IFNULL(SUM(rb.borrow_sum), 0.00) 'money'
+	FROM
+	    rb_borrow_type rt LEFT JOIN rb_borrow rb ON rt.id = rb.bid_kind AND YEAR(rb.borrow_addtime) = YEAR(#{date})
+	GROUP BY
+	    rt.name
+	WITH ROLLUP
+  </select>
+  
+  <!-- 统计借款待办事项 -->
+  <select id="summaryBacklogCount" parameterType="Map" resultType="Integer">
+  	SELECT COUNT(*) FROM rb_borrow WHERE borrow_status=#{status}
+  	<if test="flag == true">
+  		AND <![CDATA[publish_datetime > NOW()]]>
+  	</if>
+  </select>
+  
+  <select id="flowStandardList" parameterType="Map" resultMap="BaseResultMap">
+  	SELECT * FROM rb_borrow WHERE borrow_status=#{status} AND <![CDATA[allow_tender_time <NOW()]]> 
+  <if test="notInType != null" >
+    and	bid_kind not in 
+		<foreach item="item" index="index" collection="notInType" open="(" separator="," close=")">  
+				  #{item.id}  
+		</foreach>  
+    </if>
+  
+  </select>
+   <!-- 满标额 -->
+  <select id="selectFullMoney" resultType="BigDecimal" parameterType="Map">
+  SELECT ifNUll(SUM(borrow_sum),0) FROM rb_borrow WHERE borrow_status in (4,5,10)
+  <![CDATA[	AND publish_datetime >= #{startDate} AND publish_datetime <= #{endDate} ]]>
+  </select>
+  
+  <!-- 统计借款人数 -->
+  <select id="selectBorrowUsers" resultType="int">
+  SELECT COUNT(DISTINCT(user_id))  FROM rb_borrow
+  </select>
+  <!-- 我是投资者-正在投标的项目 -->
+  <select id="selectInBid" resultType="Map" parameterType="Map">
+  	SELECT  b.borrow_title borrowTitle,
+  		b.id bId,
+  		b.is_day isDay,
+  		b.end_time endTime,
+  		b.repayment_style repaymentStyle,
+  		b.borrow_time_limit borrowTimeLimit,
+		b.borrow_sum borrowSum,
+		b.tender_sum tenderSum,
+		b.annual_interest_rate annualInterestRate,
+		bt.tender_amount tenderAmount,
+		bt.tender_addtime tenderAddTime,
+		b.publish_datetime publishDatetime,
+		u.user_account userAccount
+	FROM rb_borrow b INNER JOIN rb_user u ON b.user_id = u.id INNER JOIN rb_borrow_tender bt ON b.id = bt.borrow_id
+	WHERE 1=1 AND b.borrow_status IN(2,4)
+	<!-- <if test="borrowStatus !=null and borrowStatus !=''">
+	
+	 AND b.borrow_status = #{borrowStatus}
+	</if> -->
+	<if test="userId != null and userId != ''">
+	AND bt.user_id = #{userId}
+	</if>
+	<if test="beginTime !=null and beginTime !=''">
+    <![CDATA[	and DATE_FORMAT(b.publish_datetime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+	</if>
+	<if test="endTime !=null and endTime !=''">
+    <![CDATA[	and DATE_FORMAT(b.publish_datetime,'%Y-%m-%d') <=  #{endTime }  ]]>
+	</if>
+	ORDER BY b.verify_review_time DESC
+  </select>
+  <select id="countInBid" resultType="int" parameterType="Map">
+  SELECT  count(*)
+	FROM rb_borrow b INNER JOIN rb_user u ON b.user_id = u.id INNER JOIN rb_borrow_tender bt ON b.id = bt.borrow_id
+	WHERE 1=1 AND b.borrow_status IN(2,4)
+	<if test="userId != null and userId != ''">
+	AND bt.user_id = #{userId}
+	</if>
+	<if test="beginTime !=null and beginTime !=''">
+    <![CDATA[	and DATE_FORMAT(b.publish_datetime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+	</if>
+	<if test="endTime !=null and endTime !=''">
+    <![CDATA[	and DATE_FORMAT(b.publish_datetime,'%Y-%m-%d') <=  #{endTime }  ]]>
+	</if>
+  </select>
+  
+  <select id="findAutoBorrowAuditForImmediate" parameterType="map" resultMap="BaseResultMap">
+  	SELECT * FROM rb_borrow WHERE borrow_status=#{borrowStatus} AND  bid_kind=#{bidKind}
+  </select>
+  
+  <select id="getByTitle" parameterType="String" resultMap="BaseResultMap">
+  	SELECT * FROM rb_borrow where borrow_title = #{title}
+  </select>
+  
+  <select id="getBorrowListByUserIdANDBorrowTypeCode" parameterType="map" resultMap="BaseResultMap">
+  	SELECT b.* FROM rb_borrow b
+	LEFT JOIN rb_borrow_type bt ON b.bid_kind=bt.ID
+	WHERE bt.CODE=#{code} AND b.user_id=#{userId}
+	AND (b.borrow_status=1 OR b.borrow_status=2 OR b.borrow_status=4 OR b.borrow_status=5 OR b.borrow_status=7)
+  </select>
+<!--   信用额度情况 -->
+  <select id="getborrowInfo" parameterType="int" resultType="map">
+  	SELECT 
+	<![CDATA[SUM(borrow_status=2) borrowSuccess,SUM(borrow_status=6 AND repayment_time<=end_time) repaySuccessStaus,SUM(repayment_time<end_time) aheadRepayTime ,
+	SUM(borrow_status=5) repaying,SUM(borrow_status=12) flowStatus ,SUM(borrow_status=7) overStatus,
+	SUM(borrow_status=6 AND repayment_time>end_time ) overSuccessRepay]]>
+	 FROM rb_borrow WHERE user_id=#{userId}
+  </select>
+  <!--   查询借款资金情况 -->
+  <select id="getborrowAccount" parameterType="int" resultType="map">
+	 SELECT SUM(b.borrow_sum) borrowSum ,ua.wait_repay_capital waitRepayCapital, ua.wait_repay_interest waitRepayInterest 
+	 FROM rb_borrow b LEFT JOIN rb_user_account ua ON b.user_id=ua.user_id 
+     WHERE b.borrow_status IN(2,4,5,6,7) AND b.user_id=#{userId}
+  </select>
+	<!-- 自动发标 -->  
+   <select id="findAllowToBorrowListByBorrowStatus" parameterType="map" resultMap="BaseResultMap" >
+  	 	SELECT * FROM rb_borrow WHERE borrow_status=2  
+  	 	<![CDATA[ AND TIMESTAMPDIFF(MINUTE, publish_datetime, NOW())<=5 AND TIMESTAMPDIFF(MINUTE, publish_datetime, NOW())>-5]]>
+  	 	<if test="tenderMoney !=null">
+  	 		AND allow_tender_time > now() AND #{tenderMoney} >= min_amount
+  	 	</if>    
+  	 	<if test="repayType != null">
+  	 		<if test="repayType != 0">AND repayment_style =#{repayType}</if>
+  	 	</if>
+  	 	<if test="periodType !=null">
+  	 		<if test="periodType == 1">
+  	 			<![CDATA[ AND (borrow_time_limit>= #{periodBegin}  AND borrow_time_limit <= #{periodEnd}) and is_day=2   ]]>	
+  	 		</if>
+  	 		<if test="periodType == 2">
+  	 			<![CDATA[ AND (borrow_time_limit>= #{periodBegin}  AND borrow_time_limit <= #{periodEnd}) and is_day=1 ]]>
+  	 		</if>
+  	 	</if>
+  	 	<if test="aprStatus == 1">
+  	 		<![CDATA[AND (annual_interest_rate >= #{aprMin} AND annual_interest_rate <= #{aprMax})  ]]>
+  	 	</if>
+  	 	<if test="rewardType != null">
+  	 		<if test="rewardType == 1">
+  	 			AND	 proportion_rate >=  #{reward} 
+  	 		</if>
+  	 		<if test="rewardType == 2">
+  	 			AND	 part_amount >=  #{reward} 
+  	 		</if>
+  	 	</if>
+  	 	<if test="borrowType !=null">
+  	 		AND FIND_IN_SET(bid_kind,#{borrowType})
+  	 	</if>
+  	 	ORDER BY annual_interest_rate desc
+   </select>
+  
+  <!-- 查询标的数量 -->
+  <select id="selectCountByStatus" resultType="int" parameterType="Map">
+    select count(*)
+    from rb_borrow
+    <where>
+    <if test="userId != null" >
+    	and	user_id = #{userId }
+    </if>
+    <if test="inStatus != null" >
+    and	borrow_status in 
+		<foreach item="item" index="index" collection="inStatus" open="(" separator="," close=")">  
+				  #{item}  
+		</foreach>  
+    </if>
+    </where>
+  </select>
+ <!-- 查询正在招标和尚未发布的标 -->
+ <select id="selectBorrowsByStatusAndUserId" resultType="Map" parameterType="Map">
+ 	SELECT t.name tName, b.id id, b.user_id userId, b.borrow_title borrowTitle, b.borrow_status borrowStatus, b.borrow_sum borrowSum, b.tender_sum tenderSum, 
+ 	DATE_FORMAT(b.borrow_addtime,'%Y-%m-%d') borrowAddTime,
+b.annual_interest_rate annualInterestRate, b.bid_kind bidKind, b.borrow_time_limit borrowTimeLimit, b.is_day idDay  
+FROM rb_borrow b ,rb_borrow_type t WHERE b.bid_kind = t.id
+ 	<if test="userId != null and userId != ''">
+				and b.user_id = #{userId}
+	</if>
+	<if test="borrowStatus != null and borrowStatus != ''">
+				and b.borrow_status in
+				
+				<foreach item="item" index="index" collection="borrowStatus" open="(" separator="," close=")">  
+					  #{item}  
+				</foreach> 
+	</if>
+	<if test="beginTime !=null and beginTime !=''">
+    <![CDATA[	and DATE_FORMAT(b.borrow_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+		</if>
+		<if test="endTime !=null and endTime !=''">
+    
+    <![CDATA[	and DATE_FORMAT(b.borrow_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+		</if>
+	order by b.borrow_addtime
+ </select>
+ <select id="countBorrowsByStatusAndUserId" resultType="int" parameterType="Map">
+ 	SELECT count(*) 
+FROM rb_borrow b ,rb_borrow_type t WHERE b.bid_kind = t.id
+ 	<if test="userId != null and userId != ''">
+				and b.user_id = #{userId}
+	</if>
+	<if test="borrowStatus != null and borrowStatus != ''">
+				and b.borrow_status in
+				
+				<foreach item="item" index="index" collection="borrowStatus" open="(" separator="," close=")">  
+					  #{item}  
+				</foreach> 
+	</if>
+	<if test="beginTime !=null and beginTime !=''">
+    <![CDATA[	and DATE_FORMAT(b.borrow_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+		</if>
+		<if test="endTime !=null and endTime !=''">
+    
+    <![CDATA[	and DATE_FORMAT(b.borrow_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+		</if>
+	order by b.borrow_addtime
+ </select>
+ 
+  <!-- 根据标的状态查询借款 -->
+  <select id="selectBorrowsByStatus" resultMap="BaseResultMap" parameterType="Map">
+  	select 
+		b.*,
+		u.id userId,
+		u.user_account userAccount,
+		u.user_realname userRealName,
+		bt.NAME borrowTypeName,
+		b.tender_sum/b.borrow_sum*100 tenderProgressRate
+	from rb_borrow b inner join rb_user u on  b.user_id=u.id 
+		inner join rb_borrow_type bt on b.bid_kind = bt.ID
+		<where>
+			<if test="bidKind != null and bidKind != ''">
+				b.bid_kind = #{bidKind} 
+			</if> 
+			<if test="dingCode != null and dingCode != ''">
+				and bt.code != #{dingCode} 
+			</if> 
+			<if test="borrowStatus != '-1' and borrowStatus != null and borrowStatus != ''">
+				and b.borrow_status = #{borrowStatus}
+			</if> 
+			<if test="borrowStatus == '-1'">
+				and  NOW()> b.allow_tender_time and b.borrow_status = 1
+			</if>
+			<if test="userAccount != null and userAccount != ''">
+				and u.user_account like CONCAT('%', #{userAccount}, '%')
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(b.publish_datetime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+		    </if>
+		    <if test="endTime !=null and endTime !=''">
+		    	<![CDATA[	and DATE_FORMAT(b.publish_datetime,'%Y-%m-%d') <=  #{endTime }  ]]>
+		    </if>
+		</where>
+	order by b.id desc
+  </select>
+  
+  <!-- 查询最新的一条投标信息 -->
+  <select id="borrowFirst" parameterType="Map" resultMap="BaseResultMap">
+	  	SELECT 
+	  b.*
+	FROM
+	  rb_borrow b 
+	  INNER JOIN rb_user u 
+	    ON b.user_id = u.id 
+	  INNER JOIN rb_borrow_type bt 
+	    ON b.bid_kind = bt.ID 
+	WHERE bt.ID != 6 
+	<if test="borrowStatus">
+	and b.borrow_status = #{borrowStatus}
+	</if>
+	ORDER BY b.borrow_status ASC,
+	  b.borrow_sequence ASC,
+	  b.publish_datetime DESC 
+	LIMIT 1
+  </select>
+  <!-- 前台查詢标 -->
+  
+   <select id="showBorrowStatusInfoPageByParam" resultType="java.util.HashMap" parameterType="Map">
+  	select 
+		b.*,
+		u.user_account userAccount,
+		u.user_realname userRealName,
+		u.avatar_img,
+		u.user_province,
+		u.user_city,
+		u.user_area,
+		u.user_logintime,
+		bt.NAME borrowTypeName,
+		b.tender_sum/b.borrow_sum*100 tenderProgressRate,
+		(SELECT COUNT(1) FROM rb_borrow_tender bt WHERE bt.borrow_id=b.id)  tenderCount
+	from rb_borrow b inner join rb_user u on  b.user_id=u.id 
+		inner join rb_borrow_type bt on b.bid_kind = bt.ID
+		<where>
+			bt.ID!=6 
+			
+			<if test="bidList != null and bidList != ''">
+				and bt.ID  in
+				<foreach collection="bidList" item="item"  open="(" separator="," close=")">
+					#{item}   
+				</foreach>
+			</if>
+		
+			<choose>
+				<when test = "isPrepare == 'isPrepare' ">
+					<![CDATA[ and b.publish_datetime >=now()]]>
+				</when>
+				<otherwise>
+					<![CDATA[ and now()>=b.publish_datetime]]>
+				</otherwise>
+			</choose>
+			
+			<if test="isIndex != null">
+				<![CDATA[ AND b.allow_tender_time > now() ]]>
+			</if>
+			<if test="list != null">
+				<foreach collection="list" item="borrowStatus" open=" AND (" close=" )" separator="or">
+						b.borrow_status = #{borrowStatus}
+				</foreach>
+			</if>
+			<!-- 标种 -->
+			<if test="borrowtypeArrays != null">
+				<foreach collection="borrowtypeArrays" item="term" open=" AND (" close=" )" separator="or">
+						b.bid_kind = #{term }
+				</foreach>
+			</if>
+			<!-- 状态 -->
+			<if test="statuArrays != null">
+				<foreach collection="statuArrays" item="term" open=" AND (" close=" )" separator="or">
+						b.borrow_status = #{term}
+				</foreach>
+			</if>
+			<!-- 利率 -->
+			<if test="rateArrays != null">
+				<foreach collection="rateArrays" item="term" open=" AND (" close=" )" separator="or">
+						<choose>
+							<when test="term == '12'">
+								<![CDATA[ b.annual_interest_rate <=12]]>
+							</when>
+							<when test="term == '1218'">
+								<![CDATA[( b.annual_interest_rate >= 12 AND b.annual_interest_rate <=18  )]]>
+							</when>
+							<when test="term == '18'">
+								<![CDATA[b.annual_interest_rate >= 18 ]]>
+							</when>
+						</choose>
+				</foreach>
+			</if>
+			<!-- 期限 -->
+			<if test="dateArrays != null">
+				<foreach collection="dateArrays" item="term" open=" AND (" close=" )" separator="or">
+						<choose>
+							<when test="term == '3090'">
+								<![CDATA[( if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) >= 30 AND if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=90  )]]>
+							</when>
+							<when test="term == '90180'">
+								<![CDATA[( if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) >= 90 AND if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=180  )]]>
+							</when>
+							<when test="term == '180360'">
+								<![CDATA[( if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) >= 180 AND if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=360  )]]>
+							</when>
+						</choose>
+				</foreach>
+			</if>
+			<!-- 还款方式 -->
+			<if test="securitymodeArrays != null">
+				<foreach collection="securitymodeArrays" item="term" open=" AND (" close=" )" separator="or">
+						b.repayment_style = #{term}
+				</foreach>
+			</if>
+			
+			
+			
+		</where>
+		<choose>
+			<when test="orderType == 1">
+				<if test="checkNum == 1">
+					ORDER BY  tenderProgressRate desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY  tenderProgressRate asc
+				</if>
+			</when>
+			<when test="orderType == 2">
+				<if test="checkNum == 1">
+					ORDER BY  b.borrow_time_limit desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY  b.borrow_time_limit asc
+				</if>
+			</when>
+			<when test="orderType == 3">
+				<if test="checkNum == 1">
+					ORDER BY  b.borrow_sum desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY  b.borrow_sum ASC
+				</if>
+			</when>
+			<when test="orderType == 5">
+				<if test="checkNum == 1">
+					ORDER BY  b.annual_interest_rate desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY  b.annual_interest_rate ASC
+				</if>
+			</when>
+			<when test="orderType == 4">
+				ORDER BY b.borrow_status asc ,b.borrow_sequence desc,b.publish_datetime desc
+			</when>
+			<otherwise>
+				ORDER BY b.borrow_status asc ,b.borrow_sequence asc,b.publish_datetime asc
+			</otherwise>
+		</choose>
+  </select>
+  
+  <select id="showBorrowStatusInfoPageCountByParam" resultType="java.lang.Integer" parameterType="Map">
+  	select COUNT(1)
+	from rb_borrow b inner join rb_user u on  b.user_id=u.id 
+		inner join rb_borrow_type bt on b.bid_kind = bt.ID
+		<where>
+			bt.ID!=6 
+			<if test="bidList != null and bidList != ''">
+				and bt.ID  in
+				<foreach collection="bidList" item="item"  open="(" separator="," close=")">
+					#{item}   
+				</foreach>
+			</if>
+			<choose>
+				<when test="isPrepare != null ">
+					<![CDATA[ and b.publish_datetime >=now()]]>
+				</when>
+				<otherwise>
+					<![CDATA[ and now()>=b.publish_datetime]]>
+				</otherwise>
+			</choose>
+			
+			<if test="isIndex != null">
+				<![CDATA[ AND b.allow_tender_time > now() ]]>
+			</if>
+			<if test="list != null">
+				<foreach collection="list" item="borrowStatus" open=" AND (" close=" )" separator="or">
+					b.borrow_status = #{borrowStatus}
+				</foreach>
+			</if>
+			<!-- 标种 -->
+			<if test="borrowtypeArrays != null">
+				<foreach collection="borrowtypeArrays" item="term" open=" AND (" close=" )" separator="or">
+						b.bid_kind = #{term }
+				</foreach>
+			</if>
+			<!-- 状态 -->
+			<if test="statuArrays != null">
+				<foreach collection="statuArrays" item="term" open=" AND (" close=" )" separator="or">
+						b.borrow_status = #{term}
+				</foreach>
+			</if>
+			<!-- 利率 -->
+			<if test="rateArrays != null">
+				<foreach collection="rateArrays" item="term" open=" AND (" close=" )" separator="or">
+						<choose>
+							<when test="term == '12'">
+								<![CDATA[ b.annual_interest_rate <=12]]>
+							</when>
+							<when test="term == '1218'">
+								<![CDATA[( b.annual_interest_rate >= 12 AND b.annual_interest_rate <=18  )]]>
+							</when>
+							<when test="term == '18'">
+								<![CDATA[b.annual_interest_rate >= 13 ]]>
+							</when>
+						</choose>
+				</foreach>
+			</if>
+			<!-- 期限 -->
+			<if test="dateArrays != null">
+				<foreach collection="dateArrays" item="term" open=" AND (" close=" )" separator="or">
+						<choose>
+							<when test="term == 'TERM_30'">
+								<![CDATA[ if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=30]]>
+							</when>
+							<when test="term == '3090'">
+								<![CDATA[( if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) >= 30 AND if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=90  )]]>
+							</when>
+							<when test="term == '90180'">
+								<![CDATA[( if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) >= 90 AND if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=180  )]]>
+							</when>
+							<when test="term == '180360'">
+								<![CDATA[( if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) >= 180 AND if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=360  )]]>
+							</when>
+						</choose>
+				</foreach>
+			</if>
+			<!-- 还款方式 -->
+			<if test="securitymodeArrays != null">
+				<foreach collection="securitymodeArrays" item="term" open=" AND (" close=" )" separator="or">
+						b.repayment_style = #{term}
+				</foreach>
+			</if>
+		</where>
+		<choose>
+			<when test="orderType == 1">
+				<if test="checkNum == 1">
+					ORDER BY  tenderProgressRate desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY  tenderProgressRate asc
+				</if>
+			</when>
+			<when test="orderType == 2">
+				<if test="checkNum == 1">
+					ORDER BY  b.borrow_time_limit desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY  b.borrow_time_limit asc
+				</if>
+			</when>
+			<when test="orderType == 3">
+				<if test="checkNum == 1">
+					ORDER BY  b.borrow_sum desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY  b.borrow_sum ASC
+				</if>
+			</when>
+			<when test="orderType == 5">
+				<if test="checkNum == 1">
+					ORDER BY  b.annual_interest_rate desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY  b.annual_interest_rate ASC
+				</if>
+			</when>
+			<when test="orderType == 4">
+				ORDER BY b.borrow_status asc ,b.borrow_sequence desc,b.publish_datetime desc
+			</when>
+			<otherwise>
+				ORDER BY b.borrow_status asc ,b.borrow_sequence asc,b.publish_datetime asc
+			</otherwise>
+		</choose>
+  </select>
+  
+  
+  <select id="findBorrowByTransferId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	SELECT b.* FROM rb_borrow_transfer bt
+	LEFT JOIN rb_borrow_tender bte ON bt.tender_id=bte.id
+	LEFT JOIN rb_borrow b ON b.id=bte.borrow_id WHERE bt.id=#{id}
+  </select>
+  
+  <!-- 借款协议查询 -->
+  <select id="selectAgreementPath" parameterType="Map"
+		resultType="Map">
+		SELECT c.coun coun, c.sumEff sumEff, b.borrow_title borrowTitle, b.annual_interest_rate annualInterestRate ,u.user_account userAccount, b.agreement_path agreementPath
+FROM rb_borrow b,rb_user u,
+(SELECT COUNT(*) coun,SUM(effective_amount) sumEff ,t.borrow_id borrowId 
+FROM rb_borrow_tender t WHERE t.user_id = #{userId} GROUP BY t.borrow_id) c 
+WHERE b.id = c.borrowId AND b.user_id = u.id 
+		<if test="bidKind != null and bidKind !=''" >
+       		and b.bid_kind = #{bidKind}
+    	</if>
+    	<if test="bidKindNo != null and bidKindNo !=''" >
+       		and b.bid_kind != #{bidKindNo}
+    	</if>
+	</select>
+	<select id="selectAgreementPathCount" parameterType="Map"
+		resultType="java.lang.Integer">
+		SELECT count(*)
+FROM rb_borrow b,rb_user u,
+(SELECT COUNT(*) coun,SUM(effective_amount) sumEff ,t.borrow_id borrowId 
+FROM rb_borrow_tender t WHERE t.user_id = #{userId} GROUP BY t.borrow_id) c 
+WHERE b.id = c.borrowId AND b.user_id = u.id 
+		<if test="bidKind != null and bidKind !=''" >
+       		and b.bid_kind = #{bidKind}
+    	</if>
+    	<if test="bidKindNo != null and bidKindNo !=''" >
+       		and b.bid_kind != #{bidKindNo}
+    	</if>
+	</select>
+  <!-- 根据标的状态查询借款标总数 -->
+  <select id="selectCountBorrowsByStatus" resultType="int" parameterType="Map">
+  	select 
+		count(*)
+	from rb_borrow b inner join rb_user u on  b.user_id=u.id 
+		inner join rb_borrow_type bt on b.bid_kind = bt.ID
+		<where>
+			<if test="bidKind != null and bidKind != ''">
+				b.bid_kind = #{bidKind}
+			</if> 
+			<if test="dingCode != null and dingCode != ''">
+				and bt.code != #{dingCode} 
+			</if> 
+			<if test="borrowStatus != '-1' and borrowStatus != null and borrowStatus != ''">
+				and b.borrow_status = #{borrowStatus}
+			</if> 
+			<if test="borrowStatus == '-1'">
+				and  NOW()> b.allow_tender_time and b.borrow_status = 1
+			</if>
+			<if test="userAccount != null and userAccount != ''">
+				and u.user_account like CONCAT('%', #{userAccount}, '%')
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(b.publish_datetime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+		    </if>
+		    <if test="endTime !=null and endTime !=''">
+		    	<![CDATA[	and DATE_FORMAT(b.publish_datetime,'%Y-%m-%d') <=  #{endTime }  ]]>
+		    </if>
+		</where>
+  </select>
+ 
+  <!-- 还款管理 -->
+  <select id="selectRepaymentBorrows" resultType="Map" parameterType="Map">
+  	select 
+		b.id borrowId,
+		b.annual_interest_rate annualInterestRate,
+		br.id repayId,
+		b.user_id userId,
+		bt.NAME borrowTypeName,
+		b.bid_kind bidKind,
+		u.user_account userAccount,
+		b.borrow_title borrowTitle,
+		b.borrow_sum borrowSum,
+		b.borrow_sum-b.repayment_amount surplusSum,
+		bt.name TypeName,
+		br.total_period-br.current_period surplusPeriod,
+		br.repayment_time repaymentTiime,
+		br.repayment_amount repaymentAmount,
+		br.late_days lateDays,
+		br.late_interest lateInterest,
+		br.repayment_interest repaymentInterest,
+		br.repayment_principal repaymentPrincipal,
+		br.repayment_paidtime repaymentPaidtime,
+		br.repayment_status repaymentStatus,
+		u.is_system systems,
+		TO_DAYS(br.repayment_time)-TO_DAYS(NOW()) surplusTime
+	from rb_borrow b inner join rb_borrow_repayment br on b.id = br.borrow_id 
+			 inner join rb_user u on b.user_id = u.id 
+			 inner join rb_borrow_type bt on b.bid_kind = bt.ID
+	<where>
+		1=1
+		<if test="bidKind != null and bidKind != ''">
+			and	b.bid_kind = #{bidKind}
+		</if>
+		<if test="borrowTitle != null and borrowTitle != ''">
+			and	b.borrow_title like '%${borrowTitle}%' 
+		</if>
+		<if test="repaymentStatus != null and repaymentStatus != ''">
+			and br.repayment_status = #{repaymentStatus}
+			<if test="repaymentStatus == 1">
+		    	<if test="days!=null and days!=''">
+		    		<![CDATA[and TO_DAYS(br.repayment_time)-TO_DAYS(NOW())>0 AND TO_DAYS(br.repayment_time)-TO_DAYS(NOW())<30 ]]>
+		    	</if>
+		    </if>
+		   <if test="repaymentStatus == 3">
+		    	<if test="days == 30">
+		    		<![CDATA[  and br.late_days>0	and  br.late_days<90 ]]>
+		    	</if>
+		    	<if test="days == 90">
+		    		and br.late_days >= 90
+		    	</if>
+		    </if>
+		</if>
+		<if test="userAccount != null and userAccount != ''">
+				and u.user_account like CONCAT('%', #{userAccount}, '%')
+			</if>
+		<!-- 	
+		<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(b.publish_datetime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+	    </if>
+	    <if test="endTime !=null and endTime !=''">
+	    	<![CDATA[	and DATE_FORMAT(b.publish_datetime,'%Y-%m-%d') <=  #{endTime }  ]]>
+	    </if> 
+	    -->
+	    <if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(br.repayment_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+	    </if>
+	    <if test="endTime !=null and endTime !=''">
+	    	<![CDATA[	and DATE_FORMAT(br.repayment_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+	    </if>
+	    
+	    <if test="actualbeginTime !=null and actualbeginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(br.repayment_paidtime,'%Y-%m-%d') >=  #{actualbeginTime }  ]]>
+	    </if>
+	    <if test="actualendTime !=null and actualendTime !=''">
+	    	<![CDATA[	and DATE_FORMAT(br.repayment_paidtime,'%Y-%m-%d') <=  #{actualendTime }  ]]>
+	    </if>
+	    
+	</where>
+	<choose>  
+        <when test="repaymentStatus == 2">  
+           order by br.repayment_paidtime desc
+        </when>  
+       
+        <otherwise>  
+           order by br.repayment_time asc
+        </otherwise>  
+    </choose>  
+	
+	
+  </select>
+  
+  <select id="selectCountRepaymentBorrows" resultType="int" parameterType="Map">
+  	select 
+		count(*)
+	from rb_borrow b inner join rb_borrow_repayment br on b.id = br.borrow_id 
+			 inner join rb_user u on b.user_id = u.id 
+			 inner join rb_borrow_type bt on b.bid_kind = bt.ID
+	<where>
+		<if test="bidKind != null and bidKind != ''">
+			and b.bid_kind = #{bidKind}
+		</if>
+		<if test="borrowTitle != null and borrowTitle != ''">
+			and	b.borrow_title like '%${borrowTitle}%' 
+		</if>
+		<if test="repaymentStatus != null and repaymentStatus != ''">
+			and br.repayment_status = #{repaymentStatus}
+		</if>
+		<if test="userAccount != null and userAccount != ''">
+				and u.user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<!-- 
+		<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(b.publish_datetime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+	    </if>
+	    <if test="endTime !=null and endTime !=''">
+	    	<![CDATA[	and DATE_FORMAT(b.publish_datetime,'%Y-%m-%d') <=  #{endTime }  ]]>
+	    </if> 
+	    -->
+	    <if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(br.repayment_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+	    </if>
+	    <if test="endTime !=null and endTime !=''">
+	    	<![CDATA[	and DATE_FORMAT(br.repayment_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+	    </if>
+	    
+	    <if test="actualbeginTime !=null and actualbeginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(br.repayment_paidtime,'%Y-%m-%d') >=  #{actualbeginTime }  ]]>
+	    </if>
+	    <if test="actualendTime !=null and actualendTime !=''">
+	    	<![CDATA[	and DATE_FORMAT(br.repayment_paidtime,'%Y-%m-%d') <=  #{actualendTime }  ]]>
+	    </if>
+	</where>
+  </select>
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    *
+    from rb_borrow
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPrimaryKeyForUpdate" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    *
+    from rb_borrow
+    where id = #{id,jdbcType=INTEGER} for update
+  </select>
+   <!-- 首页显示借款 -->
+  <select id="selectBorrowsByEntity" resultMap="BaseResultMap" parameterType="com.rbao.east.entity.Borrow">
+  	SELECT *,b.tender_sum/b.borrow_sum*100 tenderProgressRate FROM rb_borrow b WHERE 1=1
+		<if test="borrowStatus != null ">
+			and borrow_status = #{borrowStatus}
+		</if> 
+	ORDER BY tenderProgressRate ASC ,b.borrow_addtime DESC    LIMIT 5
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_borrow
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.Borrow" >
+    insert into rb_borrow (id, site_id, user_id, 
+      borrow_title, borrow_status, borrow_sequence, 
+      borrow_hits, vouch_award, vouch_user, 
+      vouch_amount, vouch_times, publish_datetime, 
+      verify_trial_user, verify_trial_time, verify_trial_remark, 
+      verify_review_user, verify_review_time, verify_review_remark, 
+      repayment_user, repayment_amount, monthly_repayment, 
+      paid_amount, paid_interest, repayment_time, 
+      success_time, end_time, payment_amount, 
+      borrow_use, borrow_time_limit, repayment_style, 
+      tender_sum, borrow_sum, tender_times, 
+      annual_interest_rate, min_amount, max_amount, 
+      valid_time, tender_award, part_amount, 
+      proportion_rate, is_false, open_account, 
+      open_borrow, open_tender, open_credit, 
+      borrow_addtime, borrow_addip, bid_kind, 
+      tender_password, is_day, pay_datetime, 
+      borrow_content,user_type_id,bid_rank,borrow_picture)
+    values (#{id,jdbcType=INTEGER}, #{siteId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{borrowTitle,jdbcType=VARCHAR}, #{borrowStatus,jdbcType=INTEGER}, #{borrowSequence,jdbcType=INTEGER}, 
+      #{borrowHits,jdbcType=INTEGER}, #{vouchAward,jdbcType=VARCHAR}, #{vouchUser,jdbcType=VARCHAR}, 
+      #{vouchAmount,jdbcType=VARCHAR}, #{vouchTimes,jdbcType=INTEGER}, #{publishDatetime,jdbcType=TIMESTAMP}, 
+      #{verifyTrialUser,jdbcType=INTEGER}, #{verifyTrialTime,jdbcType=TIMESTAMP}, #{verifyTrialRemark,jdbcType=VARCHAR}, 
+      #{verifyReviewUser,jdbcType=INTEGER}, #{verifyReviewTime,jdbcType=TIMESTAMP}, #{verifyReviewRemark,jdbcType=VARCHAR}, 
+      #{repaymentUser,jdbcType=INTEGER}, #{repaymentAmount,jdbcType=DECIMAL}, #{monthlyRepayment,jdbcType=DECIMAL}, 
+      #{paidAmount,jdbcType=DECIMAL}, #{paidInterest,jdbcType=DECIMAL}, #{repaymentTime,jdbcType=TIMESTAMP}, 
+      #{successTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{paymentAmount,jdbcType=DECIMAL}, 
+      #{borrowUse,jdbcType=VARCHAR}, #{borrowTimeLimit,jdbcType=INTEGER}, #{repaymentStyle,jdbcType=INTEGER}, 
+      #{tenderSum,jdbcType=DECIMAL}, #{borrowSum,jdbcType=DECIMAL}, #{tenderTimes,jdbcType=INTEGER}, 
+      #{annualInterestRate,jdbcType=DECIMAL}, #{minAmount,jdbcType=DECIMAL}, #{maxAmount,jdbcType=DECIMAL}, 
+      #{validTime,jdbcType=INTEGER}, #{tenderAward,jdbcType=VARCHAR}, #{partAmount,jdbcType=DECIMAL}, 
+      #{proportionRate,jdbcType=DECIMAL}, #{isFalse,jdbcType=INTEGER}, #{openAccount,jdbcType=INTEGER}, 
+      #{openBorrow,jdbcType=INTEGER}, #{openTender,jdbcType=INTEGER}, #{openCredit,jdbcType=INTEGER}, 
+      #{borrowAddtime,jdbcType=TIMESTAMP}, #{borrowAddip,jdbcType=VARCHAR}, #{bidKind,jdbcType=INTEGER}, 
+      #{tenderPassword,jdbcType=VARCHAR}, #{isDay,jdbcType=INTEGER}, #{payDatetime,jdbcType=VARCHAR}, 
+      #{borrowContent,jdbcType=LONGVARCHAR}, #{userTypeId,jdbcType=INTEGER}, #{bidRank,jdbcType=INTEGER},
+      #{borrowPicture,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.Borrow" 
+  useGeneratedKeys="true" keyProperty="id" >
+    insert into rb_borrow
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="siteId != null" >
+        site_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="borrowTitle != null" >
+        borrow_title,
+      </if>
+      <if test="borrowStatus != null" >
+        borrow_status,
+      </if>
+      <if test="borrowSequence != null" >
+        borrow_sequence,
+      </if>
+      <if test="borrowHits != null" >
+        borrow_hits,
+      </if>
+      <if test="vouchAward != null" >
+        vouch_award,
+      </if>
+      <if test="vouchUser != null" >
+        vouch_user,
+      </if>
+      <if test="vouchAmount != null" >
+        vouch_amount,
+      </if>
+      <if test="vouchTimes != null" >
+        vouch_times,
+      </if>
+      <if test="publishDatetime != null" >
+        publish_datetime,
+      </if>
+      <if test="verifyTrialUser != null" >
+        verify_trial_user,
+      </if>
+      <if test="verifyTrialTime != null" >
+        verify_trial_time,
+      </if>
+      <if test="verifyTrialRemark != null" >
+        verify_trial_remark,
+      </if>
+      <if test="verifyReviewUser != null" >
+        verify_review_user,
+      </if>
+      <if test="verifyReviewTime != null" >
+        verify_review_time,
+      </if>
+      <if test="verifyReviewRemark != null" >
+        verify_review_remark,
+      </if>
+      <if test="repaymentUser != null" >
+        repayment_user,
+      </if>
+      <if test="repaymentAmount != null" >
+        repayment_amount,
+      </if>
+      <if test="monthlyRepayment != null" >
+        monthly_repayment,
+      </if>
+      <if test="paidAmount != null" >
+        paid_amount,
+      </if>
+      <if test="paidInterest != null" >
+        paid_interest,
+      </if>
+      <if test="repaymentTime != null" >
+        repayment_time,
+      </if>
+      <if test="successTime != null" >
+        success_time,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount,
+      </if>
+      <if test="borrowUse != null" >
+        borrow_use,
+      </if>
+      <if test="borrowTimeLimit != null" >
+        borrow_time_limit,
+      </if>
+      <if test="repaymentStyle != null" >
+        repayment_style,
+      </if>
+      <if test="tenderSum != null" >
+        tender_sum,
+      </if>
+      <if test="borrowSum != null" >
+        borrow_sum,
+      </if>
+      <if test="tenderTimes != null" >
+        tender_times,
+      </if>
+      <if test="annualInterestRate != null" >
+        annual_interest_rate,
+      </if>
+      <if test="minAmount != null" >
+        min_amount,
+      </if>
+      <if test="maxAmount != null" >
+        max_amount,
+      </if>
+      <if test="validTime != null" >
+        valid_time,
+      </if>
+      <if test="tenderAward != null" >
+        tender_award,
+      </if>
+      <if test="partAmount != null" >
+        part_amount,
+      </if>
+      <if test="proportionRate != null" >
+        proportion_rate,
+      </if>
+      <if test="isFalse != null" >
+        is_false,
+      </if>
+      <if test="openAccount != null" >
+        open_account,
+      </if>
+      <if test="openBorrow != null" >
+        open_borrow,
+      </if>
+      <if test="openTender != null" >
+        open_tender,
+      </if>
+      <if test="openCredit != null" >
+        open_credit,
+      </if>
+      <if test="borrowAddtime != null" >
+        borrow_addtime,
+      </if>
+      <if test="borrowAddip != null" >
+        borrow_addip,
+      </if>
+      <if test="bidKind != null" >
+        bid_kind,
+      </if>
+      <if test="tenderPassword != null" >
+        tender_password,
+      </if>
+      <if test="isDay != null" >
+        is_day,
+      </if>
+      <if test="payDatetime != null" >
+        pay_datetime,
+      </if>
+      <if test="borrowContent != null" >
+        borrow_content,
+      </if>
+      <if test="userTypeId != null" >
+        user_type_id,
+      </if>
+      <if test="borrowNo != null" >
+        borrow_no,
+      </if>
+      <if test="bidRank != null" >
+        bid_rank,
+      </if>
+      <if test="creditType != null" >
+        credit_type,
+      </if>
+      <if test="amountPerCopies != null" >
+        amount_per_copies,
+      </if>
+       <if test="allowTenderTime != null" >
+        allow_tender_time,
+      </if>
+      <if test="borrowPicture != null" >
+         borrow_picture,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="siteId != null" >
+        #{siteId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="borrowTitle != null" >
+        #{borrowTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="borrowStatus != null" >
+        #{borrowStatus,jdbcType=INTEGER},
+      </if>
+      <if test="borrowSequence != null" >
+        #{borrowSequence,jdbcType=INTEGER},
+      </if>
+      <if test="borrowHits != null" >
+        #{borrowHits,jdbcType=INTEGER},
+      </if>
+      <if test="vouchAward != null" >
+        #{vouchAward,jdbcType=VARCHAR},
+      </if>
+      <if test="vouchUser != null" >
+        #{vouchUser,jdbcType=VARCHAR},
+      </if>
+      <if test="vouchAmount != null" >
+        #{vouchAmount,jdbcType=VARCHAR},
+      </if>
+      <if test="vouchTimes != null" >
+        #{vouchTimes,jdbcType=INTEGER},
+      </if>
+      <if test="publishDatetime != null" >
+        #{publishDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyTrialUser != null" >
+        #{verifyTrialUser,jdbcType=INTEGER},
+      </if>
+      <if test="verifyTrialTime != null" >
+        #{verifyTrialTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyTrialRemark != null" >
+        #{verifyTrialRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyReviewUser != null" >
+        #{verifyReviewUser,jdbcType=INTEGER},
+      </if>
+      <if test="verifyReviewTime != null" >
+        #{verifyReviewTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyReviewRemark != null" >
+        #{verifyReviewRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="repaymentUser != null" >
+        #{repaymentUser,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentAmount != null" >
+        #{repaymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="monthlyRepayment != null" >
+        #{monthlyRepayment,jdbcType=DECIMAL},
+      </if>
+      <if test="paidAmount != null" >
+        #{paidAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="paidInterest != null" >
+        #{paidInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="repaymentTime != null" >
+        #{repaymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="successTime != null" >
+        #{successTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paymentAmount != null" >
+        #{paymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="borrowUse != null" >
+        #{borrowUse,jdbcType=VARCHAR},
+      </if>
+      <if test="borrowTimeLimit != null" >
+        #{borrowTimeLimit,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentStyle != null" >
+        #{repaymentStyle,jdbcType=INTEGER},
+      </if>
+      <if test="tenderSum != null" >
+        #{tenderSum,jdbcType=DECIMAL},
+      </if>
+      <if test="borrowSum != null" >
+        #{borrowSum,jdbcType=DECIMAL},
+      </if>
+      <if test="tenderTimes != null" >
+        #{tenderTimes,jdbcType=INTEGER},
+      </if>
+      <if test="annualInterestRate != null" >
+        #{annualInterestRate,jdbcType=DECIMAL},
+      </if>
+      <if test="minAmount != null" >
+        #{minAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="maxAmount != null" >
+        #{maxAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="validTime != null" >
+        #{validTime,jdbcType=INTEGER},
+      </if>
+      <if test="tenderAward != null" >
+        #{tenderAward,jdbcType=VARCHAR},
+      </if>
+      <if test="partAmount != null" >
+        #{partAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="proportionRate != null" >
+        #{proportionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="isFalse != null" >
+        #{isFalse,jdbcType=INTEGER},
+      </if>
+      <if test="openAccount != null" >
+        #{openAccount,jdbcType=INTEGER},
+      </if>
+      <if test="openBorrow != null" >
+        #{openBorrow,jdbcType=INTEGER},
+      </if>
+      <if test="openTender != null" >
+        #{openTender,jdbcType=INTEGER},
+      </if>
+      <if test="openCredit != null" >
+        #{openCredit,jdbcType=INTEGER},
+      </if>
+      <if test="borrowAddtime != null" >
+        #{borrowAddtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="borrowAddip != null" >
+        #{borrowAddip,jdbcType=VARCHAR},
+      </if>
+      <if test="bidKind != null" >
+        #{bidKind,jdbcType=INTEGER},
+      </if>
+      <if test="tenderPassword != null" >
+        #{tenderPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="isDay != null" >
+        #{isDay,jdbcType=INTEGER},
+      </if>
+      <if test="payDatetime != null" >
+        #{payDatetime,jdbcType=VARCHAR},
+      </if>
+      <if test="borrowContent != null" >
+        #{borrowContent,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="userTypeId != null" >
+        #{userTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="borrowNo != null" >
+        #{borrowNo,jdbcType=VARCHAR},
+      </if>
+       <if test="bidRank != null" >
+        #{bidRank,jdbcType=INTEGER},
+      </if>
+       <if test="creditType != null" >
+        #{creditType,jdbcType=INTEGER},
+      </if>
+     <if test="amountPerCopies != null" >
+        #{amountPerCopies,jdbcType=DECIMAL},
+      </if>
+      <if test="allowTenderTime != null" >
+         #{allowTenderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="borrowPicture != null" >
+         #{borrowPicture,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.Borrow" >
+    update rb_borrow
+    <set >
+      <if test="siteId != null" >
+        site_id = #{siteId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="borrowTitle != null" >
+        borrow_title = #{borrowTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="borrowStatus != null" >
+        borrow_status = #{borrowStatus,jdbcType=INTEGER},
+      </if>
+      <if test="borrowSequence != null" >
+        borrow_sequence = #{borrowSequence,jdbcType=INTEGER},
+      </if>
+      <if test="borrowHits != null" >
+        borrow_hits = #{borrowHits,jdbcType=INTEGER},
+      </if>
+      <if test="vouchAward != null" >
+        vouch_award = #{vouchAward,jdbcType=VARCHAR},
+      </if>
+      <if test="vouchUser != null" >
+        vouch_user = #{vouchUser,jdbcType=VARCHAR},
+      </if>
+      <if test="vouchAmount != null" >
+        vouch_amount = #{vouchAmount,jdbcType=VARCHAR},
+      </if>
+      <if test="vouchTimes != null" >
+        vouch_times = #{vouchTimes,jdbcType=INTEGER},
+      </if>
+      <if test="publishDatetime != null" >
+        publish_datetime = #{publishDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyTrialUser != null" >
+        verify_trial_user = #{verifyTrialUser,jdbcType=INTEGER},
+      </if>
+      <if test="verifyTrialTime != null" >
+        verify_trial_time = #{verifyTrialTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyTrialRemark != null" >
+        verify_trial_remark = #{verifyTrialRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyReviewUser != null" >
+        verify_review_user = #{verifyReviewUser,jdbcType=INTEGER},
+      </if>
+      <if test="verifyReviewTime != null" >
+        verify_review_time = #{verifyReviewTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyReviewRemark != null" >
+        verify_review_remark = #{verifyReviewRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="repaymentUser != null" >
+        repayment_user = #{repaymentUser,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentAmount != null" >
+        repayment_amount = #{repaymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="monthlyRepayment != null" >
+        monthly_repayment = #{monthlyRepayment,jdbcType=DECIMAL},
+      </if>
+      <if test="paidAmount != null" >
+        paid_amount = #{paidAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="paidInterest != null" >
+        paid_interest = #{paidInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="repaymentTime != null" >
+        repayment_time = #{repaymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="successTime != null" >
+        success_time = #{successTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount = #{paymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="borrowUse != null" >
+        borrow_use = #{borrowUse,jdbcType=VARCHAR},
+      </if>
+      <if test="borrowTimeLimit != null" >
+        borrow_time_limit = #{borrowTimeLimit,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentStyle != null" >
+        repayment_style = #{repaymentStyle,jdbcType=INTEGER},
+      </if>
+      <if test="tenderSum != null" >
+        tender_sum = #{tenderSum,jdbcType=DECIMAL},
+      </if>
+      <if test="borrowSum != null" >
+        borrow_sum = #{borrowSum,jdbcType=DECIMAL},
+      </if>
+      <if test="tenderTimes != null" >
+        tender_times = #{tenderTimes,jdbcType=INTEGER},
+      </if>
+      <if test="annualInterestRate != null" >
+        annual_interest_rate = #{annualInterestRate,jdbcType=DECIMAL},
+      </if>
+      <if test="minAmount != null" >
+        min_amount = #{minAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="maxAmount != null" >
+        max_amount = #{maxAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="validTime != null" >
+        valid_time = #{validTime,jdbcType=INTEGER},
+      </if>
+      <if test="tenderAward != null" >
+        tender_award = #{tenderAward,jdbcType=VARCHAR},
+      </if>
+      <if test="partAmount != null" >
+        part_amount = #{partAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="proportionRate != null" >
+        proportion_rate = #{proportionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="isFalse != null" >
+        is_false = #{isFalse,jdbcType=INTEGER},
+      </if>
+      <if test="openAccount != null" >
+        open_account = #{openAccount,jdbcType=INTEGER},
+      </if>
+      <if test="openBorrow != null" >
+        open_borrow = #{openBorrow,jdbcType=INTEGER},
+      </if>
+      <if test="openTender != null" >
+        open_tender = #{openTender,jdbcType=INTEGER},
+      </if>
+      <if test="openCredit != null" >
+        open_credit = #{openCredit,jdbcType=INTEGER},
+      </if>
+      <if test="borrowAddtime != null" >
+        borrow_addtime = #{borrowAddtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="borrowAddip != null" >
+        borrow_addip = #{borrowAddip,jdbcType=VARCHAR},
+      </if>
+      <if test="bidKind != null" >
+        bid_kind = #{bidKind,jdbcType=INTEGER},
+      </if>
+      <if test="tenderPassword != null" >
+        tender_password = #{tenderPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="isDay != null" >
+        is_day = #{isDay,jdbcType=INTEGER},
+      </if>
+      <if test="payDatetime != null" >
+        pay_datetime = #{payDatetime,jdbcType=VARCHAR},
+      </if>
+      <if test="borrowContent != null" >
+        borrow_content = #{borrowContent,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="userTypeId != null" >
+       user_type_id= #{userTypeId,jdbcType=INTEGER},
+      </if>
+       <if test="bidRank != null" >
+        bid_rank=#{bidRank,jdbcType=INTEGER},
+      </if>
+      <if test="allowTenderTime != null" >
+        allow_tender_time=#{allowTenderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="minWaitRepossess != null" >
+        min_wait_repossess=#{minWaitRepossess,jdbcType=VARCHAR},
+      </if>
+      
+      <if test="agreementPath != null" >
+        agreement_path=#{agreementPath,jdbcType=VARCHAR},
+      </if>
+      <if test="borrowPicture != null" >
+        borrow_picture=#{borrowPicture,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  
+  <update id="updateByPrimaryKeySelectiveByTender" parameterType="com.rbao.east.entity.Borrow" >
+    update rb_borrow
+    <set >
+      <if test="siteId != null" >
+        site_id = #{siteId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="borrowTitle != null" >
+        borrow_title = #{borrowTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="borrowStatus != null" >
+        borrow_status = #{borrowStatus,jdbcType=INTEGER},
+      </if>
+      <if test="borrowSequence != null" >
+        borrow_sequence = #{borrowSequence,jdbcType=INTEGER},
+      </if>
+      <if test="borrowHits != null" >
+        borrow_hits = #{borrowHits,jdbcType=INTEGER},
+      </if>
+      <if test="vouchAward != null" >
+        vouch_award = #{vouchAward,jdbcType=VARCHAR},
+      </if>
+      <if test="vouchUser != null" >
+        vouch_user = #{vouchUser,jdbcType=VARCHAR},
+      </if>
+      <if test="vouchAmount != null" >
+        vouch_amount = #{vouchAmount,jdbcType=VARCHAR},
+      </if>
+      <if test="vouchTimes != null" >
+        vouch_times = #{vouchTimes,jdbcType=INTEGER},
+      </if>
+      <if test="publishDatetime != null" >
+        publish_datetime = #{publishDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyTrialUser != null" >
+        verify_trial_user = #{verifyTrialUser,jdbcType=INTEGER},
+      </if>
+      <if test="verifyTrialTime != null" >
+        verify_trial_time = #{verifyTrialTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyTrialRemark != null" >
+        verify_trial_remark = #{verifyTrialRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyReviewUser != null" >
+        verify_review_user = #{verifyReviewUser,jdbcType=INTEGER},
+      </if>
+      <if test="verifyReviewTime != null" >
+        verify_review_time = #{verifyReviewTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyReviewRemark != null" >
+        verify_review_remark = #{verifyReviewRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="repaymentUser != null" >
+        repayment_user = #{repaymentUser,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentAmount != null" >
+        repayment_amount = #{repaymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="monthlyRepayment != null" >
+        monthly_repayment = #{monthlyRepayment,jdbcType=DECIMAL},
+      </if>
+      <if test="paidAmount != null" >
+        paid_amount = #{paidAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="paidInterest != null" >
+        paid_interest = #{paidInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="repaymentTime != null" >
+        repayment_time = #{repaymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="successTime != null" >
+        success_time = #{successTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paymentAmount != null" >
+        payment_amount = #{paymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="borrowUse != null" >
+        borrow_use = #{borrowUse,jdbcType=VARCHAR},
+      </if>
+      <if test="borrowTimeLimit != null" >
+        borrow_time_limit = #{borrowTimeLimit,jdbcType=INTEGER},
+      </if>
+      <if test="repaymentStyle != null" >
+        repayment_style = #{repaymentStyle,jdbcType=INTEGER},
+      </if>
+      <if test="tenderSum != null" >
+        tender_sum = #{tenderSum,jdbcType=DECIMAL},
+      </if>
+      <if test="borrowSum != null" >
+        borrow_sum = #{borrowSum,jdbcType=DECIMAL},
+      </if>
+      <if test="tenderTimes != null" >
+        tender_times = #{tenderTimes,jdbcType=INTEGER},
+      </if>
+      <if test="annualInterestRate != null" >
+        annual_interest_rate = #{annualInterestRate,jdbcType=DECIMAL},
+      </if>
+      <if test="minAmount != null" >
+        min_amount = #{minAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="maxAmount != null" >
+        max_amount = #{maxAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="validTime != null" >
+        valid_time = #{validTime,jdbcType=INTEGER},
+      </if>
+      <if test="tenderAward != null" >
+        tender_award = #{tenderAward,jdbcType=VARCHAR},
+      </if>
+      <if test="partAmount != null" >
+        part_amount = #{partAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="proportionRate != null" >
+        proportion_rate = #{proportionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="isFalse != null" >
+        is_false = #{isFalse,jdbcType=INTEGER},
+      </if>
+      <if test="openAccount != null" >
+        open_account = #{openAccount,jdbcType=INTEGER},
+      </if>
+      <if test="openBorrow != null" >
+        open_borrow = #{openBorrow,jdbcType=INTEGER},
+      </if>
+      <if test="openTender != null" >
+        open_tender = #{openTender,jdbcType=INTEGER},
+      </if>
+      <if test="openCredit != null" >
+        open_credit = #{openCredit,jdbcType=INTEGER},
+      </if>
+      <if test="borrowAddtime != null" >
+        borrow_addtime = #{borrowAddtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="borrowAddip != null" >
+        borrow_addip = #{borrowAddip,jdbcType=VARCHAR},
+      </if>
+      <if test="bidKind != null" >
+        bid_kind = #{bidKind,jdbcType=INTEGER},
+      </if>
+      <if test="tenderPassword != null" >
+        tender_password = #{tenderPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="isDay != null" >
+        is_day = #{isDay,jdbcType=INTEGER},
+      </if>
+      <if test="payDatetime != null" >
+        pay_datetime = #{payDatetime,jdbcType=VARCHAR},
+      </if>
+      <if test="borrowContent != null" >
+        borrow_content = #{borrowContent,jdbcType=LONGVARCHAR},
+      </if>
+       <if test="userTypeId != null" >
+       user_type_id= #{userTypeId,jdbcType=INTEGER},
+      </if>
+       <if test="bidRank != null" >
+        bid_rank=#{bidRank,jdbcType=INTEGER},
+      </if>
+      <if test="allowTenderTime != null" >
+        allow_tender_time=#{allowTenderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="minWaitRepossess != null" >
+        min_wait_repossess=#{minWaitRepossess,jdbcType=VARCHAR},
+      </if>
+      
+      <if test="agreementPath != null" >
+        agreement_path=#{agreementPath,jdbcType=VARCHAR},
+      </if>
+      <if test="borrowPicture != null" >
+        borrow_picture=#{borrowPicture,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER} and  borrow_sum >= #{tenderSum,jdbcType=DECIMAL}
+  </update>
+  
+  
+  
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.rbao.east.entity.Borrow" >
+    update rb_borrow
+    set site_id = #{siteId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      borrow_title = #{borrowTitle,jdbcType=VARCHAR},
+      borrow_status = #{borrowStatus,jdbcType=INTEGER},
+      borrow_sequence = #{borrowSequence,jdbcType=INTEGER},
+      borrow_hits = #{borrowHits,jdbcType=INTEGER},
+      vouch_award = #{vouchAward,jdbcType=VARCHAR},
+      vouch_user = #{vouchUser,jdbcType=VARCHAR},
+      vouch_amount = #{vouchAmount,jdbcType=VARCHAR},
+      vouch_times = #{vouchTimes,jdbcType=INTEGER},
+      publish_datetime = #{publishDatetime,jdbcType=TIMESTAMP},
+      verify_trial_user = #{verifyTrialUser,jdbcType=INTEGER},
+      verify_trial_time = #{verifyTrialTime,jdbcType=TIMESTAMP},
+      verify_trial_remark = #{verifyTrialRemark,jdbcType=VARCHAR},
+      verify_review_user = #{verifyReviewUser,jdbcType=INTEGER},
+      verify_review_time = #{verifyReviewTime,jdbcType=TIMESTAMP},
+      verify_review_remark = #{verifyReviewRemark,jdbcType=VARCHAR},
+      repayment_user = #{repaymentUser,jdbcType=INTEGER},
+      repayment_amount = #{repaymentAmount,jdbcType=DECIMAL},
+      monthly_repayment = #{monthlyRepayment,jdbcType=DECIMAL},
+      paid_amount = #{paidAmount,jdbcType=DECIMAL},
+      paid_interest = #{paidInterest,jdbcType=DECIMAL},
+      repayment_time = #{repaymentTime,jdbcType=TIMESTAMP},
+      success_time = #{successTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      payment_amount = #{paymentAmount,jdbcType=DECIMAL},
+      borrow_use = #{borrowUse,jdbcType=VARCHAR},
+      borrow_time_limit = #{borrowTimeLimit,jdbcType=INTEGER},
+      repayment_style = #{repaymentStyle,jdbcType=INTEGER},
+      tender_sum = #{tenderSum,jdbcType=DECIMAL},
+      borrow_sum = #{borrowSum,jdbcType=DECIMAL},
+      tender_times = #{tenderTimes,jdbcType=INTEGER},
+      annual_interest_rate = #{annualInterestRate,jdbcType=DECIMAL},
+      min_amount = #{minAmount,jdbcType=DECIMAL},
+      max_amount = #{maxAmount,jdbcType=DECIMAL},
+      valid_time = #{validTime,jdbcType=INTEGER},
+      tender_award = #{tenderAward,jdbcType=VARCHAR},
+      part_amount = #{partAmount,jdbcType=DECIMAL},
+      proportion_rate = #{proportionRate,jdbcType=DECIMAL},
+      is_false = #{isFalse,jdbcType=INTEGER},
+      open_account = #{openAccount,jdbcType=INTEGER},
+      open_borrow = #{openBorrow,jdbcType=INTEGER},
+      open_tender = #{openTender,jdbcType=INTEGER},
+      open_credit = #{openCredit,jdbcType=INTEGER},
+      borrow_addtime = #{borrowAddtime,jdbcType=TIMESTAMP},
+      borrow_addip = #{borrowAddip,jdbcType=VARCHAR},
+      bid_kind = #{bidKind,jdbcType=INTEGER},
+      tender_password = #{tenderPassword,jdbcType=VARCHAR},
+      is_day = #{isDay,jdbcType=INTEGER},
+      pay_datetime = #{payDatetime,jdbcType=VARCHAR},
+      borrow_content = #{borrowContent,jdbcType=LONGVARCHAR},
+      user_type_id= #{userTypeId,jdbcType=INTEGER},
+      bid_rank=#{bidRank,jdbcType=INTEGER},
+       borrow_picture=#{borrowPicture,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.Borrow" >
+    update rb_borrow
+    set site_id = #{siteId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      borrow_title = #{borrowTitle,jdbcType=VARCHAR},
+      borrow_status = #{borrowStatus,jdbcType=INTEGER},
+      borrow_sequence = #{borrowSequence,jdbcType=INTEGER},
+      borrow_hits = #{borrowHits,jdbcType=INTEGER},
+      vouch_award = #{vouchAward,jdbcType=VARCHAR},
+      vouch_user = #{vouchUser,jdbcType=VARCHAR},
+      vouch_amount = #{vouchAmount,jdbcType=VARCHAR},
+      vouch_times = #{vouchTimes,jdbcType=INTEGER},
+      publish_datetime = #{publishDatetime,jdbcType=TIMESTAMP},
+      verify_trial_user = #{verifyTrialUser,jdbcType=INTEGER},
+      verify_trial_time = #{verifyTrialTime,jdbcType=TIMESTAMP},
+      verify_trial_remark = #{verifyTrialRemark,jdbcType=VARCHAR},
+      verify_review_user = #{verifyReviewUser,jdbcType=INTEGER},
+      verify_review_time = #{verifyReviewTime,jdbcType=TIMESTAMP},
+      verify_review_remark = #{verifyReviewRemark,jdbcType=VARCHAR},
+      repayment_user = #{repaymentUser,jdbcType=INTEGER},
+      repayment_amount = #{repaymentAmount,jdbcType=DECIMAL},
+      monthly_repayment = #{monthlyRepayment,jdbcType=DECIMAL},
+      paid_amount = #{paidAmount,jdbcType=DECIMAL},
+      paid_interest = #{paidInterest,jdbcType=DECIMAL},
+      repayment_time = #{repaymentTime,jdbcType=TIMESTAMP},
+      success_time = #{successTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      payment_amount = #{paymentAmount,jdbcType=DECIMAL},
+      borrow_use = #{borrowUse,jdbcType=VARCHAR},
+      borrow_time_limit = #{borrowTimeLimit,jdbcType=INTEGER},
+      repayment_style = #{repaymentStyle,jdbcType=INTEGER},
+      tender_sum = #{tenderSum,jdbcType=DECIMAL},
+      borrow_sum = #{borrowSum,jdbcType=DECIMAL},
+      tender_times = #{tenderTimes,jdbcType=INTEGER},
+      annual_interest_rate = #{annualInterestRate,jdbcType=DECIMAL},
+      min_amount = #{minAmount,jdbcType=DECIMAL},
+      max_amount = #{maxAmount,jdbcType=DECIMAL},
+      valid_time = #{validTime,jdbcType=INTEGER},
+      tender_award = #{tenderAward,jdbcType=VARCHAR},
+      part_amount = #{partAmount,jdbcType=DECIMAL},
+      proportion_rate = #{proportionRate,jdbcType=DECIMAL},
+      is_false = #{isFalse,jdbcType=INTEGER},
+      open_account = #{openAccount,jdbcType=INTEGER},
+      open_borrow = #{openBorrow,jdbcType=INTEGER},
+      open_tender = #{openTender,jdbcType=INTEGER},
+      open_credit = #{openCredit,jdbcType=INTEGER},
+      borrow_addtime = #{borrowAddtime,jdbcType=TIMESTAMP},
+      borrow_addip = #{borrowAddip,jdbcType=VARCHAR},
+      bid_kind = #{bidKind,jdbcType=INTEGER},
+      tender_password = #{tenderPassword,jdbcType=VARCHAR},
+      is_day = #{isDay,jdbcType=INTEGER},
+      pay_datetime = #{payDatetime,jdbcType=VARCHAR},
+      user_type_id= #{userTypeId,jdbcType=INTEGER},
+      bid_rank=#{bidRank,jdbcType=INTEGER},
+      borrow_picture=#{borrowPicture,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <select id="findBorrowDeal" parameterType="Map" resultType="Map">
+  	SELECT
+	b.id borrowId,
+  	b.borrow_title borrowTitle,
+  	u.user_account userAccount,
+  	u.user_realname userRealName,
+  	u.card_number cardNumber,
+  	bt.agreement_path agreePath,
+  	bt.agreement_time agreementTime,
+  	us.user_account tenderUserAccount
+  	FROM rb_borrow b 
+    INNER JOIN rb_user u ON b.user_id = u.id
+    INNER JOIN rb_borrow_tender bt ON b.`id`=bt.`borrow_id`
+     INNER JOIN rb_user us ON bt.user_id = us.id
+
+	   <where>
+	   	<if test="userAccount!=null and userAccount!=''">
+	   		and u.user_account=#{userAccount}
+	   	</if>
+	   	 <if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(bt.agreement_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+	    </if>
+	    <if test="endTime !=null and endTime !=''">
+	    	<![CDATA[	and DATE_FORMAT(bt.agreement_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+	    </if>
+	   </where>
+  </select>
+	<select id="getProjectSummary" parameterType="Map" resultType="Map">
+		select rb.id id, rb.borrow_title,ru.user_account,rb.borrow_sum,rb.borrow_time_limit,
+		   		case rb.is_day when 1 then '天' else '个月' end as day_type,
+		  		rb.borrow_status,ru.user_realname,ru.user_phone,rb.verify_review_time,rbrs.repayment_time
+		from rb_borrow rb, rb_user ru,(select a.borrow_id,a.repayment_time from rb_borrow_repayment a where repayment_time = (select max(repayment_time) from rb_borrow_repayment where borrow_id = a.borrow_id) order by a.borrow_id) rbrs where rb.user_id = ru.id and rbrs.borrow_id = rb.id
+			<if test="borrow_id != null and borrow_id != ''">
+				and rb.id = ${borrow_id}
+			</if>
+			<if test="borrow_status != null and borrow_status != ''">
+				and rb.borrow_status in ${borrow_status}
+			</if>
+			<if test="borrow_title != null and borrow_title != ''">
+				and rb.borrow_title like CONCAT('%', #{borrow_title}, '%')
+			</if> 
+			<if test="user_account != null and user_account != ''">
+				and ru.user_account like CONCAT('%', #{user_account}, '%')
+			</if> 
+			<if test="verify_review_begin_time !=null and verify_review_begin_time !=''">
+	    		<![CDATA[ and DATE_FORMAT(rb.verify_review_time,'%Y-%m-%d') >=  #{verify_review_begin_time } ]]>
+	    	</if>
+		    <if test="verify_review_end_time !=null and verify_review_end_time !=''">
+		    	<![CDATA[ and DATE_FORMAT(rb.verify_review_time,'%Y-%m-%d') <=  #{verify_review_end_time } ]]>
+		    </if>
+		    <if test="borrowTimeLimitStart !=null and borrowTimeLimitStart !=''">
+		    	<![CDATA[ and rb.borrow_time_limit >= #{borrowTimeLimitStart } ]]> 
+		    </if>
+		    <if test="borrowTimeLimitEnd !=null and borrowTimeLimitEnd !=''">
+    			<![CDATA[ and rb.borrow_time_limit <= #{borrowTimeLimitEnd } ]]> 
+		    </if>
+		    <if test="isDay !=null and isDay !=''">
+		    	and rb.is_Day = #{isDay}
+		    </if>
+		    <if test="repayment_time_begin !=null and repayment_time_begin !=''">
+		    	<![CDATA[ and DATE_FORMAT(rbrs.repayment_time,'%Y-%m-%d') >=  #{repayment_time_begin } ]]>
+		    </if>
+		    <if test="repayment_time_end !=null and repayment_time_end !=''">
+		    	<![CDATA[ and DATE_FORMAT(rbrs.repayment_time,'%Y-%m-%d') <=  #{repayment_time_end } ]]>
+		    </if>
+	</select>
+	<select id="getProjectSummaryCount" parameterType="Map" resultType="int">
+		select  COUNT(rb.id)
+		from rb_borrow rb, rb_user ru, (select a.borrow_id,a.repayment_time from rb_borrow_repayment a where repayment_time = (select max(repayment_time) from rb_borrow_repayment where borrow_id = a.borrow_id) order by a.borrow_id) rbrs where rb.user_id = ru.id and rbrs.borrow_id = rb.id
+			<if test="borrow_status != null and borrow_status != ''">
+				and rb.borrow_status in ${borrow_status}
+			</if>
+			<if test="borrow_title != null and borrow_title != ''">
+			and rb.borrow_title like CONCAT('%', #{borrow_title}, '%')
+			</if> 
+			<if test="user_account != null and user_account != ''">
+			and ru.user_account like CONCAT('%', #{user_account}, '%')
+			</if>
+			<if test="verify_review_begin_time !=null and verify_review_begin_time !=''">
+	    		<![CDATA[ and DATE_FORMAT(rb.verify_review_time,'%Y-%m-%d') >=  #{verify_review_begin_time } ]]>
+	    	</if>
+		    <if test="verify_review_end_time !=null and verify_review_end_time !=''">
+		    	<![CDATA[ and DATE_FORMAT(rb.verify_review_time,'%Y-%m-%d') <=  #{verify_review_end_time } ]]>
+		    </if>
+		    <if test="borrowTimeLimitStart !=null and borrowTimeLimitStart !=''">
+		    	<![CDATA[ and rb.borrow_time_limit >= #{borrowTimeLimitStart } ]]> 
+		    </if>
+		    <if test="borrowTimeLimitEnd !=null and borrowTimeLimitEnd !=''">
+    			<![CDATA[ and rb.borrow_time_limit <= #{borrowTimeLimitEnd } ]]> 
+		    </if> 
+		    <if test="isDay !=null and isDay !=''">
+		    	and rb.is_Day = #{isDay}
+		    </if>
+		    <if test="repayment_time_begin !=null and repayment_time_begin !=''">
+		    	<![CDATA[ and DATE_FORMAT(rbrs.repayment_time,'%Y-%m-%d') >=  #{repayment_time_begin } ]]>
+		    </if>
+		    <if test="repayment_time_end !=null and repayment_time_end !=''">
+		    	<![CDATA[ and DATE_FORMAT(rbrs.repayment_time,'%Y-%m-%d') <=  #{repayment_time_end } ]]>
+		    </if>
+	</select>
+	<select id="gettenderSum" parameterType="Map" resultType="BigDecimal">
+		select sum(tender_sum) tender_sum from rb_borrow where borrow_status in (4,5,10)
+	</select>
+</mapper>

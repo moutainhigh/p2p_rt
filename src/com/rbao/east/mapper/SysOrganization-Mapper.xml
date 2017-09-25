@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.SysOrganizationMapper">
+	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.SysOrganization">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="org_name" property="orgName" jdbcType="VARCHAR" />
+		<result column="org_code" property="orgCode" jdbcType="VARCHAR" />
+		<result column="org_sequence" property="orgSequence" jdbcType="INTEGER" />
+		<result column="org_parent_id" property="orgParentId" jdbcType="INTEGER" />
+		<result column="org_descripe" property="orgDescripe" jdbcType="VARCHAR" />
+		<result column="org_addtime" property="orgAddtime" jdbcType="TIMESTAMP" />
+		<result column="org_addip" property="orgAddip" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, org_name, org_code, org_sequence, org_parent_id, org_descripe,
+		org_addtime, org_addip
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from sys_organization
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from sys_organization
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.SysOrganization">
+		insert into sys_organization (id, org_name, org_code,
+		org_sequence, org_parent_id, org_descripe,
+		org_addtime, org_addip)
+		values (#{id,jdbcType=INTEGER}, #{orgName,jdbcType=VARCHAR},
+		#{orgCode,jdbcType=VARCHAR},
+		#{orgSequence,jdbcType=INTEGER}, #{orgParentId,jdbcType=INTEGER}, #{orgDescripe,jdbcType=VARCHAR},
+		#{orgAddtime,jdbcType=TIMESTAMP}, #{orgAddip,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.SysOrganization">
+		insert into sys_organization
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="orgName != null">
+				org_name,
+			</if>
+			<if test="orgCode != null">
+				org_code,
+			</if>
+			<if test="orgSequence != null">
+				org_sequence,
+			</if>
+			<if test="orgParentId != null">
+				org_parent_id,
+			</if>
+			<if test="orgDescripe != null">
+				org_descripe,
+			</if>
+			<if test="orgAddtime != null">
+				org_addtime,
+			</if>
+			<if test="orgAddip != null">
+				org_addip,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="orgName != null">
+				#{orgName,jdbcType=VARCHAR},
+			</if>
+			<if test="orgCode != null">
+				#{orgCode,jdbcType=VARCHAR},
+			</if>
+			<if test="orgSequence != null">
+				#{orgSequence,jdbcType=INTEGER},
+			</if>
+			<if test="orgParentId != null">
+				#{orgParentId,jdbcType=INTEGER},
+			</if>
+			<if test="orgDescripe != null">
+				#{orgDescripe,jdbcType=VARCHAR},
+			</if>
+			<if test="orgAddtime != null">
+				#{orgAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orgAddip != null">
+				#{orgAddip,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.SysOrganization">
+		update sys_organization
+		<set>
+			<if test="orgName != null">
+				org_name = #{orgName,jdbcType=VARCHAR},
+			</if>
+			<if test="orgCode != null">
+				org_code = #{orgCode,jdbcType=VARCHAR},
+			</if>
+			<if test="orgSequence != null">
+				org_sequence = #{orgSequence,jdbcType=INTEGER},
+			</if>
+			<if test="orgParentId != null">
+				org_parent_id = #{orgParentId,jdbcType=INTEGER},
+			</if>
+			<if test="orgDescripe != null">
+				org_descripe = #{orgDescripe,jdbcType=VARCHAR},
+			</if>
+			<if test="orgAddtime != null">
+				org_addtime = #{orgAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="orgAddip != null">
+				org_addip = #{orgAddip,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.SysOrganization">
+		update sys_organization
+		set org_name = #{orgName,jdbcType=VARCHAR},
+		org_code = #{orgCode,jdbcType=VARCHAR},
+		org_sequence = #{orgSequence,jdbcType=INTEGER},
+		org_parent_id = #{orgParentId,jdbcType=INTEGER},
+		org_descripe = #{orgDescripe,jdbcType=VARCHAR},
+		org_addtime = #{orgAddtime,jdbcType=TIMESTAMP},
+		org_addip = #{orgAddip,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

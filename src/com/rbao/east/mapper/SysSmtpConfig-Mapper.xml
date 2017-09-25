@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.SysSmtpConfigMapper">
+		<!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache" />-->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.SysSmtpConfig">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sys_smtp_server" property="sysSmtpServer"
+			jdbcType="VARCHAR" />
+		<result column="sys_smtp_needauth" property="sysSmtpNeedauth"
+			jdbcType="INTEGER" />
+		<result column="sys_mail_address" property="sysMailAddress"
+			jdbcType="VARCHAR" />
+		<result column="sys_mail_password" property="sysMailPassword"
+			jdbcType="VARCHAR" />
+		<result column="sys_mail_sender" property="sysMailSender"
+			jdbcType="VARCHAR" />
+		<result column="sys_mail_name" property="sysMailName" jdbcType="VARCHAR" />
+		<result column="sys_smtp_port" property="sysSmtpPort" jdbcType="INTEGER" />
+		<result column="sys_ssl_authentication" property="sysSslAuthentication" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, sys_smtp_server, sys_smtp_needauth, sys_mail_address,
+		sys_mail_password, sys_mail_sender,
+		sys_mail_name, sys_smtp_port,sys_ssl_authentication
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from sys_smtp_config
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		select
+		*
+		from sys_smtp_config
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from sys_smtp_config
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.SysSmtpConfig">
+		insert into sys_smtp_config (id, sys_smtp_server, sys_smtp_needauth,
+		sys_mail_address, sys_mail_password, sys_mail_sender,
+		sys_mail_name, sys_smtp_port,sys_ssl_authentication)
+		values (#{id,jdbcType=INTEGER}, #{sysSmtpServer,jdbcType=VARCHAR},
+		#{sysSmtpNeedauth,jdbcType=INTEGER},
+		#{sysMailAddress,jdbcType=VARCHAR},
+		#{sysMailPassword,jdbcType=VARCHAR},
+		#{sysMailSender,jdbcType=VARCHAR},
+		#{sysMailName,jdbcType=VARCHAR}, #{sysSmtpPort,jdbcType=INTEGER},
+		#{sysSslAuthentication,jdbcType=INTEGER}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.SysSmtpConfig">
+		insert into sys_smtp_config
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="sysSmtpServer != null">
+				sys_smtp_server,
+			</if>
+			<if test="sysSmtpNeedauth != null">
+				sys_smtp_needauth,
+			</if>
+			<if test="sysMailAddress != null">
+				sys_mail_address,
+			</if>
+			<if test="sysMailPassword != null">
+				sys_mail_password,
+			</if>
+			<if test="sysMailSender != null">
+				sys_mail_sender,
+			</if>
+			<if test="sysMailName != null">
+				sys_mail_name,
+			</if>
+			<if test="sysSmtpPort != null">
+				sys_smtp_port,
+			</if>
+			<if test="sysSslAuthentication != null">
+				sys_ssl_authentication,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="sysSmtpServer != null">
+				#{sysSmtpServer,jdbcType=VARCHAR},
+			</if>
+			<if test="sysSmtpNeedauth != null">
+				#{sysSmtpNeedauth,jdbcType=INTEGER},
+			</if>
+			<if test="sysMailAddress != null">
+				#{sysMailAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="sysMailPassword != null">
+				#{sysMailPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="sysMailSender != null">
+				#{sysMailSender,jdbcType=VARCHAR},
+			</if>
+			<if test="sysMailName != null">
+				#{sysMailName,jdbcType=VARCHAR},
+			</if>
+			<if test="sysSmtpPort != null">
+				#{sysSmtpPort,jdbcType=INTEGER},
+			</if>
+			<if test="sysSslAuthentication != null">
+				#{sysSslAuthentication,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.SysSmtpConfig">
+		update sys_smtp_config
+		<set>
+			<if test="sysSmtpServer != null">
+				sys_smtp_server = #{sysSmtpServer,jdbcType=VARCHAR},
+			</if>
+			<if test="sysSmtpNeedauth != null">
+				sys_smtp_needauth = #{sysSmtpNeedauth,jdbcType=INTEGER},
+			</if>
+			<if test="sysMailAddress != null">
+				sys_mail_address = #{sysMailAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="sysMailPassword != null">
+				sys_mail_password = #{sysMailPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="sysMailSender != null">
+				sys_mail_sender = #{sysMailSender,jdbcType=VARCHAR},
+			</if>
+			<if test="sysMailName != null">
+				sys_mail_name = #{sysMailName,jdbcType=VARCHAR},
+			</if>
+			<if test="sysSmtpPort != null">
+				sys_smtp_port = #{sysSmtpPort,jdbcType=INTEGER},
+			</if>
+			<if test="sysSslAuthentication != null">
+				sys_ssl_authentication = #{sysSslAuthentication,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.SysSmtpConfig">
+		update sys_smtp_config
+		set sys_smtp_server = #{sysSmtpServer,jdbcType=VARCHAR},
+		sys_smtp_needauth = #{sysSmtpNeedauth,jdbcType=INTEGER},
+		sys_mail_address = #{sysMailAddress,jdbcType=VARCHAR},
+		sys_mail_password = #{sysMailPassword,jdbcType=VARCHAR},
+		sys_mail_sender = #{sysMailSender,jdbcType=VARCHAR},
+		sys_mail_name = #{sysMailName,jdbcType=VARCHAR},
+		sys_smtp_port = #{sysSmtpPort,jdbcType=INTEGER},
+		sys_ssl_authentication = #{sysSslAuthentication,jdbcType=INTEGER}
+		
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.NoticeUserMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.NoticeUser">
+		<id column="id" property="id" jdbcType="SMALLINT" />
+		<result column="user_id" property="userId" jdbcType="SMALLINT" />
+		<result column="notice_id" property="noticeId" jdbcType="SMALLINT" />
+		<result column="message" property="message" jdbcType="SMALLINT" />
+		<result column="email" property="email" jdbcType="SMALLINT" />
+		<result column="phone" property="phone" jdbcType="SMALLINT" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, notice_id, message, email, phone
+	</sql>
+	
+	<select id="deleteByUserId" parameterType="int">
+		DELETE FROM rb_notice_user WHERE 1=1 
+		AND user_id = #{userId}
+	</select>
+	
+	<select id="selectByUserId" resultMap="BaseResultMap" parameterType="int">
+		SELECT 
+			*
+		FROM rb_notice_user
+		WHERE 1=1 and user_id = #{userId}
+	</select>
+	
+	<select id="selectByUserIdAndNoticeId" resultMap="BaseResultMap" parameterType="Map">
+		SELECT * FROM rb_notice_user nu WHERE 1=1
+		<if test="userId != null and userId != ''">
+			and nu.user_id = #{userId}
+		</if>
+		<if test="noticeId != null and noticeId != ''">
+			and nu.notice_id = #{noticeId}
+		</if>
+	</select>
+	
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Short">
+		select
+		<include refid="Base_Column_List" />
+		from rb_notice_user
+		where id = #{id,jdbcType=SMALLINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Short">
+		delete from rb_notice_user
+		where id = #{id,jdbcType=SMALLINT}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.NoticeUser">
+		insert into rb_notice_user (id, user_id, notice_id,
+		message, email, phone
+		)
+		values (#{id,jdbcType=SMALLINT}, #{userId,jdbcType=SMALLINT},
+		#{noticeId,jdbcType=SMALLINT},
+		#{message,jdbcType=SMALLINT}, #{email,jdbcType=SMALLINT}, #{phone,jdbcType=SMALLINT}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.NoticeUser">
+		insert into rb_notice_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="noticeId != null">
+				notice_id,
+			</if>
+			<if test="message != null">
+				message,
+			</if>
+			<if test="email != null">
+				email,
+			</if>
+			<if test="phone != null">
+				phone,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=SMALLINT},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=SMALLINT},
+			</if>
+			<if test="noticeId != null">
+				#{noticeId,jdbcType=SMALLINT},
+			</if>
+			<if test="message != null">
+				#{message,jdbcType=SMALLINT},
+			</if>
+			<if test="email != null">
+				#{email,jdbcType=SMALLINT},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=SMALLINT},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.NoticeUser">
+		update rb_notice_user
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=SMALLINT},
+			</if>
+			<if test="noticeId != null">
+				notice_id = #{noticeId,jdbcType=SMALLINT},
+			</if>
+			<if test="message != null">
+				message = #{message,jdbcType=SMALLINT},
+			</if>
+			<if test="email != null">
+				email = #{email,jdbcType=SMALLINT},
+			</if>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=SMALLINT},
+			</if>
+		</set>
+		where id = #{id,jdbcType=SMALLINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.NoticeUser">
+		update rb_notice_user
+		set user_id = #{userId,jdbcType=SMALLINT},
+		notice_id = #{noticeId,jdbcType=SMALLINT},
+		message = #{message,jdbcType=SMALLINT},
+		email = #{email,jdbcType=SMALLINT},
+		phone = #{phone,jdbcType=SMALLINT}
+		where id = #{id,jdbcType=SMALLINT}
+	</update>
+</mapper>

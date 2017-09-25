@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.BorrowTransferRepossessedMapper">
+	<resultMap id="BaseResultMap"
+		type="com.rbao.east.entity.BorrowTransferRepossessed">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="transfer_id" property="transferId" jdbcType="INTEGER" />
+		<result column="repossessed_id" property="repossessedId"
+			jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, transfer_id, repossessed_id
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_borrow_transfer_repossessed
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_borrow_transfer_repossessed
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.BorrowTransferRepossessed">
+		insert into rb_borrow_transfer_repossessed (id, transfer_id,
+		repossessed_id
+		)
+		values (#{id,jdbcType=INTEGER}, #{transferId,jdbcType=INTEGER},
+		#{repossessedId,jdbcType=INTEGER}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.BorrowTransferRepossessed">
+		insert into rb_borrow_transfer_repossessed
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="transferId != null">
+				transfer_id,
+			</if>
+			<if test="repossessedId != null">
+				repossessed_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="transferId != null">
+				#{transferId,jdbcType=INTEGER},
+			</if>
+			<if test="repossessedId != null">
+				#{repossessedId,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.BorrowTransferRepossessed">
+		update rb_borrow_transfer_repossessed
+		<set>
+			<if test="transferId != null">
+				transfer_id = #{transferId,jdbcType=INTEGER},
+			</if>
+			<if test="repossessedId != null">
+				repossessed_id = #{repossessedId,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.BorrowTransferRepossessed">
+		update rb_borrow_transfer_repossessed
+		set transfer_id = #{transferId,jdbcType=INTEGER},
+		repossessed_id = #{repossessedId,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

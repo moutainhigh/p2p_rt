@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.CreditRankMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.CreditRank">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="rank_name" property="rankName" jdbcType="VARCHAR" />
+		<result column="rank_value" property="rankValue" jdbcType="INTEGER" />
+		<result column="rank_mincredit" property="rankMincredit"
+			jdbcType="INTEGER" />
+		<result column="rank_maxcredit" property="rankMaxcredit"
+			jdbcType="INTEGER" />
+		<result column="rank_icon" property="rankIcon" jdbcType="VARCHAR" />
+		<result column="rank_remarks" property="rankRemarks" jdbcType="VARCHAR" />
+		<result column="rank_addtime" property="rankAddtime" jdbcType="TIMESTAMP" />
+		<result column="rank_addip" property="rankAddip" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, rank_name, rank_value, rank_mincredit, rank_maxcredit, rank_icon,
+		rank_remarks,
+		rank_addtime, rank_addip
+	</sql>
+	<select id="selectTotalCount" resultType="int"
+		parameterType="com.rbao.east.entity.CreditRank">
+		select
+		count(*)
+		from rb_credit_rank where 1=1 ORDER BY id
+	</select>
+	<select id="selectByEntity" resultMap="BaseResultMap"
+		parameterType="com.rbao.east.entity.CreditRank">
+		select
+		*
+		from rb_credit_rank where 1=1 ORDER BY id
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_credit_rank
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_credit_rank
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.CreditRank">
+		insert into rb_credit_rank (id, rank_name, rank_value,
+		rank_mincredit, rank_maxcredit, rank_icon,
+		rank_remarks, rank_addtime, rank_addip
+		)
+		values (#{id,jdbcType=INTEGER}, #{rankName,jdbcType=VARCHAR},
+		#{rankValue,jdbcType=INTEGER},
+		#{rankMincredit,jdbcType=INTEGER}, #{rankMaxcredit,jdbcType=INTEGER}, #{rankIcon,jdbcType=VARCHAR},
+		#{rankRemarks,jdbcType=VARCHAR}, #{rankAddtime,jdbcType=TIMESTAMP},
+		#{rankAddip,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.CreditRank">
+		insert into rb_credit_rank
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="rankName != null">
+				rank_name,
+			</if>
+			<if test="rankValue != null">
+				rank_value,
+			</if>
+			<if test="rankMincredit != null">
+				rank_mincredit,
+			</if>
+			<if test="rankMaxcredit != null">
+				rank_maxcredit,
+			</if>
+			<if test="rankIcon != null">
+				rank_icon,
+			</if>
+			<if test="rankRemarks != null">
+				rank_remarks,
+			</if>
+			<if test="rankAddtime != null">
+				rank_addtime,
+			</if>
+			<if test="rankAddip != null">
+				rank_addip,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="rankName != null">
+				#{rankName,jdbcType=VARCHAR},
+			</if>
+			<if test="rankValue != null">
+				#{rankValue,jdbcType=INTEGER},
+			</if>
+			<if test="rankMincredit != null">
+				#{rankMincredit,jdbcType=INTEGER},
+			</if>
+			<if test="rankMaxcredit != null">
+				#{rankMaxcredit,jdbcType=INTEGER},
+			</if>
+			<if test="rankIcon != null">
+				#{rankIcon,jdbcType=VARCHAR},
+			</if>
+			<if test="rankRemarks != null">
+				#{rankRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="rankAddtime != null">
+				#{rankAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="rankAddip != null">
+				#{rankAddip,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.CreditRank">
+		update rb_credit_rank
+		<set>
+			<if test="rankName != null">
+				rank_name = #{rankName,jdbcType=VARCHAR},
+			</if>
+			<if test="rankValue != null">
+				rank_value = #{rankValue,jdbcType=INTEGER},
+			</if>
+			<if test="rankMincredit != null">
+				rank_mincredit = #{rankMincredit,jdbcType=INTEGER},
+			</if>
+			<if test="rankMaxcredit != null">
+				rank_maxcredit = #{rankMaxcredit,jdbcType=INTEGER},
+			</if>
+			<if test="rankIcon != null">
+				rank_icon = #{rankIcon,jdbcType=VARCHAR},
+			</if>
+			<if test="rankRemarks != null">
+				rank_remarks = #{rankRemarks,jdbcType=VARCHAR},
+			</if>
+			<if test="rankAddtime != null">
+				rank_addtime = #{rankAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="rankAddip != null">
+				rank_addip = #{rankAddip,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.CreditRank">
+		update rb_credit_rank
+		set rank_name = #{rankName,jdbcType=VARCHAR},
+		rank_value = #{rankValue,jdbcType=INTEGER},
+		rank_mincredit = #{rankMincredit,jdbcType=INTEGER},
+		rank_maxcredit = #{rankMaxcredit,jdbcType=INTEGER},
+		rank_icon = #{rankIcon,jdbcType=VARCHAR},
+		rank_remarks = #{rankRemarks,jdbcType=VARCHAR},
+		rank_addtime = #{rankAddtime,jdbcType=TIMESTAMP},
+		rank_addip = #{rankAddip,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

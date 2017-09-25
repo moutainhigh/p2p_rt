@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.BorrowTypeMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.BorrowType">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+		<result column="front_publish" property="frontPublish"
+			jdbcType="INTEGER" />
+		<result column="admin_publish" property="adminPublish"
+			jdbcType="INTEGER" />
+		<result column="deal_service" property="dealService" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="log_path" property="logPath" jdbcType="VARCHAR" />
+		<result column="agreement_content" property="agreementContent"
+			jdbcType="LONGVARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="REPAY_TYPE" property="repayType" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		ID, NAME, CODE, FRONT_PUBLISH, ADMIN_PUBLISH, DEAL_SERVICE,
+		STATUS,LOG_PATH,agreement_content,remark,REPAY_TYPE
+	</sql>
+	<select id="selectTotalCount" resultType="int" parameterType="Map">
+		select count(*) from rb_borrow_type where 1=1
+		<if test="id !=null and id !=''">
+			and ID not in (${id})
+		</if>
+		<if test="code !=null">
+			and CODE =#{code}
+		</if>
+		<if test="name!=null">
+			and NAME like CONCAT('%', #{name}, '%')
+		</if>
+		order by id asc
+	</select>
+	<select id="selectByEntity" resultMap="BaseResultMap"
+		parameterType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_borrow_type where 1=1
+		<if test="name!=null">
+			and NAME like CONCAT('%', #{name}, '%')
+		</if>
+		order by id asc
+	</select>
+	<select id="getBorrowTypeByCode" parameterType="map"
+		resultMap="BaseResultMap">
+		SELECT * FROM rb_borrow_type
+	    where CODE=#{code}
+		
+	</select>
+	<select id="getBorrowTypeByName" parameterType="String"
+		resultMap="BaseResultMap">
+		SELECT * FROM rb_borrow_type
+		where NAME=#{name}
+	</select>
+	<select id="selectBorrowTypeByParams" resultMap="BaseResultMap"
+		parameterType="Map">
+		select * from rb_borrow_type bt
+		<where>
+			<if test="frontPublish != null and frontPublish !=''">
+				bt.FRONT_PUBLISH = #{frontPublish}
+			</if>
+			<if test="adminPublish != null and adminPublish !=''">
+				and bt.ADMIN_PUBLISH = #{adminPublish}
+			</if>
+			<if test="status != null and status !=''">
+				and bt.STATUS = #{status}
+			</if>
+		</where>
+	</select>
+		<select id="selectByCodes" resultMap="BaseResultMap"
+		parameterType="Map">
+		select * from rb_borrow_type
+		where CODE in
+			<foreach item="item" index="index" collection="inCodes" open="(" separator="," close=")">  
+				  #{item}  
+		</foreach>  
+	</select>
+	<select id="selectBorrowTypeNotDing" resultMap="BaseResultMap"
+		parameterType="Map">
+		select * from rb_borrow_type bt
+		<where>
+			<if test="dingCode != null and dingCode !=''">
+				and bt.CODE != #{dingCode}
+			</if>
+		</where>
+	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		select
+		*
+		from rb_borrow_type
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_borrow_type
+		where ID = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		rb_borrow_type
+		where ID = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.BorrowType">
+		insert into rb_borrow_type
+		(ID, NAME, CODE,
+		FRONT_PUBLISH, ADMIN_PUBLISH, DEAL_SERVICE,
+		STATUS,LOG_PATH,agreement_content,remark,REPAY_TYPE)
+		values
+		(#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{code,jdbcType=VARCHAR},
+		#{frontPublish,jdbcType=INTEGER},
+		#{adminPublish,jdbcType=INTEGER}, #{dealService,jdbcType=VARCHAR},
+		#{status,jdbcType=INTEGER},
+		#{logPath,jdbcType=VARCHAR},#{agreementContent,jdbcType=LONGVARCHAR},
+		#{remark,jdbcType=VARCHAR},#{repayType,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.BorrowType">
+		insert into rb_borrow_type
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				ID,
+			</if>
+			<if test="name != null">
+				NAME,
+			</if>
+			<if test="code != null">
+				CODE,
+			</if>
+			<if test="frontPublish != null">
+				FRONT_PUBLISH,
+			</if>
+			<if test="adminPublish != null">
+				ADMIN_PUBLISH,
+			</if>
+			<if test="dealService != null">
+				DEAL_SERVICE,
+			</if>
+			<if test="status != null">
+				STATUS,
+			</if>
+			<if test="logPath != null">
+				LOG_PATH,
+			</if>
+			<if test="agreementContent != null">
+				agreement_content,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="repayType != null">
+				REPAY_TYPE,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				#{code,jdbcType=VARCHAR},
+			</if>
+			<if test="frontPublish != null">
+				#{frontPublish,jdbcType=INTEGER},
+			</if>
+			<if test="adminPublish != null">
+				#{adminPublish,jdbcType=INTEGER},
+			</if>
+			<if test="dealService != null">
+				#{dealService,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="logPath != null">
+				#{logPath,jdbcType=VARCHAR},
+			</if>
+			<if test="agreementContent != null">
+				#{agreementContent,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="repayType != null">
+				#{repayType,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.BorrowType">
+		update rb_borrow_type
+		<set>
+			<if test="name != null">
+				NAME = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="code != null">
+				CODE = #{code,jdbcType=VARCHAR},
+			</if>
+			<if test="frontPublish != null">
+				FRONT_PUBLISH = #{frontPublish,jdbcType=INTEGER},
+			</if>
+			<if test="adminPublish != null">
+				ADMIN_PUBLISH = #{adminPublish,jdbcType=INTEGER},
+			</if>
+			<if test="dealService != null">
+				DEAL_SERVICE = #{dealService,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				STATUS = #{status,jdbcType=INTEGER},
+			</if>
+
+			LOG_PATH = #{logPath,jdbcType=VARCHAR},
+
+			<if test="agreementContent != null">
+				agreement_content=#{agreementContent,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="remark != null">
+				remark=#{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="repayType != null">
+				REPAY_TYPE=#{repayType,jdbcType=INTEGER},
+			</if>
+		</set>
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.BorrowType">
+		update
+		rb_borrow_type
+		set NAME = #{name,jdbcType=VARCHAR},
+		CODE =
+		#{code,jdbcType=VARCHAR},
+		FRONT_PUBLISH =
+		#{frontPublish,jdbcType=INTEGER},
+		ADMIN_PUBLISH =
+		#{adminPublish,jdbcType=INTEGER},
+		DEAL_SERVICE =
+		#{dealService,jdbcType=VARCHAR},
+		STATUS = #{status,jdbcType=INTEGER},
+		LOGPATH = #{logPath,jdbcType=VARCHAR},
+		agreement_content
+		=#{agreementContent,jdbcType=LONGVARCHAR},
+		remark=#{remark,jdbcType=VARCHAR},
+		REPAY_TYPE=#{repayType}
+		where ID = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

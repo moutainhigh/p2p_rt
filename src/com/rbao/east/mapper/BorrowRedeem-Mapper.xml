@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.BorrowRedeemMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.BorrowRedeem" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="tender_id" property="tenderId" jdbcType="INTEGER" />
+    <result column="redeem_status" property="redeemStatus" jdbcType="INTEGER" />
+    <result column="redeem_money" property="redeemMoney" jdbcType="DECIMAL" />
+    <result column="redeem_fee" property="redeemFee" jdbcType="DECIMAL" />
+    <result column="redeem_backMoney" property="redeemBackmoney" jdbcType="DECIMAL" />
+    <result column="create_ip" property="createIp" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="audit_user" property="auditUser" jdbcType="INTEGER" />
+    <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP" />
+    <result column="audit_ip" property="auditIp" jdbcType="VARCHAR" />
+    <result column="borrow_title" property="borrowTitle" jdbcType="VARCHAR" />
+    <result column="user_account" property="userAccount" jdbcType="VARCHAR" />
+    <result column="redeem_remark" property="redeemRemark"  jdbcType="VARCHAR" />
+    <result column="userId" property="userId" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, tender_id, redeem_status, redeem_money, redeem_fee, redeem_backMoney, create_ip, 
+    create_time, audit_user, audit_time, audit_ip
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_borrow_redeem
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <select id="selectBorrowRedeemByTenderId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  		SELECT * FROM rb_borrow_redeem
+		WHERE tender_id=#{tenderId} AND (redeem_status = 2 OR redeem_status = 1 )
+  </select>
+  
+  <insert id="insertborrowRedeemRepossessed" parameterType="map" >
+  
+  	insert into rb_borrow_redeem_repossessed (redeem_id, repossessed_id)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			( #{redeemId}, #{item.id})
+		</foreach>
+  
+  </insert>
+  
+  <select id="getRepossessedIdListByPk" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+  		SELECT repossessed_id FROM rb_borrow_redeem_repossessed
+		WHERE redeem_id=#{id}
+  </select>
+  
+  
+  	<select id="getBorrowRedeemById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  		SELECT br.*,b.borrow_title,u.user_account,u.id as userId FROM rb_borrow_redeem br
+		LEFT JOIN rb_borrow_tender bt ON br.tender_id=bt.id
+		LEFT JOIN rb_borrow b ON bt.borrow_id=b.id
+		LEFT JOIN rb_user u ON bt.user_id=u.id
+		WHERE br.id=#{id}
+  	</select>
+  	<select id="getByTenderId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  		SELECT * FROM rb_borrow_redeem 
+		
+		WHERE tender_id = #{tenderId }
+  	</select>
+  
+	<select id="getBorrowRedeemList" parameterType="map" resultType="java.util.HashMap">
+		SELECT br.*,b.borrow_title,u.user_account,
+		(SELECT user_account FROM rb_user ru WHERE ru.id=br.audit_user) AS auditUserAccount 
+		FROM rb_borrow_redeem br
+		LEFT JOIN rb_borrow_tender bt ON br.tender_id=bt.id
+		LEFT JOIN rb_borrow b ON bt.borrow_id=b.id
+		LEFT JOIN rb_user u ON bt.user_id=u.id
+		<where>
+			<if test="userAccount !=null">
+				AND u.user_account like CONCAT('%', #{userAccount}, '%')
+			</if>
+			<if test="redeemStatus != null">
+				AND br.redeem_status=#{redeemStatus}
+			</if>
+		</where>
+		ORDER BY br.create_time DESC
+	</select>
+	
+	<select id="getBorrowRedeemCount" parameterType="map" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM rb_borrow_redeem br
+		LEFT JOIN rb_borrow_tender bt ON br.tender_id=bt.id
+		LEFT JOIN rb_borrow b ON bt.borrow_id=b.id
+		LEFT JOIN rb_user u ON bt.user_id=u.id
+			<where>
+			<if test="userAccount !=null">
+				AND u.user_account LIKE CONCAT('%', #{userAccount}, '%')
+			</if>
+			<if test="redeemStatus != null">
+				AND br.redeem_status=#{redeemStatus}
+			</if>
+		</where>
+		ORDER BY br.create_time DESC
+	</select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_borrow_redeem
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.BorrowRedeem" >
+    insert into rb_borrow_redeem (id, tender_id, redeem_status, 
+      redeem_money, redeem_fee, redeem_backMoney, 
+      create_ip, create_time, audit_user, 
+      audit_time, audit_ip)
+    values (#{id,jdbcType=INTEGER}, #{tenderId,jdbcType=INTEGER}, #{redeemStatus,jdbcType=INTEGER}, 
+      #{redeemMoney,jdbcType=DECIMAL}, #{redeemFee,jdbcType=DECIMAL}, #{redeemBackmoney,jdbcType=DECIMAL}, 
+      #{createIp,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{auditUser,jdbcType=INTEGER}, 
+      #{auditTime,jdbcType=TIMESTAMP}, #{auditIp,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.BorrowRedeem" useGeneratedKeys="true" keyProperty="id" >
+    insert into rb_borrow_redeem
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tenderId != null" >
+        tender_id,
+      </if>
+      <if test="redeemStatus != null" >
+        redeem_status,
+      </if>
+      <if test="redeemMoney != null" >
+        redeem_money,
+      </if>
+      <if test="redeemFee != null" >
+        redeem_fee,
+      </if>
+      <if test="redeemBackmoney != null" >
+        redeem_backMoney,
+      </if>
+      <if test="createIp != null" >
+        create_ip,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="auditUser != null" >
+        audit_user,
+      </if>
+      <if test="auditTime != null" >
+        audit_time,
+      </if>
+      <if test="auditIp != null" >
+        audit_ip,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="tenderId != null" >
+        #{tenderId,jdbcType=INTEGER},
+      </if>
+      <if test="redeemStatus != null" >
+        #{redeemStatus,jdbcType=INTEGER},
+      </if>
+      <if test="redeemMoney != null" >
+        #{redeemMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="redeemFee != null" >
+        #{redeemFee,jdbcType=DECIMAL},
+      </if>
+      <if test="redeemBackmoney != null" >
+        #{redeemBackmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="createIp != null" >
+        #{createIp,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditUser != null" >
+        #{auditUser,jdbcType=INTEGER},
+      </if>
+      <if test="auditTime != null" >
+        #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditIp != null" >
+        #{auditIp,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.BorrowRedeem" >
+    update rb_borrow_redeem
+    <set >
+      <if test="tenderId != null" >
+        tender_id = #{tenderId,jdbcType=INTEGER},
+      </if>
+      <if test="redeemStatus != null" >
+        redeem_status = #{redeemStatus,jdbcType=INTEGER},
+      </if>
+      <if test="redeemMoney != null" >
+        redeem_money = #{redeemMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="redeemFee != null" >
+        redeem_fee = #{redeemFee,jdbcType=DECIMAL},
+      </if>
+      <if test="redeemBackmoney != null" >
+        redeem_backMoney = #{redeemBackmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="createIp != null" >
+        create_ip = #{createIp,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditUser != null" >
+        audit_user = #{auditUser,jdbcType=INTEGER},
+      </if>
+      <if test="auditTime != null" >
+        audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="auditIp != null" >
+        audit_ip = #{auditIp,jdbcType=VARCHAR},
+      </if>
+      <if test="redeemRemark != null" >
+        redeem_remark = #{redeemRemark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.BorrowRedeem" >
+    update rb_borrow_redeem
+    set tender_id = #{tenderId,jdbcType=INTEGER},
+      redeem_status = #{redeemStatus,jdbcType=INTEGER},
+      redeem_money = #{redeemMoney,jdbcType=DECIMAL},
+      redeem_fee = #{redeemFee,jdbcType=DECIMAL},
+      redeem_backMoney = #{redeemBackmoney,jdbcType=DECIMAL},
+      create_ip = #{createIp,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      audit_user = #{auditUser,jdbcType=INTEGER},
+      audit_time = #{auditTime,jdbcType=TIMESTAMP},
+      audit_ip = #{auditIp,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

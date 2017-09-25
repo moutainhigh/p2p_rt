@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.SysLetterTemplatesMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.SysLetterTemplates" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="sys_registered_mailinfo" property="sysRegisteredMailinfo" jdbcType="VARCHAR" />
+    <result column="sys_verify_mailinfo" property="sysVerifyMailinfo" jdbcType="VARCHAR" />
+    <result column="sys_password_mailinfo" property="sysPasswordMailinfo" jdbcType="VARCHAR" />
+    <result column="sys_updataphone" property="sysUpdataphone" jdbcType="VARCHAR" />
+    <result column="sys_paypwd_mailinfo" property="sysPaypwdMailinfo" jdbcType="VARCHAR" />
+    <result column="sys_sms_info" property="sysSmsInfo" jdbcType="VARCHAR" />
+    <result column="sys_letter" property="sysLetter" jdbcType="VARCHAR" />
+    <result column="sys_sms_isopen" property="sysSmsIsopen" jdbcType="INTEGER" />
+    <result column="sys_mail_isopen" property="sysMailIsopen" jdbcType="INTEGER" />
+    <result column="sys_letter_isopen" property="sysLetterIsopen" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, sys_registered_mailinfo, sys_verify_mailinfo, sys_password_mailinfo, sys_updataphone, 
+    sys_paypwd_mailinfo, sys_sms_info, sys_letter, sys_sms_isopen, sys_mail_isopen, sys_letter_isopen
+  </sql>
+   <select id="selectAll" resultMap="BaseResultMap">
+  		SELECT
+		*
+		FROM sys_letter_templates
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_letter_templates
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_letter_templates
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.SysLetterTemplates" >
+    insert into sys_letter_templates (id, sys_registered_mailinfo, sys_verify_mailinfo, 
+      sys_password_mailinfo, sys_updataphone, sys_paypwd_mailinfo, 
+      sys_sms_info, sys_letter, sys_sms_isopen, 
+      sys_mail_isopen, sys_letter_isopen)
+    values (#{id,jdbcType=INTEGER}, #{sysRegisteredMailinfo,jdbcType=VARCHAR}, #{sysVerifyMailinfo,jdbcType=VARCHAR}, 
+      #{sysPasswordMailinfo,jdbcType=VARCHAR}, #{sysUpdataphone,jdbcType=VARCHAR}, #{sysPaypwdMailinfo,jdbcType=VARCHAR}, 
+      #{sysSmsInfo,jdbcType=VARCHAR}, #{sysLetter,jdbcType=VARCHAR}, #{sysSmsIsopen,jdbcType=INTEGER}, 
+      #{sysMailIsopen,jdbcType=INTEGER}, #{sysLetterIsopen,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.SysLetterTemplates" >
+    insert into sys_letter_templates
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="sysRegisteredMailinfo != null" >
+        sys_registered_mailinfo,
+      </if>
+      <if test="sysVerifyMailinfo != null" >
+        sys_verify_mailinfo,
+      </if>
+      <if test="sysPasswordMailinfo != null" >
+        sys_password_mailinfo,
+      </if>
+      <if test="sysUpdataphone != null" >
+        sys_updataphone,
+      </if>
+      <if test="sysPaypwdMailinfo != null" >
+        sys_paypwd_mailinfo,
+      </if>
+      <if test="sysSmsInfo != null" >
+        sys_sms_info,
+      </if>
+      <if test="sysLetter != null" >
+        sys_letter,
+      </if>
+      <if test="sysSmsIsopen != null" >
+        sys_sms_isopen,
+      </if>
+      <if test="sysMailIsopen != null" >
+        sys_mail_isopen,
+      </if>
+      <if test="sysLetterIsopen != null" >
+        sys_letter_isopen,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="sysRegisteredMailinfo != null" >
+        #{sysRegisteredMailinfo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysVerifyMailinfo != null" >
+        #{sysVerifyMailinfo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysPasswordMailinfo != null" >
+        #{sysPasswordMailinfo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysUpdataphone != null" >
+        #{sysUpdataphone,jdbcType=VARCHAR},
+      </if>
+      <if test="sysPaypwdMailinfo != null" >
+        #{sysPaypwdMailinfo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysSmsInfo != null" >
+        #{sysSmsInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysLetter != null" >
+        #{sysLetter,jdbcType=VARCHAR},
+      </if>
+      <if test="sysSmsIsopen != null" >
+        #{sysSmsIsopen,jdbcType=INTEGER},
+      </if>
+      <if test="sysMailIsopen != null" >
+        #{sysMailIsopen,jdbcType=INTEGER},
+      </if>
+      <if test="sysLetterIsopen != null" >
+        #{sysLetterIsopen,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.SysLetterTemplates" >
+    update sys_letter_templates
+    <set >
+      <if test="sysRegisteredMailinfo != null" >
+        sys_registered_mailinfo = #{sysRegisteredMailinfo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysVerifyMailinfo != null" >
+        sys_verify_mailinfo = #{sysVerifyMailinfo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysPasswordMailinfo != null" >
+        sys_password_mailinfo = #{sysPasswordMailinfo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysUpdataphone != null" >
+        sys_updataphone = #{sysUpdataphone,jdbcType=VARCHAR},
+      </if>
+      <if test="sysPaypwdMailinfo != null" >
+        sys_paypwd_mailinfo = #{sysPaypwdMailinfo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysSmsInfo != null" >
+        sys_sms_info = #{sysSmsInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="sysLetter != null" >
+        sys_letter = #{sysLetter,jdbcType=VARCHAR},
+      </if>
+      <if test="sysSmsIsopen != null" >
+        sys_sms_isopen = #{sysSmsIsopen,jdbcType=INTEGER},
+      </if>
+      <if test="sysMailIsopen != null" >
+        sys_mail_isopen = #{sysMailIsopen,jdbcType=INTEGER},
+      </if>
+      <if test="sysLetterIsopen != null" >
+        sys_letter_isopen = #{sysLetterIsopen,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.SysLetterTemplates" >
+    update sys_letter_templates
+    set sys_registered_mailinfo = #{sysRegisteredMailinfo,jdbcType=VARCHAR},
+      sys_verify_mailinfo = #{sysVerifyMailinfo,jdbcType=VARCHAR},
+      sys_password_mailinfo = #{sysPasswordMailinfo,jdbcType=VARCHAR},
+      sys_updataphone = #{sysUpdataphone,jdbcType=VARCHAR},
+      sys_paypwd_mailinfo = #{sysPaypwdMailinfo,jdbcType=VARCHAR},
+      sys_sms_info = #{sysSmsInfo,jdbcType=VARCHAR},
+      sys_letter = #{sysLetter,jdbcType=VARCHAR},
+      sys_sms_isopen = #{sysSmsIsopen,jdbcType=INTEGER},
+      sys_mail_isopen = #{sysMailIsopen,jdbcType=INTEGER},
+      sys_letter_isopen = #{sysLetterIsopen,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

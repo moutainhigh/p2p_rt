@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.BorrowRelatedMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.BorrowRelated" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="related_period_num" property="relatedPeriodNum" jdbcType="INTEGER" />
+    <result column="related_publish_time" property="relatedPublishTime" jdbcType="TIMESTAMP" />
+    <result column="related_allow_tender_time" property="relatedAllowTenderTime" jdbcType="TIMESTAMP" />
+    <result column="add_time" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="borrowOne_id" property="borrowoneId" jdbcType="INTEGER" />
+    <result column="borrowTwo_id" property="borrowtwoId" jdbcType="INTEGER" />
+    <result column="borrowThree_id" property="borrowthreeId" jdbcType="INTEGER" />
+    <result column="borrowOneCount" property="borrowOneCount" jdbcType="INTEGER" />
+    <result column="borrowTwoCount" property="borrowTwoCount" jdbcType="INTEGER" />
+    <result column="borrowThreeCount" property="borrowThreeCount" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <association property="borrowone" column="borrowOne_id"
+			javaType="com.rbao.east.entity.Borrow" select="com.rbao.east.mapper.BorrowMapper.selectByPrimaryKey" />
+	<association property="borrowtwo" column="borrowTwo_id"
+			javaType="com.rbao.east.entity.Borrow" select="com.rbao.east.mapper.BorrowMapper.selectByPrimaryKey" />
+	<association property="borrowthree" column="borrowThree_id"
+			javaType="com.rbao.east.entity.Borrow" select="com.rbao.east.mapper.BorrowMapper.selectByPrimaryKey" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, related_period_num, related_publish_time, related_allow_tender_time, add_time, 
+    borrowOne_id, borrowTwo_id, borrowThree_id, status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_borrow_related
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_borrow_related
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <select id="findRecentlyEntity" parameterType="map" resultMap="BaseResultMap">
+  		SELECT *,
+  		(SELECT count(1) FROM rb_borrow_tender WHERE borrow_id =borrowOne_id) AS borrowOneCount,
+		(SELECT count(1) FROM rb_borrow_tender WHERE borrow_id =borrowTwo_id) AS borrowTwoCount,
+		(SELECT count(1) FROM rb_borrow_tender WHERE borrow_id =borrowThree_id) AS borrowThreeCount
+  		FROM rb_borrow_related
+		ORDER BY related_period_num DESC
+		LIMIT 1
+  </select>
+  
+  <select id="getDHTPage" parameterType="map" resultType="java.util.HashMap">
+  	SELECT b.*,br.id AS relatedId,br.related_period_num,br.related_publish_time,b.borrow_sum-b.tender_sum as borrowResidue,
+	br.related_allow_tender_time,br.status,NOW() AS nowTime,b.tender_sum/b.borrow_sum*100 tenderProgressRate FROM rb_borrow_related br
+	LEFT JOIN rb_borrow b ON br.borrowOne_id=b.id OR br.borrowTwo_id=b.id
+	OR br.borrowThree_id=b.id
+	<choose>
+			<when test="orderType == 1">
+				<if test="checkNum == 1">
+					ORDER BY  b.annual_interest_rate desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY  b.annual_interest_rate asc
+				</if>
+			</when>
+			<when test="orderType == 2">
+				<if test="checkNum == 1">
+					ORDER BY  b.borrow_time_limit desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY  b.borrow_time_limit asc
+				</if>
+			</when>
+			<when test="orderType == 3">
+				<if test="checkNum == 1">
+					ORDER BY  tenderProgressRate desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY  tenderProgressRate ASC
+				</if>
+			</when>
+			<when test="orderType == 4">
+				<if test="checkNum == 1">
+					ORDER BY borrowResidue desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY  borrowResidue ASC
+				</if>
+			</when>
+			<otherwise>
+				ORDER BY br.related_publish_time DESC
+			</otherwise>
+		</choose>
+  </select>
+  
+  <select id="getDHTPageCount" parameterType="map" resultType="java.lang.Integer">
+  	SELECT COUNT(1) FROM rb_borrow_related br
+	LEFT JOIN rb_borrow b ON br.borrowOne_id=b.id OR br.borrowTwo_id=b.id
+	OR br.borrowThree_id=b.id
+	ORDER BY br.related_publish_time DESC
+  </select>
+  
+  
+   <!-- 根据标的状态查询定活通 -->
+  <select id="selectBorrowDing" resultMap="BaseResultMap" parameterType="Map">
+      SELECT 
+		br.*,
+		b.bid_kind bidKind,
+		u.id userId,
+		u.user_account userAccount,
+		u.user_realname userRealName,
+		bt.NAME borrowTypeName,
+		b.tender_sum/b.borrow_sum*100 tenderProgressRate
+		FROM rb_borrow_related br INNER JOIN rb_borrow b ON br.borrowOne_id=b.id
+	    INNER JOIN rb_user u ON  b.user_id=u.id 
+		INNER JOIN rb_borrow_type bt ON b.bid_kind = bt.ID where 1=1
+		<if test="beginTime != null and beginTime !=''" >
+          <![CDATA[	and DATE_FORMAT(br.related_publish_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+        </if>
+        <if test="endTime !=null and endTime !=''">
+		   <![CDATA[ and DATE_FORMAT(br.related_publish_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+		</if>
+		<if test="allowbeginTime != null and allowbeginTime !=''" >
+          <![CDATA[	and DATE_FORMAT(br.related_allow_tender_time,'%Y-%m-%d') >=  #{allowbeginTime }  ]]>
+        </if>
+        <if test="allowendTime !=null and allowendTime !=''">
+		   <![CDATA[ and DATE_FORMAT(br.related_allow_tender_time,'%Y-%m-%d') <=  #{allowendTime }  ]]>
+		</if>
+	order by br.id desc
+  </select>
+  <select id="selectCountBorrowDing" resultType="int" parameterType="Map">
+  	select   count(*)
+	    FROM rb_borrow_related br INNER JOIN rb_borrow b ON br.borrowOne_id=b.id
+	    INNER JOIN rb_user u ON  b.user_id=u.id 
+		INNER JOIN rb_borrow_type bt ON b.bid_kind = bt.ID where 1=1
+		<if test="beginTime != null and beginTime !=''" >
+          <![CDATA[	and DATE_FORMAT(br.related_publish_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+        </if>
+        <if test="endTime !=null and endTime !=''">
+		   <![CDATA[ and DATE_FORMAT(br.related_publish_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+		</if>
+		<if test="allowbeginTime != null and allowbeginTime !=''" >
+          <![CDATA[	and DATE_FORMAT(br.related_allow_tender_time,'%Y-%m-%d') >=  #{allowbeginTime }  ]]>
+        </if>
+        <if test="allowendTime !=null and allowendTime !=''">
+		   <![CDATA[ and DATE_FORMAT(br.related_allow_tender_time,'%Y-%m-%d') <=  #{allowendTime }  ]]>
+		</if>
+	order by br.id desc
+  </select>
+  
+  <insert id="insert" parameterType="com.rbao.east.entity.BorrowRelated" >
+    insert into rb_borrow_related (id, related_period_num, related_publish_time, 
+      related_allow_tender_time, add_time, borrowOne_id, 
+      borrowTwo_id, borrowThree_id, status
+      )
+    values (#{id,jdbcType=INTEGER}, #{relatedPeriodNum,jdbcType=INTEGER}, #{relatedPublishTime,jdbcType=TIMESTAMP}, 
+      #{relatedAllowTenderTime,jdbcType=TIMESTAMP}, #{addTime,jdbcType=TIMESTAMP}, #{borrowoneId,jdbcType=INTEGER}, 
+      #{borrowtwoId,jdbcType=INTEGER}, #{borrowthreeId,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.BorrowRelated" >
+    insert into rb_borrow_related
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="relatedPeriodNum != null" >
+        related_period_num,
+      </if>
+      <if test="relatedPublishTime != null" >
+        related_publish_time,
+      </if>
+      <if test="relatedAllowTenderTime != null" >
+        related_allow_tender_time,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="borrowoneId != null" >
+        borrowOne_id,
+      </if>
+      <if test="borrowtwoId != null" >
+        borrowTwo_id,
+      </if>
+      <if test="borrowthreeId != null" >
+        borrowThree_id,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="relatedPeriodNum != null" >
+        #{relatedPeriodNum,jdbcType=INTEGER},
+      </if>
+      <if test="relatedPublishTime != null" >
+        #{relatedPublishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="relatedAllowTenderTime != null" >
+        #{relatedAllowTenderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="borrowoneId != null" >
+        #{borrowoneId,jdbcType=INTEGER},
+      </if>
+      <if test="borrowtwoId != null" >
+        #{borrowtwoId,jdbcType=INTEGER},
+      </if>
+      <if test="borrowthreeId != null" >
+        #{borrowthreeId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.BorrowRelated" >
+    update rb_borrow_related
+    <set >
+      <if test="relatedPeriodNum != null" >
+        related_period_num = #{relatedPeriodNum,jdbcType=INTEGER},
+      </if>
+      <if test="relatedPublishTime != null" >
+        related_publish_time = #{relatedPublishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="relatedAllowTenderTime != null" >
+        related_allow_tender_time = #{relatedAllowTenderTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="borrowoneId != null" >
+        borrowOne_id = #{borrowoneId,jdbcType=INTEGER},
+      </if>
+      <if test="borrowtwoId != null" >
+        borrowTwo_id = #{borrowtwoId,jdbcType=INTEGER},
+      </if>
+      <if test="borrowthreeId != null" >
+        borrowThree_id = #{borrowthreeId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.BorrowRelated" >
+    update rb_borrow_related
+    set related_period_num = #{relatedPeriodNum,jdbcType=INTEGER},
+      related_publish_time = #{relatedPublishTime,jdbcType=TIMESTAMP},
+      related_allow_tender_time = #{relatedAllowTenderTime,jdbcType=TIMESTAMP},
+      add_time = #{addTime,jdbcType=TIMESTAMP},
+      borrowOne_id = #{borrowoneId,jdbcType=INTEGER},
+      borrowTwo_id = #{borrowtwoId,jdbcType=INTEGER},
+      borrowThree_id = #{borrowthreeId,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

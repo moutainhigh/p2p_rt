@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.SysFeesRateMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.SysFeesRate" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="sys_loan_rate" property="sysLoanRate" jdbcType="DECIMAL" />
+    <result column="sys_loan_poundage" property="sysLoanPoundage" jdbcType="DECIMAL" />
+    <result column="sys_max_loan" property="sysMaxLoan" jdbcType="DECIMAL" />
+    <result column="sys_withdrawal_poundage" property="sysWithdrawalPoundage" jdbcType="DECIMAL" />
+    <result column="sys_online_poundage" property="sysOnlinePoundage" jdbcType="DECIMAL" />
+    <result column="sys_max_withdrawal" property="sysMaxWithdrawal" jdbcType="DECIMAL" />
+    <result column="sys_min_withdrawal" property="sysMinWithdrawal" jdbcType="DECIMAL" />
+    <result column="sys_continue_reward" property="sysContinueReward" jdbcType="DECIMAL" />
+    <result column="sys_registered_reward" property="sysRegisteredReward" jdbcType="DECIMAL" />
+    <result column="sys_overdue_rate" property="sysOverdueRate" jdbcType="DECIMAL" />
+    <result column="sys_offline_reward" property="sysOfflineReward" jdbcType="DECIMAL" />
+    <result column="sys_offline_minmoney" property="sysOfflineMinmoney" jdbcType="DECIMAL" />
+    <result column="sys_offline_reward_minmoney" property="sysOfflineRewardMinmoney" jdbcType="DECIMAL" />
+    <result column="sys_interest_rate" property="sysInterestRate" jdbcType="DECIMAL" />
+    <result column="sys_auth_rate" property="sysAuthRate" jdbcType="DECIMAL" />
+    <result column="sys_video_rate" property="sysVideoRate" jdbcType="DECIMAL" />
+    <result column="sys_vip_rate" property="sysVipRate" jdbcType="DECIMAL" />
+    <result column="sys_invite_reward" property="sysInviteReward" jdbcType="DECIMAL" />
+    <result column="sys_invest_minmoney" property="sysInvestMinmoney" jdbcType="DECIMAL" />
+    <result column="sys_worth_rate" property="sysWorthRate" jdbcType="DECIMAL" />
+    <result column="sys_platform_overdue_rate" property="sysPlatformOverdueRate" jdbcType="DECIMAL" />
+    <result column="sys_invite_reward_rate" property="sysInviteRewardRate" jdbcType="DECIMAL" />
+    <result column="sys_invite_reward_money" property="sysInviteRewardMoney" jdbcType="DECIMAL" />
+    <result column="sys_withdrawal_poundage_online" property="sysWithdrawalPoundageOnline" jdbcType="DECIMAL" />
+    <result column="sys_withdrawal_day" property="sysWithdrawalDay" jdbcType="INTEGER" />
+    <result column="sys_registered_type" property="sysRegisteredType" jdbcType="INTEGER" />
+    <result column="sys_registered_tender_money" property="sysRegisteredTenderMoney" jdbcType="DECIMAL" />
+    <result column="sys_withdrawal_one" property="sysWithdrawalOne" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, sys_loan_rate, sys_loan_poundage, sys_max_loan, sys_withdrawal_poundage, sys_online_poundage, 
+    sys_max_withdrawal, sys_min_withdrawal, sys_continue_reward, sys_registered_reward, 
+    sys_overdue_rate, sys_offline_reward, sys_offline_minmoney, sys_offline_reward_minmoney, 
+    sys_interest_rate, sys_auth_rate, sys_video_rate, sys_vip_rate, sys_invite_reward, 
+    sys_invest_minmoney, sys_worth_rate, sys_platform_overdue_rate, sys_invite_reward_rate,sys_invite_reward_money,
+    sys_withdrawal_day,sys_withdrawal_poundage_online,sys_registered_type,sys_registered_tender_money,sys_withdrawal_one
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_fees_rate
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+		select * from sys_fees_rate
+	</select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_fees_rate
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.SysFeesRate" >
+    insert into sys_fees_rate (id, sys_loan_rate, sys_loan_poundage, 
+      sys_max_loan, sys_withdrawal_poundage, sys_online_poundage, 
+      sys_max_withdrawal, sys_min_withdrawal, sys_continue_reward, 
+      sys_registered_reward, sys_overdue_rate, sys_offline_reward, 
+      sys_offline_minmoney, sys_offline_reward_minmoney, 
+      sys_interest_rate, sys_auth_rate, sys_video_rate, 
+      sys_vip_rate, sys_invite_reward, sys_invest_minmoney, 
+      sys_worth_rate, sys_platform_overdue_rate, sys_invite_reward_rate,sys_invite_reward_money,sys_withdrawal_day,
+      sys_withdrawal_poundage_online,sys_registered_type,sys_registered_tender_money,sys_withdrawal_one
+      )
+    values (#{id,jdbcType=INTEGER}, #{sysLoanRate,jdbcType=DECIMAL}, #{sysLoanPoundage,jdbcType=DECIMAL}, 
+      #{sysMaxLoan,jdbcType=DECIMAL}, #{sysWithdrawalPoundage,jdbcType=DECIMAL}, #{sysOnlinePoundage,jdbcType=DECIMAL}, 
+      #{sysMaxWithdrawal,jdbcType=DECIMAL}, #{sysMinWithdrawal,jdbcType=DECIMAL}, #{sysContinueReward,jdbcType=DECIMAL}, 
+      #{sysRegisteredReward,jdbcType=DECIMAL}, #{sysOverdueRate,jdbcType=DECIMAL}, #{sysOfflineReward,jdbcType=DECIMAL}, 
+      #{sysOfflineMinmoney,jdbcType=DECIMAL}, #{sysOfflineRewardMinmoney,jdbcType=DECIMAL}, 
+      #{sysInterestRate,jdbcType=DECIMAL}, #{sysAuthRate,jdbcType=DECIMAL}, #{sysVideoRate,jdbcType=DECIMAL}, 
+      #{sysVipRate,jdbcType=DECIMAL}, #{sysInviteReward,jdbcType=DECIMAL}, #{sysInvestMinmoney,jdbcType=DECIMAL}, 
+      #{sysWorthRate,jdbcType=DECIMAL}, #{sysPlatformOverdueRate,jdbcType=DECIMAL}, #{sysInviteRewardRate,jdbcType=DECIMAL},
+      #{sysInviteRewardMoney,jdbcType=DECIMAL},#{sysWithdrawalDay,jdbcType=INTEGER},
+      #{sysWithdrawalPoundageOnline,jdbcType=DECIMAL},
+      #{sysRegisteredType,jdbcType=INTEGER},
+      #{sysRegisteredTenderMoney,jdbcType=DECIMAL}, #{sysWithdrawalOne,jdbcType=DECIMAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.SysFeesRate" >
+    insert into sys_fees_rate
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="sysLoanRate != null" >
+        sys_loan_rate,
+      </if>
+      <if test="sysLoanPoundage != null" >
+        sys_loan_poundage,
+      </if>
+      <if test="sysMaxLoan != null" >
+        sys_max_loan,
+      </if>
+      <if test="sysWithdrawalPoundage != null" >
+        sys_withdrawal_poundage,
+      </if>
+      <if test="sysOnlinePoundage != null" >
+        sys_online_poundage,
+      </if>
+      <if test="sysMaxWithdrawal != null" >
+        sys_max_withdrawal,
+      </if>
+      <if test="sysMinWithdrawal != null" >
+        sys_min_withdrawal,
+      </if>
+      <if test="sysContinueReward != null" >
+        sys_continue_reward,
+      </if>
+      <if test="sysRegisteredReward != null" >
+        sys_registered_reward,
+      </if>
+      <if test="sysOverdueRate != null" >
+        sys_overdue_rate,
+      </if>
+      <if test="sysOfflineReward != null" >
+        sys_offline_reward,
+      </if>
+      <if test="sysOfflineMinmoney != null" >
+        sys_offline_minmoney,
+      </if>
+      <if test="sysOfflineRewardMinmoney != null" >
+        sys_offline_reward_minmoney,
+      </if>
+      <if test="sysInterestRate != null" >
+        sys_interest_rate,
+      </if>
+      <if test="sysAuthRate != null" >
+        sys_auth_rate,
+      </if>
+      <if test="sysVideoRate != null" >
+        sys_video_rate,
+      </if>
+      <if test="sysVipRate != null" >
+        sys_vip_rate,
+      </if>
+      <if test="sysInviteReward != null" >
+        sys_invite_reward,
+      </if>
+      <if test="sysInvestMinmoney != null" >
+        sys_invest_minmoney,
+      </if>
+      <if test="sysWorthRate != null" >
+        sys_worth_rate,
+      </if>
+      <if test="sysPlatformOverdueRate != null" >
+        sys_platform_overdue_rate,
+      </if>
+      <if test="sysInviteRewardRate != null" >
+        sys_invite_reward_rate,
+      </if>
+      <if test="sysInviteRewardMoney != null" >
+        sys_invite_reward_money,
+      </if>
+      <if test="sysWithdrawalDay != null" >
+        sys_withdrawal_day,
+      </if>
+      <if test="sysWithdrawalPoundageOnline != null" >
+        sys_withdrawal_poundage_online,
+      </if>
+      <if test="sysRegisteredType != null" >
+        sys_registered_type,
+      </if>
+      <if test="sysRegisteredTenderMoney != null" >
+        sys_registered_tender_money,
+      </if>
+       <if test="sysWithdrawalOne != null" >
+        sys_withdrawal_one,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="sysLoanRate != null" >
+        #{sysLoanRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysLoanPoundage != null" >
+        #{sysLoanPoundage,jdbcType=DECIMAL},
+      </if>
+      <if test="sysMaxLoan != null" >
+        #{sysMaxLoan,jdbcType=DECIMAL},
+      </if>
+      <if test="sysWithdrawalPoundage != null" >
+        #{sysWithdrawalPoundage,jdbcType=DECIMAL},
+      </if>
+      <if test="sysOnlinePoundage != null" >
+        #{sysOnlinePoundage,jdbcType=DECIMAL},
+      </if>
+      <if test="sysMaxWithdrawal != null" >
+        #{sysMaxWithdrawal,jdbcType=DECIMAL},
+      </if>
+      <if test="sysMinWithdrawal != null" >
+        #{sysMinWithdrawal,jdbcType=DECIMAL},
+      </if>
+      <if test="sysContinueReward != null" >
+        #{sysContinueReward,jdbcType=DECIMAL},
+      </if>
+      <if test="sysRegisteredReward != null" >
+        #{sysRegisteredReward,jdbcType=DECIMAL},
+      </if>
+      <if test="sysOverdueRate != null" >
+        #{sysOverdueRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysOfflineReward != null" >
+        #{sysOfflineReward,jdbcType=DECIMAL},
+      </if>
+      <if test="sysOfflineMinmoney != null" >
+        #{sysOfflineMinmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="sysOfflineRewardMinmoney != null" >
+        #{sysOfflineRewardMinmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="sysInterestRate != null" >
+        #{sysInterestRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysAuthRate != null" >
+        #{sysAuthRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysVideoRate != null" >
+        #{sysVideoRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysVipRate != null" >
+        #{sysVipRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysInviteReward != null" >
+        #{sysInviteReward,jdbcType=DECIMAL},
+      </if>
+      <if test="sysInvestMinmoney != null" >
+        #{sysInvestMinmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="sysWorthRate != null" >
+        #{sysWorthRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysPlatformOverdueRate != null" >
+        #{sysPlatformOverdueRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysInviteRewardRate != null" >
+        #{sysInviteRewardRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysInviteRewardMoney != null" >
+        #{sysInviteRewardMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="sysWithdrawalDay != null" >
+        #{sysWithdrawalDay,jdbcType=INTEGER},
+      </if>
+      <if test="sysWithdrawalPoundageOnline != null" >
+        #{sysWithdrawalPoundageOnline,jdbcType=DECIMAL},
+      </if>
+      <if test="sysRegisteredType != null" >
+        #{sysRegisteredType,jdbcType=INTEGER},
+      </if>
+      <if test="sysRegisteredTenderMoney != null" >
+        #{sysRegisteredTenderMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="sysWithdrawalOne != null" >
+        #{sysWithdrawalOne,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+   
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.SysFeesRate" >
+    update sys_fees_rate
+    <set >
+      <if test="sysLoanRate != null" >
+        sys_loan_rate = #{sysLoanRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysLoanPoundage != null" >
+        sys_loan_poundage = #{sysLoanPoundage,jdbcType=DECIMAL},
+      </if>
+      <if test="sysMaxLoan != null" >
+        sys_max_loan = #{sysMaxLoan,jdbcType=DECIMAL},
+      </if>
+      <if test="sysWithdrawalPoundage != null" >
+        sys_withdrawal_poundage = #{sysWithdrawalPoundage,jdbcType=DECIMAL},
+      </if>
+      <if test="sysOnlinePoundage != null" >
+        sys_online_poundage = #{sysOnlinePoundage,jdbcType=DECIMAL},
+      </if>
+      <if test="sysMaxWithdrawal != null" >
+        sys_max_withdrawal = #{sysMaxWithdrawal,jdbcType=DECIMAL},
+      </if>
+      <if test="sysMinWithdrawal != null" >
+        sys_min_withdrawal = #{sysMinWithdrawal,jdbcType=DECIMAL},
+      </if>
+      <if test="sysContinueReward != null" >
+        sys_continue_reward = #{sysContinueReward,jdbcType=DECIMAL},
+      </if>
+      <if test="sysRegisteredReward != null" >
+        sys_registered_reward = #{sysRegisteredReward,jdbcType=DECIMAL},
+      </if>
+      <if test="sysOverdueRate != null" >
+        sys_overdue_rate = #{sysOverdueRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysOfflineReward != null" >
+        sys_offline_reward = #{sysOfflineReward,jdbcType=DECIMAL},
+      </if>
+      <if test="sysOfflineMinmoney != null" >
+        sys_offline_minmoney = #{sysOfflineMinmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="sysOfflineRewardMinmoney != null" >
+        sys_offline_reward_minmoney = #{sysOfflineRewardMinmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="sysInterestRate != null" >
+        sys_interest_rate = #{sysInterestRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysAuthRate != null" >
+        sys_auth_rate = #{sysAuthRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysVideoRate != null" >
+        sys_video_rate = #{sysVideoRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysVipRate != null" >
+        sys_vip_rate = #{sysVipRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysInviteReward != null" >
+        sys_invite_reward = #{sysInviteReward,jdbcType=DECIMAL},
+      </if>
+      <if test="sysInvestMinmoney != null" >
+        sys_invest_minmoney = #{sysInvestMinmoney,jdbcType=DECIMAL},
+      </if>
+      <if test="sysWorthRate != null" >
+        sys_worth_rate = #{sysWorthRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysPlatformOverdueRate != null" >
+        sys_platform_overdue_rate = #{sysPlatformOverdueRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysInviteRewardRate != null" >
+        sys_invite_reward_rate = #{sysInviteRewardRate,jdbcType=DECIMAL},
+      </if>
+      <if test="sysInviteRewardMoney != null" >
+        sys_invite_reward_money = #{sysInviteRewardMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="sysWithdrawalPoundageOnline != null" >
+        sys_withdrawal_poundage_online = #{sysWithdrawalPoundageOnline,jdbcType=DECIMAL},
+      </if>
+      <if test="sysWithdrawalDay != null" >
+        sys_withdrawal_day = #{sysWithdrawalDay,jdbcType=INTEGER},
+      </if>
+      <if test="sysRegisteredType != null" >
+        sys_registered_type = #{sysRegisteredType,jdbcType=INTEGER},
+      </if>
+      <if test="sysRegisteredTenderMoney != null" >
+        sys_registered_tender_money = #{sysRegisteredTenderMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="sysWithdrawalOne!= null" >
+        sys_withdrawal_one = #{sysWithdrawalOne,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.SysFeesRate" >
+    update sys_fees_rate
+    set sys_loan_rate = #{sysLoanRate,jdbcType=DECIMAL},
+      sys_loan_poundage = #{sysLoanPoundage,jdbcType=DECIMAL},
+      sys_max_loan = #{sysMaxLoan,jdbcType=DECIMAL},
+      sys_withdrawal_poundage = #{sysWithdrawalPoundage,jdbcType=DECIMAL},
+      sys_online_poundage = #{sysOnlinePoundage,jdbcType=DECIMAL},
+      sys_max_withdrawal = #{sysMaxWithdrawal,jdbcType=DECIMAL},
+      sys_min_withdrawal = #{sysMinWithdrawal,jdbcType=DECIMAL},
+      sys_continue_reward = #{sysContinueReward,jdbcType=DECIMAL},
+      sys_registered_reward = #{sysRegisteredReward,jdbcType=DECIMAL},
+      sys_overdue_rate = #{sysOverdueRate,jdbcType=DECIMAL},
+      sys_offline_reward = #{sysOfflineReward,jdbcType=DECIMAL},
+      sys_offline_minmoney = #{sysOfflineMinmoney,jdbcType=DECIMAL},
+      sys_offline_reward_minmoney = #{sysOfflineRewardMinmoney,jdbcType=DECIMAL},
+      sys_interest_rate = #{sysInterestRate,jdbcType=DECIMAL},
+      sys_auth_rate = #{sysAuthRate,jdbcType=DECIMAL},
+      sys_video_rate = #{sysVideoRate,jdbcType=DECIMAL},
+      sys_vip_rate = #{sysVipRate,jdbcType=DECIMAL},
+      sys_invite_reward = #{sysInviteReward,jdbcType=DECIMAL},
+      sys_invest_minmoney = #{sysInvestMinmoney,jdbcType=DECIMAL},
+      sys_worth_rate = #{sysWorthRate,jdbcType=DECIMAL},
+      sys_platform_overdue_rate = #{sysPlatformOverdueRate,jdbcType=DECIMAL},
+      sys_invite_reward_rate = #{sysInviteRewardRate,jdbcType=DECIMAL},
+      sys_invite_reward_money = #{sysInviteRewardMoney,jdbcType=DECIMAL},
+      sys_withdrawal_day = #{sysWithdrawalDay,jdbcType=INTEGER},
+      sys_registered_type = #{sysRegisteredType,jdbcType=INTEGER},
+      sys_registered_tender_money = #{sysRegisteredTenderMoney,jdbcType=DECIMAL},
+      sys_withdrawal_one = #{sysWithdrawalOne,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

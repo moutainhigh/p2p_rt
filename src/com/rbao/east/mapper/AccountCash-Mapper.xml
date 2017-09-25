@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.AccountCashMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.AccountCash">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="cash_status" property="cashStatus" jdbcType="INTEGER" />
+		<result column="cash_bank" property="cashBank" jdbcType="VARCHAR" />
+		<result column="cash_branch" property="cashBranch" jdbcType="VARCHAR" />
+		<result column="cash_total" property="cashTotal" jdbcType="DECIMAL" />
+		<result column="cash_account" property="cashAccount" jdbcType="DECIMAL" />
+		<result column="cash_fee" property="cashFee" jdbcType="DECIMAL" />
+		<result column="verify_userid" property="verifyUserid"
+			jdbcType="INTEGER" />
+		<result column="verify_time" property="verifyTime" jdbcType="TIMESTAMP" />
+		<result column="user_account" property="userAccount" jdbcType="VARCHAR" />
+		<result column="cash_bank_account" property="cashBankAccount"
+			jdbcType="VARCHAR" />
+		<result column="user_realname" property="userRealname"
+			jdbcType="VARCHAR" />
+		<result column="user_phone" property="userPhone"
+			jdbcType="VARCHAR" />
+		<result column="bank_city" property="bankCity"
+			jdbcType="VARCHAR" />
+		<result column="verify_remark" property="verifyRemark"
+			jdbcType="VARCHAR" />
+		<result column="verify_name" property="verifyName" jdbcType="VARCHAR" />
+		<result column="cash_addip" property="cashAddip" jdbcType="VARCHAR" />
+		<result column="no_order" property="noOrder" jdbcType="VARCHAR" />
+		<result column="cash_addtime" property="cashAddtime" jdbcType="TIMESTAMP" />
+		<result column="cash_type" property="cashType" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<!-- 统计提现待审 -->
+	<select id="summaryCashNoCheck" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		SELECT COUNT(*) FROM rb_account_cash WHERE cash_status = #{status}
+	</select>
+	
+	<!-- 统计用户总提现 -->
+	<select id="summaryCash" resultType="BigDecimal" parameterType="java.lang.Integer">
+		SELECT IFNULL(SUM(cash_total), 0) FROM rb_account_cash WHERE cash_status = #{status}
+		<if test="flag == true">
+			<![CDATA[	AND DATE_FORMAT(verify_time,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')]]>
+		</if>
+	</select>
+
+	<select id="selectCashForUpdate" resultMap="BaseResultMap"  parameterType="java.lang.Integer">
+		SELECT distinct a.*,u.user_account,u.user_realname,
+		(SELECT r.user_account FROM rb_user r WHERE r.id=a.verify_userid) AS
+		verify_name
+		FROM rb_account_cash a LEFT JOIN rb_user u ON a.user_id=u.id
+		where a.id = #{id,jdbcType=INTEGER} for update
+	</select>
+	<select id="selectCashByNoOrderForUpdate" resultMap="BaseResultMap"  parameterType="java.lang.String">
+		SELECT distinct a.*,u.user_account,u.user_realname,
+		(SELECT r.user_account FROM rb_user r WHERE r.id=a.verify_userid) AS
+		verify_name
+		FROM rb_account_cash a LEFT JOIN rb_user u ON a.user_id=u.id
+		where a.no_order = #{noOrder,jdbcType=VARCHAR} for update
+	</select>
+<!-- 查询提现记录 -->
+	<select id="selectCash" parameterType="Map" resultType="Map">
+	<!-- 	SELECT s.id sid, s.cash_total cashTotal, DATE_FORMAT(s.cash_addtime, '%Y-%m-%d %H:%i:%S') cashAddtime,
+	 '提现' leixing, s.cash_status cashStatus FROM rb_account_cash s where 1=1
+			
+			
+			提现查询SQL	 -->
+			SELECT s.id sid, s.cash_total cashTotal, DATE_FORMAT(s.cash_addtime, '%Y-%m-%d %H:%i:%S') cashAddtime, 
+			'提现' leixing, s.cash_status cashStatus ,s.cash_bank_account cashBankAccount,s.cash_bank cashBank,
+			s.cash_fee cashFee,s.cash_account cashAccount
+			FROM rb_account_cash s where 1=1
+			<if test="userId !=null and userId !=''">
+	    		and s.user_id=#{userId}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(s.cash_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+			    <![CDATA[	and DATE_FORMAT(s.cash_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+			ORDER BY s.cash_addtime DESC ,s.verify_time DESC
+	</select>
+	<select id="selectCashCount" parameterType="Map" resultType="int">
+		SELECT count(1) 
+			FROM rb_account_cash s where 1=1
+			<if test="userId !=null and userId !=''">
+	    		and s.user_id=#{userId}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(s.cash_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+			    <![CDATA[	and DATE_FORMAT(s.cash_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+	</select>
+	<!-- 当日提现总金额 -->
+	<select id="selectTotalMoney" parameterType="Map" resultType="BIGDECIMAL">
+		SELECT ifnull(SUM(cash_total),0) FROM rb_account_cash WHERE 1=1 
+		<if test="userId!=null">
+			and user_id=#{userId}
+		</if>
+		<if test="thisTime!=null">
+			 <![CDATA[AND DATE_FORMAT(cash_addtime,'%Y-%m-%d')=#{thisTime}]]>
+		</if>
+		<if test="cashAddtime!=null">
+			 <![CDATA[AND DATE_FORMAT(cash_addtime,'%Y-%m-%d')>= #{cashAddtime}]]>
+		</if>
+		<if test="cashStatus != null" >
+	    and cash_status in 
+			<foreach item="item" index="index" collection="cashStatus" open="(" separator="," close=")">  
+					  #{item}  
+			</foreach>  
+	    </if>
+	</select>
+	<!-- 查询充值记录 -->
+	<select id="selectRecharge" parameterType="Map" resultType="Map">
+		<!-- SELECT c.id cid, c.recharge_money cashTotal, DATE_FORMAT(c.recharge_addtime, '%Y-%m-%d %H:%i:%S') cashAddtime, 
+			'充值' leixing, c.recharge_status cashStatus FROM rb_account_recharge c where 1=1
+			 -->
+			
+		SELECT c.id cid, c.recharge_money cashTotal, DATE_FORMAT(c.recharge_addtime, '%Y-%m-%d %H:%i:%S') cashAddtime,
+		'充值' leixing, c.recharge_status cashStatus ,c.recharge_trade_no rechargeTradeNo ,
+		c.recharge_remark rechargeRemark,c.verify_remark verifyRemark
+ 		FROM rb_account_recharge c where 1=1  and c.recharge_status=2
+			
+			<if test="userId !=null and userId !=''">
+	    		and c.user_id=#{userId}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(c.recharge_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+			    <![CDATA[	and DATE_FORMAT(c.recharge_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+			ORDER BY c.recharge_addtime DESC
+	</select>
+	
+	<select id="selectRechargeCount" parameterType="Map" resultType="int">
+		SELECT count(1) FROM rb_account_recharge c where 1=1  and c.recharge_status=2
+			<if test="userId !=null and userId !=''">
+	    		and c.user_id=#{userId}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(c.recharge_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+			    <![CDATA[	and DATE_FORMAT(c.recharge_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+	</select>
+<!-- 查询充值提现记录 -->
+	<select id="selectCashAndRecharge" parameterType="Map" resultType="Map">
+			SELECT s.id sid, s.cash_total cashTotal, DATE_FORMAT(s.cash_addtime, '%Y-%m-%d %H:%i:%S') cashAddtime, '提现' leixing, s.cash_status cashStatus 
+			FROM rb_account_cash s where 1=1
+			<if test="userId !=null and userId !=''">
+	    		and s.user_id=#{userId}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(s.cash_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+			    <![CDATA[	and DATE_FORMAT(s.cash_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+			UNION ALL SELECT c.id cid, c.recharge_money cashTotal, DATE_FORMAT(c.recharge_addtime, '%Y-%m-%d %H:%i:%S') cashAddtime, 
+			'充值' leixing, c.recharge_status cashStatus FROM rb_account_recharge c where 1=1
+			<if test="userId !=null and userId !=''">
+	    		and c.user_id=#{userId}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(c.recharge_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+			    <![CDATA[	and DATE_FORMAT(c.recharge_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+	</select>
+	<select id="selectCashAndRechargeCount" parameterType="Map" resultType="int">	
+			SELECT count(1) from (SELECT s.cash_total cashTotal, s.cash_addtime cashAddtime, '提现' leixing, s.cash_status cashStatus 
+			FROM rb_account_cash s where 1=1
+			<if test="userId !=null and userId !=''">
+	    		and s.user_id=#{userId}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(s.cash_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+			    <![CDATA[	and DATE_FORMAT(s.cash_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+			UNION ALL SELECT c.recharge_money cashTotal, c.recharge_addtime cashAddtime, 
+			'充值' leixing, c.recharge_status cashStatus FROM rb_account_recharge c where 1=1
+			<if test="userId !=null and userId !=''">
+	    		and c.user_id=#{userId}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(c.recharge_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+			    <![CDATA[	and DATE_FORMAT(c.recharge_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+			) a 
+	</select>
+	
+	
+	
+	<select id="selectAccountCashList" parameterType="map"
+		resultMap="BaseResultMap">
+		SELECT distinct a.*,u.user_account,u.user_realname,u.user_phone, b.bank_city
+		FROM rb_account_cash a LEFT JOIN rb_user u ON a.user_id=u.id LEFT JOIN rb_user_bank b ON u.id=b.user_id
+		<where>
+			<if test="cashType!=null">
+				AND a.cash_type=#{cashType}
+			</if>
+			<if test="cashStatus!=null">
+				AND a.cash_status=#{cashStatus}
+			</if>
+			<if test="userAccount!=null">
+				AND u.user_account like CONCAT('%', #{userAccount}, '%')
+			</if>
+			<if test="startTime!=null">AND a.cash_addtime > CONCAT(#{startTime}, ' 00:00:00') </if>
+			<if test="endTime!=null"><![CDATA[AND a.cash_addtime <= CONCAT(#{endTime}, ' 23:59:59')]]></if>
+		</where>
+	</select>
+   <!-- 查询H5提现中的订单 -->
+	<select id="selectAccountCashingList" parameterType="map"
+		resultMap="BaseResultMap">
+		SELECT distinct a.*,u.user_account,u.user_realname
+		FROM rb_account_cash a LEFT JOIN rb_user u ON a.user_id=u.id
+		where  a.cash_status in (4,5) and a.cash_type in (1,2)
+	</select>
+	
+	<!-- 查询提现待审的 -->
+	<select id="selectAccountCashByStatus" parameterType="map" resultMap="BaseResultMap">
+		SELECT * from rb_account_cash where user_id=#{userId} and cash_status=0
+	</select>
+	
+
+	<select id="selectAccountCashListCount" parameterType="map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(distinct a.id)
+		FROM rb_account_cash a LEFT JOIN rb_user u ON a.user_id=u.id
+		<where>
+			<if test="cashStatus!=null">
+				AND a.cash_status=#{cashStatus}
+			</if>
+			<if test="userAccount!=null">
+				AND u.user_account like CONCAT('%', #{userAccount}, '%')
+			</if>
+			<if test="startTime!=null">AND a.cash_addtime > CONCAT(#{startTime}, ' 00:00:00') </if>
+			<if test="endTime!=null"><![CDATA[AND a.cash_addtime <= CONCAT(#{endTime}, ' 23:59:59')]]></if>
+		</where>
+	</select>
+
+
+	<sql id="Base_Column_List">
+		id, user_id, cash_status, cash_bank, cash_branch, cash_total,
+		cash_account, cash_fee,
+		verify_userid, verify_time, verify_remark, cash_addip, cash_addtime,
+		no_order,cash_type
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		SELECT distinct a.*,u.user_account,u.user_realname,
+		(SELECT r.user_account FROM rb_user r WHERE r.id=a.verify_userid) AS
+		verify_name
+		FROM rb_account_cash a LEFT JOIN rb_user u ON a.user_id=u.id
+		where a.id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectByNoOrder" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		SELECT distinct a.*,u.user_account,u.user_realname,
+		(SELECT r.user_account FROM rb_user r WHERE r.id=a.verify_userid) AS
+		verify_name
+		FROM rb_account_cash a LEFT JOIN rb_user u ON a.user_id=u.id
+		where a.no_order = #{noOrder,jdbcType=VARCHAR}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_account_cash
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.AccountCash">
+		insert into rb_account_cash (id, user_id, cash_status,
+		cash_bank, cash_branch, cash_total,
+		cash_account, cash_fee, verify_userid,
+		verify_time, verify_remark, cash_addip,
+		cash_addtime,no_order,cash_type)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{cashStatus,jdbcType=INTEGER},
+		#{cashBank,jdbcType=VARCHAR}, #{cashBranch,jdbcType=VARCHAR}, #{cashTotal,jdbcType=DECIMAL},
+		#{cashAccount,jdbcType=DECIMAL}, #{cashFee,jdbcType=DECIMAL},
+		#{verifyUserid,jdbcType=INTEGER},
+		#{verifyTime,jdbcType=TIMESTAMP}, #{verifyRemark,jdbcType=VARCHAR}, #{cashAddip,jdbcType=VARCHAR},
+		#{cashAddtime,jdbcType=TIMESTAMP},#{noOrder,jdbcType=VARCHAR},#{cashType,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.AccountCash" useGeneratedKeys="true" keyProperty="id">
+		insert into rb_account_cash
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="cashStatus != null">
+				cash_status,
+			</if>
+			<if test="cashBank != null">
+				cash_bank,
+			</if>
+			<if test="cashBranch != null">
+				cash_branch,
+			</if>
+			<if test="cashTotal != null">
+				cash_total,
+			</if>
+			<if test="cashAccount != null">
+				cash_account,
+			</if>
+			<if test="cashFee != null">
+				cash_fee,
+			</if>
+			<if test="cashBankAccount!=null">
+				cash_bank_account,
+			</if>
+			<if test="verifyUserid != null">
+				verify_userid,
+			</if>
+			<if test="verifyTime != null">
+				verify_time,
+			</if>
+			<if test="verifyRemark != null">
+				verify_remark,
+			</if>
+			<if test="cashAddip != null">
+				cash_addip,
+			</if>
+			<if test="cashAddtime != null">
+				cash_addtime,
+			</if>
+			<if test="noOrder != null">
+				no_order,
+			</if>
+			<if test="cashType != null">
+				cash_type,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="cashStatus != null">
+				#{cashStatus,jdbcType=INTEGER},
+			</if>
+			<if test="cashBank != null">
+				#{cashBank,jdbcType=VARCHAR},
+			</if>
+			<if test="cashBranch != null">
+				#{cashBranch,jdbcType=VARCHAR},
+			</if>
+			<if test="cashTotal != null">
+				#{cashTotal,jdbcType=DECIMAL},
+			</if>
+			<if test="cashAccount != null">
+				#{cashAccount,jdbcType=DECIMAL},
+			</if>
+			<if test="cashFee != null">
+				#{cashFee,jdbcType=DECIMAL},
+			</if>
+			<if test="cashBankAccount != null">
+				#{cashBankAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="verifyUserid != null">
+				#{verifyUserid,jdbcType=INTEGER},
+			</if>
+			<if test="verifyTime != null">
+				#{verifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="verifyRemark != null">
+				#{verifyRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="cashAddip != null">
+				#{cashAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="cashAddtime != null">
+				#{cashAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="noOrder != null">
+				#{noOrder,jdbcType=VARCHAR},
+			</if>
+			<if test="cashType != null">
+				#{cashType,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.AccountCash">
+		update rb_account_cash
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="cashStatus != null">
+				cash_status = #{cashStatus,jdbcType=INTEGER},
+			</if>
+			<if test="cashBank != null">
+				cash_bank = #{cashBank,jdbcType=VARCHAR},
+			</if>
+			<if test="cashBranch != null">
+				cash_branch = #{cashBranch,jdbcType=VARCHAR},
+			</if>
+			<if test="cashTotal != null">
+				cash_total = #{cashTotal,jdbcType=DECIMAL},
+			</if>
+			<if test="cashAccount != null">
+				cash_account = #{cashAccount,jdbcType=DECIMAL},
+			</if>
+			<if test="cashFee != null">
+				cash_fee = #{cashFee,jdbcType=DECIMAL},
+			</if>
+			<if test="verifyUserid != null">
+				verify_userid = #{verifyUserid,jdbcType=INTEGER},
+			</if>
+			<if test="verifyRemark != null">
+				verify_remark = #{verifyRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="cashAddip != null">
+				cash_addip = #{cashAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="cashAddtime != null">
+				cash_addtime = #{cashAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="noOrder != null">
+				no_order = #{noOrder,jdbcType=VARCHAR},
+			</if>
+			<if test="cashType != null">
+				cash_type = #{cashType,jdbcType=INTEGER},
+			</if>
+			verify_time = NOW(),
+		</set>
+		where no_order = #{noOrder,jdbcType=VARCHAR}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.AccountCash">
+		update rb_account_cash
+		set user_id = #{userId,jdbcType=INTEGER},
+		cash_status = #{cashStatus,jdbcType=INTEGER},
+		cash_bank = #{cashBank,jdbcType=VARCHAR},
+		cash_branch = #{cashBranch,jdbcType=VARCHAR},
+		cash_total = #{cashTotal,jdbcType=DECIMAL},
+		cash_account = #{cashAccount,jdbcType=DECIMAL},
+		cash_fee = #{cashFee,jdbcType=DECIMAL},
+		verify_userid = #{verifyUserid,jdbcType=INTEGER},
+		verify_time = #{verifyTime,jdbcType=TIMESTAMP},
+		verify_remark = #{verifyRemark,jdbcType=VARCHAR},
+		cash_addip = #{cashAddip,jdbcType=VARCHAR},
+		cash_addtime = #{cashAddtime,jdbcType=TIMESTAMP}
+		no_order = #{noOrder,jdbcType=VARCHAR}
+		cash_type = #{cashType,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<!-- 按时间段统计提现的笔数 -->
+	<select id="selectTimeCashCount" parameterType="Map" resultType="int">
+		SELECT count(1) 
+			FROM rb_account_cash s where 1=1
+			<if test="userId !=null and userId !=''">
+	    		and s.user_id=#{userId}
+			</if>
+			<if test="startDate !=null and startDate !=''">
+	    		<![CDATA[	and s.cash_addtime >=  #{startDate }  ]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+			    <![CDATA[	and s.cash_addtime <=  #{endDate } ]]>
+			</if>
+	</select>
+	<select id="selectSumCash" parameterType="Map" resultType="int">
+		SELECT SUM(s.cash_total) 
+			FROM rb_account_cash s where 1=1
+			<if test="userId !=null and userId !=''">
+	    		and s.user_id=#{userId}
+			</if>
+	</select>
+	<select id="selectSumRecharge" parameterType="Map" resultType="int">
+		SELECT SUM(r.recharge_money) 
+			FROM rb_account_recharge r where 1=1
+			<if test="userId !=null and userId !=''">
+	    		and r.user_id=#{userId}
+			</if>
+	</select>
+	
+</mapper>

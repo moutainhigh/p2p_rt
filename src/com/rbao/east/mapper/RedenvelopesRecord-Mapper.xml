@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.RedenvelopesRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.RedenvelopesRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="real_amount" property="realAmount" jdbcType="DECIMAL" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="red_type" property="redType" jdbcType="INTEGER" />
+    <result column="period_begin_time" property="periodBeginTime" jdbcType="TIMESTAMP" />
+    <result column="period_end_time" property="periodEndTime" jdbcType="TIMESTAMP" />
+    <result column="send_user_id" property="sendUserId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="open_limit_type" property="openLimitType" jdbcType="INTEGER" />
+    <result column="open_limit_param" property="openLimitParam" jdbcType="DECIMAL" />
+    <result column="fill_limit_param" property="fillLimitParam" jdbcType="DECIMAL" />
+    <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap type="map" id="map"></resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, amount, real_amount, name, red_type, period_begin_time, period_end_time, 
+    send_user_id, status, open_limit_type, open_limit_param, fill_limit_param, send_time, 
+    update_time, remark
+  </sql>
+  <select id="selectSumMoneyByMap" resultType="BigDecimal" parameterType="map" >
+    SELECT IFNULL(SUM(real_amount),0) sumAmount FROM rb_redenvelopes_record 
+	<where>
+		<if test="userId != null" >
+	    	and user_id = ${userId}
+	    </if>
+	    <if test="inStatus != null" >
+	    and STATUS in 
+			<foreach item="item" index="index" collection="inStatus" open="(" separator="," close=")">  
+					  #{item}  
+			</foreach>  
+	    </if>
+	</where>
+  </select>
+  <!-- 时间，用户id，状态查询红包金额 -->
+  <select id="selectSumMoneyByMapTime" resultType="BigDecimal" parameterType="map" >
+    SELECT IFNULL(SUM(real_amount),0) sumAmount FROM rb_redenvelopes_record 
+	<where>
+		<if test="userId != null" >
+	    	and user_id = ${userId}
+	    </if>
+	    <if test="inStatus != null" >
+	    	and STATUS in 
+			<foreach item="item" index="index" collection="inStatus" open="(" separator="," close=")">  
+					  #{item}  
+			</foreach>  
+	    </if>
+	    <if test="openTime != null">
+		   		<![CDATA[	AND DATE_FORMAT(update_time,' %y-%m-%d') >= #{openTime}	]]>
+		 </if>
+	</where>
+  </select>
+  
+  <select id="selectFrontByParam" resultMap="BaseResultMap" parameterType="map" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_redenvelopes_record
+    <where>
+    	<if test="userId != null" >
+	    	and user_id = ${userId}
+	    </if>
+	    <if test="inStatus != null" >
+	    and STATUS in 
+			<foreach item="item" index="index" collection="inStatus" open="(" separator="," close=")">  
+					  #{item}  
+			</foreach>  
+	    </if>
+	    <if test="redTypes == 1" >
+	     and red_type in (1)
+	    </if>
+	    <if test="redTypes == 2" >
+	     and red_type in (2,3,4)
+	    </if>
+    </where>
+    order by STATUS asc, id desc
+  </select>
+  
+  <select id="selectFrontCountByParam" resultType="java.lang.Integer" parameterType="map" >
+    select 
+    count(1)
+    from rb_redenvelopes_record
+    <where>
+    	<if test="userId != null" >
+	    	and user_id = ${userId}
+	    </if>
+	    <if test="inStatus != null" >
+	    and STATUS in 
+			<foreach item="item" index="index" collection="inStatus" open="(" separator="," close=")">  
+					  #{item}  
+			</foreach>  
+	    </if>
+	    <if test="redTypes == 1" >
+	     and red_type in (1)
+	    </if>
+	    <if test="redTypes == 2" >
+	     and red_type in (2,3,4)
+	    </if>
+    </where>
+  </select>
+  
+  <select id="selectAdminCountByParam" parameterType="Map" resultType="int">
+  	SELECT COUNT(*) FROM rb_redenvelopes_record red  INNER JOIN  rb_user u ON red.user_id = u.id 
+  														INNER JOIN  rb_user senderu ON red.send_user_id = senderu.id WHERE 1=1
+  																													
+  	
+  		<if test="redStatus != null and redStatus != ''" >
+	    	and status = ${redStatus}
+	</if>
+	<if test="redType != null and redType != ''" >
+	    	and red_type = ${redType}
+	</if>
+	
+	<if test="sendUserAccount != null and sendUserAccount != ''" >
+	    	and senderu.user_account like CONCAT('%', #{sendUserAccount}, '%')
+	</if>
+	
+
+	
+	<if test="userAccount != null and userAccount != ''">
+			and u.user_account like CONCAT('%', #{userAccount}, '%')
+	</if>
+  	
+  	
+  </select>
+  
+  <select id="selectAdminByParam" parameterType="Map" resultType="Map">
+  	SELECT 
+	red.id redId,
+	red.user_id userId,
+	red.amount amount,
+	senderu.user_account sendUserAccount,
+	red.real_amount realAmount,
+	red.name name,
+	red.period_begin_time periodBeginTime,
+	red.period_end_time periodEndTime,
+	red.status status,
+	red_type redType,
+	red.send_user_id sendUserId,
+	u.user_account userAccount,
+	red.open_limit_type openLimitType,
+	red.open_limit_param openLimitParam,
+	red.fill_limit_param fillLimitParam,
+	red.send_time sendTime,
+	red.update_time updateTime,
+	red.remark remark
+	
+FROM rb_redenvelopes_record red  INNER JOIN  rb_user u ON red.user_id = u.id 
+								 INNER JOIN  rb_user senderu ON red.send_user_id = senderu.id  WHERE 1=1
+  	
+  	<if test="redStatus != null and redStatus != ''" >
+	    	and status = ${redStatus}
+	</if>
+	<if test="redType != null and redType != ''" >
+	    	and red_type = ${redType}
+	</if>
+	
+	<if test="sendUserAccount != null and sendUserAccount != ''" >
+	    	and senderu.user_account like CONCAT('%', #{sendUserAccount}, '%')
+	</if>
+	
+
+	
+	<if test="userAccount != null and userAccount != ''">
+			and u.user_account like CONCAT('%', #{userAccount}, '%')
+	</if>
+  	
+  	order by red.id desc;
+  </select>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_redenvelopes_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_redenvelopes_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.RedenvelopesRecord" >
+    insert into rb_redenvelopes_record (id, user_id, amount, 
+      real_amount, name, red_type, 
+      period_begin_time, period_end_time, send_user_id, 
+      status, open_limit_type, open_limit_param, 
+      fill_limit_param, send_time, update_time, 
+      remark)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{amount,jdbcType=DECIMAL}, 
+      #{realAmount,jdbcType=DECIMAL}, #{name,jdbcType=VARCHAR}, #{redType,jdbcType=INTEGER}, 
+      #{periodBeginTime,jdbcType=TIMESTAMP}, #{periodEndTime,jdbcType=TIMESTAMP}, #{sendUserId,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{openLimitType,jdbcType=INTEGER}, #{openLimitParam,jdbcType=DECIMAL}, 
+      #{fillLimitParam,jdbcType=DECIMAL}, #{sendTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.RedenvelopesRecord" >
+    insert into rb_redenvelopes_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="realAmount != null" >
+        real_amount,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="redType != null" >
+        red_type,
+      </if>
+      <if test="periodBeginTime != null" >
+        period_begin_time,
+      </if>
+      <if test="periodEndTime != null" >
+        period_end_time,
+      </if>
+      <if test="sendUserId != null" >
+        send_user_id,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="openLimitType != null" >
+        open_limit_type,
+      </if>
+      <if test="openLimitParam != null" >
+        open_limit_param,
+      </if>
+      <if test="fillLimitParam != null" >
+        fill_limit_param,
+      </if>
+      <if test="sendTime != null" >
+        send_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="realAmount != null" >
+        #{realAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="redType != null" >
+        #{redType,jdbcType=INTEGER},
+      </if>
+      <if test="periodBeginTime != null" >
+        #{periodBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="periodEndTime != null" >
+        #{periodEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendUserId != null" >
+        #{sendUserId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="openLimitType != null" >
+        #{openLimitType,jdbcType=INTEGER},
+      </if>
+      <if test="openLimitParam != null" >
+        #{openLimitParam,jdbcType=DECIMAL},
+      </if>
+      <if test="fillLimitParam != null" >
+        #{fillLimitParam,jdbcType=DECIMAL},
+      </if>
+      <if test="sendTime != null" >
+        #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.RedenvelopesRecord" >
+    update rb_redenvelopes_record
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="realAmount != null" >
+        real_amount = #{realAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="redType != null" >
+        red_type = #{redType,jdbcType=INTEGER},
+      </if>
+      <if test="periodBeginTime != null" >
+        period_begin_time = #{periodBeginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="periodEndTime != null" >
+        period_end_time = #{periodEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendUserId != null" >
+        send_user_id = #{sendUserId,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="openLimitType != null" >
+        open_limit_type = #{openLimitType,jdbcType=INTEGER},
+      </if>
+      <if test="openLimitParam != null" >
+        open_limit_param = #{openLimitParam,jdbcType=DECIMAL},
+      </if>
+      <if test="fillLimitParam != null" >
+        fill_limit_param = #{fillLimitParam,jdbcType=DECIMAL},
+      </if>
+      <if test="sendTime != null" >
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.RedenvelopesRecord" >
+    update rb_redenvelopes_record
+    set user_id = #{userId,jdbcType=INTEGER},
+      amount = #{amount,jdbcType=DECIMAL},
+      real_amount = #{realAmount,jdbcType=DECIMAL},
+      name = #{name,jdbcType=VARCHAR},
+      red_type = #{redType,jdbcType=INTEGER},
+      period_begin_time = #{periodBeginTime,jdbcType=TIMESTAMP},
+      period_end_time = #{periodEndTime,jdbcType=TIMESTAMP},
+      send_user_id = #{sendUserId,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      open_limit_type = #{openLimitType,jdbcType=INTEGER},
+      open_limit_param = #{openLimitParam,jdbcType=DECIMAL},
+      fill_limit_param = #{fillLimitParam,jdbcType=DECIMAL},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  	<select id="selectFrontByParamRed" resultMap="map" parameterType="map" >
+		select red.id id, u.user_account user_account,red.name name, red.amount amount, 
+		DATE_FORMAT(red.period_begin_time,'%Y-%m-%d') periodBeginTime,
+		DATE_FORMAT(red.period_end_time,'%Y-%m-%d') periodEndTime,
+		red.status status,red.red_type redType,
+		ua.get_reward get_reward,
+		DATE_FORMAT(red.send_time,'%Y-%m-%d %h:%m:%s') send_time, red.remark remark
+		from rb_redenvelopes_record  red INNER JOIN  rb_user u ON red.user_id = u.id
+		INNER JOIN  rb_user_account ua ON ua.user_id = u.id
+		<where>
+			<if test="userId != null" >
+				and red.user_id = ${userId}
+			</if>
+			<if test="inStatus != null" >
+				and STATUS in 
+				<foreach item="item" index="index" collection="inStatus" open="(" separator="," close=")">  
+					#{item}  
+				</foreach>  
+			</if>
+		</where>
+		order by STATUS asc, id desc
+	</select>
+</mapper>

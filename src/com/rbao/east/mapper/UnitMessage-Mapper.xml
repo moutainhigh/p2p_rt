@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.UnitMessageMapper">
+		<!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache" />-->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.UnitMessage">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="company_name" property="companyName" jdbcType="VARCHAR" />
+		<result column="company_industry" property="companyIndustry"
+			jdbcType="INTEGER" />
+		<result column="work" property="work" jdbcType="INTEGER" />
+		<result column="work_grade" property="workGrade" jdbcType="VARCHAR" />
+		<result column="zhiwei" property="zhiwei" jdbcType="INTEGER" />
+		<result column="serve_time" property="serveTime" jdbcType="TIMESTAMP" />
+		<result column="to_serve_time" property="toServeTime" jdbcType="TIMESTAMP" />
+		<result column="work_year" property="workYear" jdbcType="INTEGER" />
+		<result column="work_tel" property="workTel" jdbcType="VARCHAR" />
+		<result column="company_add" property="companyAdd" jdbcType="VARCHAR" />
+		<result column="company_website" property="companyWebsite"
+			jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, company_name, company_industry, work, work_grade, zhiwei,
+		serve_time,
+		to_serve_time, work_year, work_tel, company_add, company_website, remark
+	</sql>
+	<select id="selectByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_unit_message
+		where user_id = #{userId}
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_unit_message
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_unit_message
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.UnitMessage">
+		insert into rb_unit_message (id, user_id, company_name,
+		company_industry, work, work_grade,
+		zhiwei, serve_time, to_serve_time,
+		work_year, work_tel, company_add,
+		company_website, remark)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{companyName,jdbcType=VARCHAR},
+		#{companyIndustry,jdbcType=INTEGER}, #{work,jdbcType=INTEGER}, #{workGrade,jdbcType=VARCHAR},
+		#{zhiwei,jdbcType=INTEGER}, #{serveTime,jdbcType=TIMESTAMP},
+		#{toServeTime,jdbcType=TIMESTAMP},
+		#{workYear,jdbcType=INTEGER}, #{workTel,jdbcType=VARCHAR}, #{companyAdd,jdbcType=VARCHAR},
+		#{companyWebsite,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.UnitMessage">
+		insert into rb_unit_message
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="companyName != null">
+				company_name,
+			</if>
+			<if test="companyIndustry != null">
+				company_industry,
+			</if>
+			<if test="work != null">
+				work,
+			</if>
+			<if test="workGrade != null">
+				work_grade,
+			</if>
+			<if test="zhiwei != null">
+				zhiwei,
+			</if>
+			<if test="serveTime != null">
+				serve_time,
+			</if>
+			<if test="toServeTime != null">
+				to_serve_time,
+			</if>
+			<if test="workYear != null">
+				work_year,
+			</if>
+			<if test="workTel != null">
+				work_tel,
+			</if>
+			<if test="companyAdd != null">
+				company_add,
+			</if>
+			<if test="companyWebsite != null">
+				company_website,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="companyName != null">
+				#{companyName,jdbcType=VARCHAR},
+			</if>
+			<if test="companyIndustry != null">
+				#{companyIndustry,jdbcType=INTEGER},
+			</if>
+			<if test="work != null">
+				#{work,jdbcType=INTEGER},
+			</if>
+			<if test="workGrade != null">
+				#{workGrade,jdbcType=VARCHAR},
+			</if>
+			<if test="zhiwei != null">
+				#{zhiwei,jdbcType=INTEGER},
+			</if>
+			<if test="serveTime != null">
+				#{serveTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="toServeTime != null">
+				#{toServeTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="workYear != null">
+				#{workYear,jdbcType=INTEGER},
+			</if>
+			<if test="workTel != null">
+				#{workTel,jdbcType=VARCHAR},
+			</if>
+			<if test="companyAdd != null">
+				#{companyAdd,jdbcType=VARCHAR},
+			</if>
+			<if test="companyWebsite != null">
+				#{companyWebsite,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.UnitMessage">
+		update rb_unit_message
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="companyName != null">
+				company_name = #{companyName,jdbcType=VARCHAR},
+			</if>
+			<if test="companyIndustry != null">
+				company_industry = #{companyIndustry,jdbcType=INTEGER},
+			</if>
+			<if test="work != null">
+				work = #{work,jdbcType=INTEGER},
+			</if>
+			<if test="workGrade != null">
+				work_grade = #{workGrade,jdbcType=VARCHAR},
+			</if>
+			<if test="zhiwei != null">
+				zhiwei = #{zhiwei,jdbcType=INTEGER},
+			</if>
+			<if test="serveTime != null">
+				serve_time = #{serveTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="toServeTime != null">
+				to_serve_time = #{toServeTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="workYear != null">
+				work_year = #{workYear,jdbcType=INTEGER},
+			</if>
+			<if test="workTel != null">
+				work_tel = #{workTel,jdbcType=VARCHAR},
+			</if>
+			<if test="companyAdd != null">
+				company_add = #{companyAdd,jdbcType=VARCHAR},
+			</if>
+			<if test="companyWebsite != null">
+				company_website = #{companyWebsite,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.UnitMessage">
+		update rb_unit_message
+		set user_id = #{userId,jdbcType=INTEGER},
+		company_name = #{companyName,jdbcType=VARCHAR},
+		company_industry = #{companyIndustry,jdbcType=INTEGER},
+		work = #{work,jdbcType=INTEGER},
+		work_grade = #{workGrade,jdbcType=VARCHAR},
+		zhiwei = #{zhiwei,jdbcType=INTEGER},
+		serve_time = #{serveTime,jdbcType=TIMESTAMP},
+		to_serve_time = #{toServeTime,jdbcType=TIMESTAMP},
+		work_year = #{workYear,jdbcType=INTEGER},
+		work_tel = #{workTel,jdbcType=VARCHAR},
+		company_add = #{companyAdd,jdbcType=VARCHAR},
+		company_website = #{companyWebsite,jdbcType=VARCHAR},
+		remark = #{remark,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

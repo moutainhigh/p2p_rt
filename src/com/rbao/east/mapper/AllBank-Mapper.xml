@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.AllBankMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.AllBank">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+		<result column="bank_sequence" property="bankSequence"
+			jdbcType="INTEGER" />
+		<result column="bank_status" property="bankStatus" jdbcType="INTEGER" />
+		<result column="bank_updatetime" property="bankUpdatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="bank_code" property="bankCode" jdbcType="VARCHAR" />
+	</resultMap>
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache" />
+	<sql id="Base_Column_List">
+		id, bank_name, bank_sequence, bank_status, bank_updatetime,bank_code
+	</sql>
+	<select id="selectTotalCount" resultType="int" parameterType="Map">
+		select count(*) FROM rb_all_bank where 1=1
+		<if test="BankId !=null and BankId !=''">
+			and id not in (${BankId })
+		</if>
+		<if test="bankName !=null">
+			and bank_name like CONCAT('%', #{bankName}, '%')
+		</if>
+		<if test="bankCode !=null">
+			and bank_code =#{bankCode}
+		</if>
+		order by bank_sequence
+	</select>
+	<select id="selectByEntity" resultMap="BaseResultMap"
+		parameterType="Map">
+		SELECT * from rb_all_bank where 1=1
+		<if test="bankName !=null">
+			and bank_name like  CONCAT('%', #{bankName}, '%')
+		</if>
+		order by bank_sequence
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_all_bank
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectAll" resultMap="BaseResultMap" parameterType="com.rbao.east.entity.AllBank">
+		select
+		*
+		from rb_all_bank where bank_status=1
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_all_bank
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.AllBank">
+		insert into rb_all_bank (id, bank_name, bank_sequence,
+		bank_status, bank_updatetime)
+		values (#{id,jdbcType=INTEGER}, #{bankName,jdbcType=VARCHAR},
+		#{bankSequence,jdbcType=INTEGER},
+		#{bankStatus,jdbcType=INTEGER}, #{bankUpdatetime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.AllBank">
+		insert into rb_all_bank
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="bankName != null">
+				bank_name,
+			</if>
+			<if test="bankSequence != null">
+				bank_sequence,
+			</if>
+			<if test="bankStatus != null">
+				bank_status,
+			</if>
+			<if test="bankUpdatetime != null">
+				bank_updatetime,
+			</if>
+			<if test="bankCode != null">
+				bank_code,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="bankName != null">
+				#{bankName,jdbcType=VARCHAR},
+			</if>
+			<if test="bankSequence != null">
+				#{bankSequence,jdbcType=INTEGER},
+			</if>
+			<if test="bankStatus != null">
+				#{bankStatus,jdbcType=INTEGER},
+			</if>
+			<if test="bankUpdatetime != null">
+				#{bankUpdatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="bankCode != null">
+				#{bankCode,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.AllBank">
+		update rb_all_bank
+		<set>
+			<if test="bankName != null">
+				bank_name = #{bankName,jdbcType=VARCHAR},
+			</if>
+			<if test="bankSequence != null">
+				bank_sequence = #{bankSequence,jdbcType=INTEGER},
+			</if>
+			<if test="bankStatus != null">
+				bank_status = #{bankStatus,jdbcType=INTEGER},
+			</if>
+			<if test="bankUpdatetime != null">
+				bank_updatetime = #{bankUpdatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="bankCode != null">
+				bank_code=#{bankCode,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.AllBank">
+		update rb_all_bank
+		set bank_name = #{bankName,jdbcType=VARCHAR},
+		bank_sequence = #{bankSequence,jdbcType=INTEGER},
+		bank_status = #{bankStatus,jdbcType=INTEGER},
+		bank_updatetime = #{bankUpdatetime,jdbcType=TIMESTAMP},
+		bank_code=#{bankCode,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

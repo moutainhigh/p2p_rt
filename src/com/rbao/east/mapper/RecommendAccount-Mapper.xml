@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.RecommendAccountMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.RecommendAccount" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="level" property="level" jdbcType="INTEGER" />
+    <result column="rewards" property="rewards" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, level, rewards
+  </sql>
+  
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="Map">
+  	select 
+    <include refid="Base_Column_List" />
+    from rb_recommend_account
+    where 1=1 
+    <if test="userId!=null and userId!=''">
+     and user_id = #{userId}
+    </if>
+    <if test="level!=null and level!=''">
+    	and level = #{level}
+    </if>
+  </select>
+  
+  
+   <select id="getRewardsByUserId" parameterType="int" resultType="BigDecimal">
+  		SELECT SUM(rewards) FROM rb_recommend_account WHERE user_id = #{userId}
+	
+  </select>
+  
+  
+  
+  <select id="selectByEntity" resultType="Map" parameterType="Map">
+  	select  r.user_account rUserAccount, r.user_realname rUserRealname, r.id rUserId,
+    r.user_email rUserEmail,r.user_phone rUserPhone,
+    ra.level levels,ra.rewards rewards,ra.id id
+  FROM
+    rb_user r 
+    INNER JOIN rb_recommend_account ra 
+      ON ra.user_id = r.id 
+      where 1=1
+        <if test="rUserAccount != null and rUserAccount !=''">
+		    AND r.user_account like CONCAT('%', #{rUserAccount}, '%')
+	    </if>
+	    <if test="rUserRealname != null and  rUserRealname !=''">
+	    	AND r.user_realname like CONCAT('%', #{rUserRealname}, '%')
+	    </if>
+	     <if test="rUserId != null and rUserId !=''">
+	     	AND r.id =#{rUserId}
+	     </if>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_recommend_account
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_recommend_account
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.RecommendAccount" >
+    insert into rb_recommend_account (id, user_id, level, 
+      rewards)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, 
+      #{rewards,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.RecommendAccount" >
+    insert into rb_recommend_account
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="level != null" >
+        level,
+      </if>
+      <if test="rewards != null" >
+        rewards,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="level != null" >
+        #{level,jdbcType=INTEGER},
+      </if>
+      <if test="rewards != null" >
+        #{rewards,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.RecommendAccount" >
+    update rb_recommend_account
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="level != null" >
+        level = #{level,jdbcType=INTEGER},
+      </if>
+      <if test="rewards != null" >
+        rewards = #{rewards,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.RecommendAccount" >
+    update rb_recommend_account
+    set user_id = #{userId,jdbcType=INTEGER},
+      level = #{level,jdbcType=INTEGER},
+      rewards = #{rewards,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

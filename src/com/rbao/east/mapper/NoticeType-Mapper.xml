@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.NoticeTypeMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.NoticeType">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="notice_sequence" property="noticeSequence"
+			jdbcType="SMALLINT" />
+		<result column="notice_name" property="noticeName" jdbcType="VARCHAR" />
+		<result column="notice_code" property="noticeCode" jdbcType="VARCHAR" />
+		<result column="notice_addtime" property="noticeAddtime"
+			jdbcType="TIMESTAMP" />
+		<result column="notice_addip" property="noticeAddip" jdbcType="CHAR" />
+	</resultMap>
+	<select id="selectTotalCount" resultType="int"
+		parameterType="com.rbao.east.entity.NoticeType">
+		select
+		count(*)
+		from rb_notice_type where 1=1
+		<if test="noticeSequence != null ">
+			and notice_sequence=#{noticeSequence}
+		</if>
+		<if test="noticeName != null and noticeName != ''">
+			and notice_name=#{noticeName}
+		</if>
+		<if test="noticeCode != null and noticeCode != ''">
+			and notice_code=#{noticeCode}
+		</if>
+		<if test="noticeAddtime != null">
+			and notice_addtime=#{noticeAddtime}
+		</if>
+		<if test="noticeAddip != null">
+			and notice_addip=#{noticeAddip}
+		</if>
+	</select>
+
+	<select id="selectByEntity" resultMap="BaseResultMap"
+		parameterType="com.rbao.east.entity.NoticeType">
+		select
+		*
+		from rb_notice_type where 1=1
+		<if test="noticeSequence != null ">
+			and notice_sequence=#{noticeSequence}
+		</if>
+		<if test="noticeName != null and noticeName != ''">
+			and notice_name=#{noticeName}
+		</if>
+		<if test="noticeCode != null and noticeCode != ''">
+			and notice_code=#{noticeCode}
+		</if>
+		<if test="noticeAddtime != null">
+			and notice_addtime=#{noticeAddtime}
+		</if>
+		<if test="noticeAddip != null">
+			and notice_addip=#{noticeAddip}
+		</if>
+		order by notice_sequence
+	</select>
+
+	<select id="selectAll" resultMap="BaseResultMap">
+		select
+		*
+		from rb_notice_type
+	</select>
+	<sql id="Base_Column_List">
+		id, notice_sequence, notice_name, notice_code, notice_addtime,
+		notice_addip
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_notice_type
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_notice_type
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.NoticeType">
+		insert into rb_notice_type (id, notice_sequence, notice_name,
+		notice_code, notice_addtime, notice_addip
+		)
+		values (#{id,jdbcType=INTEGER}, #{noticeSequence,jdbcType=SMALLINT},
+		#{noticeName,jdbcType=VARCHAR},
+		#{noticeCode,jdbcType=VARCHAR}, #{noticeAddtime,jdbcType=TIMESTAMP}, #{noticeAddip,jdbcType=CHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.NoticeType"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into rb_notice_type
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="noticeSequence != null">
+				notice_sequence,
+			</if>
+			<if test="noticeName != null">
+				notice_name,
+			</if>
+			<if test="noticeCode != null">
+				notice_code,
+			</if>
+			<if test="noticeAddtime != null">
+				notice_addtime,
+			</if>
+			<if test="noticeAddip != null">
+				notice_addip,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="noticeSequence != null">
+				#{noticeSequence,jdbcType=SMALLINT},
+			</if>
+			<if test="noticeName != null">
+				#{noticeName,jdbcType=VARCHAR},
+			</if>
+			<if test="noticeCode != null">
+				#{noticeCode,jdbcType=VARCHAR},
+			</if>
+			<if test="noticeAddtime != null">
+				#{noticeAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="noticeAddip != null">
+				#{noticeAddip,jdbcType=CHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.NoticeType">
+		update rb_notice_type
+		<set>
+			<if test="noticeSequence != null">
+				notice_sequence = #{noticeSequence,jdbcType=SMALLINT},
+			</if>
+			<if test="noticeName != null">
+				notice_name = #{noticeName,jdbcType=VARCHAR},
+			</if>
+			<if test="noticeCode != null">
+				notice_code = #{noticeCode,jdbcType=VARCHAR},
+			</if>
+			<if test="noticeAddtime != null">
+				notice_addtime = #{noticeAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="noticeAddip != null">
+				notice_addip = #{noticeAddip,jdbcType=CHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.NoticeType">
+		update rb_notice_type
+		set notice_sequence = #{noticeSequence,jdbcType=SMALLINT},
+		notice_name = #{noticeName,jdbcType=VARCHAR},
+		notice_code = #{noticeCode,jdbcType=VARCHAR},
+		notice_addtime = #{noticeAddtime,jdbcType=TIMESTAMP},
+		notice_addip = #{noticeAddip,jdbcType=CHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

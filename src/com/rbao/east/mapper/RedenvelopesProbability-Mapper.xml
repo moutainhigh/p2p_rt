@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.RedenvelopesProbabilityMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.RedenvelopesProbability" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="Probability" property="probability" jdbcType="DECIMAL" />
+    <result column="multi" property="multi" jdbcType="DECIMAL" />
+    <result column="min" property="min" jdbcType="DECIMAL" />
+    <result column="max" property="max" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, Probability, multi, min, max
+  </sql>
+  <select id="selectAll" resultMap="BaseResultMap" >
+		select
+		*
+		from rb_redenvelopes_probability order by min
+  </select>
+  <delete id="deleteAll">
+    delete from rb_redenvelopes_probability
+  </delete>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_redenvelopes_probability
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_redenvelopes_probability
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.RedenvelopesProbability" >
+    insert into rb_redenvelopes_probability (id, Probability, multi,min,max
+      )
+    values (#{id,jdbcType=INTEGER}, #{probability,jdbcType=DECIMAL}, #{multi,jdbcType=DECIMAL}, #{min,jdbcType=DECIMAL}, #{max,jdbcType=DECIMAL}
+      )
+  </insert>
+  
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.RedenvelopesProbability" >
+    insert into rb_redenvelopes_probability
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="probability != null" >
+        Probability,
+      </if>
+      <if test="multi != null" >
+        multi,
+      </if>
+      <if test="min != null" >
+        min,
+      </if>
+      <if test="max != null" >
+        max,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="probability != null" >
+        #{probability,jdbcType=DECIMAL},
+      </if>
+      <if test="multi != null" >
+        #{multi,jdbcType=DECIMAL},
+      </if>
+      <if test="min != null" >
+        #{min,jdbcType=DECIMAL},
+      </if>
+      <if test="max != null" >
+        #{max,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.RedenvelopesProbability" >
+    update rb_redenvelopes_probability
+    <set >
+      <if test="probability != null" >
+        Probability = #{probability,jdbcType=DECIMAL},
+      </if>
+      <if test="multi != null" >
+        multi = #{multi,jdbcType=DECIMAL},
+      </if>
+      <if test="min != null" >
+        min = #{min,jdbcType=DECIMAL},
+      </if>
+      <if test="max != null" >
+        max = #{max,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.RedenvelopesProbability" >
+    update rb_redenvelopes_probability
+    set Probability = #{probability,jdbcType=DECIMAL},
+      multi = #{multi,jdbcType=DECIMAL},
+      min = #{min,jdbcType=DECIMAL},
+      max = #{max,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

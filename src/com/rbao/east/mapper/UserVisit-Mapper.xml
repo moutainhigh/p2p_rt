@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.UserVisitMapper">
+		<!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache" />-->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.UserVisit">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="visit_userid" property="visitUserid" jdbcType="INTEGER" />
+		<result column="visit_addip" property="visitAddip" jdbcType="VARCHAR" />
+		<result column="visit_addtime" property="visitAddtime"
+			jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, visit_userid, visit_addip, visit_addtime
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user_visit
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_user_visit
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.UserVisit">
+		insert into rb_user_visit (id, user_id, visit_userid,
+		visit_addip, visit_addtime)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{visitUserid,jdbcType=INTEGER},
+		#{visitAddip,jdbcType=VARCHAR}, #{visitAddtime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.UserVisit">
+		insert into rb_user_visit
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="visitUserid != null">
+				visit_userid,
+			</if>
+			<if test="visitAddip != null">
+				visit_addip,
+			</if>
+			<if test="visitAddtime != null">
+				visit_addtime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="visitUserid != null">
+				#{visitUserid,jdbcType=INTEGER},
+			</if>
+			<if test="visitAddip != null">
+				#{visitAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="visitAddtime != null">
+				#{visitAddtime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.UserVisit">
+		update rb_user_visit
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="visitUserid != null">
+				visit_userid = #{visitUserid,jdbcType=INTEGER},
+			</if>
+			<if test="visitAddip != null">
+				visit_addip = #{visitAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="visitAddtime != null">
+				visit_addtime = #{visitAddtime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.UserVisit">
+		update rb_user_visit
+		set user_id = #{userId,jdbcType=INTEGER},
+		visit_userid = #{visitUserid,jdbcType=INTEGER},
+		visit_addip = #{visitAddip,jdbcType=VARCHAR},
+		visit_addtime = #{visitAddtime,jdbcType=TIMESTAMP}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

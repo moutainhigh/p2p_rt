@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.FinancialProductsMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.FinancialProducts" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="products_title" property="productsTitle" jdbcType="VARCHAR" />
+    <result column="products_status" property="productsStatus" jdbcType="INTEGER" />
+    <result column="products_type" property="productsType" jdbcType="INTEGER" />
+    <result column="products_min_profit" property="productsMinProfit" jdbcType="DECIMAL" />
+    <result column="products_max_profit" property="productsMaxProfit" jdbcType="DECIMAL" />
+    <result column="products_time_limit" property="productsTimeLimit" jdbcType="INTEGER" />
+    <result column="products_publish_date" property="productsPublishDate" jdbcType="TIMESTAMP" />
+    <result column="products_scale" property="productsScale" jdbcType="INTEGER" />
+    <result column="products_invest_begin" property="productsInvestBegin" jdbcType="INTEGER" />
+    <result column="products_income_distribution" property="productsIncomeDistribution" jdbcType="VARCHAR" />
+    <result column="products_adduser" property="productsAdduser" jdbcType="INTEGER" />
+    <result column="products_addtime" property="productsAddtime" jdbcType="TIMESTAMP" />
+    <result column="products_updateuser" property="productsUpdateuser" jdbcType="INTEGER" />
+    <result column="products_updatetime" property="productsUpdatetime" jdbcType="TIMESTAMP" />
+    <association property="addUser" column="products_adduser" javaType="com.rbao.east.entity.User" 
+  		select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  	<association property="updateUser" column="products_updateuser" javaType="com.rbao.east.entity.User" 
+  		select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  	<association property="dictionaryProductsType" column="products_type" javaType="com.rbao.east.entity.Dictionary" 
+  		select="com.rbao.east.mapper.DictionaryMapper.selectByPrimaryKey" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.rbao.east.entity.FinancialProducts" extends="BaseResultMap" >
+    <result column="products_content" property="productsContent" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, products_title, products_status, products_type, products_min_profit, products_max_profit, 
+    products_time_limit, products_publish_date, products_scale, products_invest_begin, 
+    products_income_distribution, products_adduser, products_addtime, products_updateuser, 
+    products_updatetime
+  </sql>
+  <sql id="Blob_Column_List" >
+    products_content
+  </sql>
+  
+  <select id="selectProduct" resultMap="BaseResultMap" parameterType="Map">
+  SELECT * FROM rb_financial_products WHERE products_status = 1 ORDER BY products_addtime DESC
+  </select>
+  
+  <select id="selectProductsCount" parameterType="Map" resultType="int">
+  	SELECT COUNT(*) FROM rb_financial_products fp INNER JOIN rb_dictionary d ON fp.products_type = d.id INNER JOIN  rb_user u ON fp.products_adduser = u.id WHERE 1=1
+  	<if test="productsTitle != null and productsTitle != ''">
+  	 and fp.products_content like CONCAT('%', #{productsTitle}, '%')
+  	</if>
+  	<if test="productsStatus != null and productsStatus != ''">
+  	 and fp.products_status = #{productsStatus}
+  	</if>
+  	<if test="productsType != null and productsType != ''">
+  	 and fp.products_type = #{productsType}
+  	</if>
+  </select>
+  
+  <select id="selectProductsList" parameterType="Map" resultType="Map">
+  	SELECT 
+	fp.id id,
+	fp.products_title productsTitle,
+	fp.products_status productsStatus,
+	fp.products_type productsType,
+	fp.products_min_profit productsMinProfit,
+	fp.products_max_profit productsMaxProfit,
+	fp.products_time_limit productsTimeLimit,
+	fp.products_publish_date productsPublishDate,
+	fp.products_scale productsScale,
+	fp.products_invest_begin productsInvestBegin,
+	fp.products_income_distribution productsIncomeDistribution,
+	fp.products_content productsContent,
+	fp.products_adduser productsAdduser,
+	fp.products_addtime productsAddtime,
+	fp.products_updateuser productsUpdateuser,
+	fp.products_updatetime productsUpdatetime,
+	d.dic_name dicName,
+	d.dic_code dicCode,
+	u.user_account userAccount
+FROM rb_financial_products fp INNER JOIN rb_dictionary d ON fp.products_type = d.id INNER JOIN  rb_user u ON fp.products_adduser = u.id WHERE 1=1
+  	<if test="productsTitle != null and productsTitle != ''">
+  	 and fp.products_content like CONCAT('%', #{productsTitle}, '%')
+  	</if>
+  	<if test="productsStatus != null and productsStatus != ''">
+  	 and fp.products_status = #{productsStatus}
+  	</if>
+  	<if test="productsType != null and productsType != ''">
+  	 and fp.products_type = #{productsType}
+  	</if>
+  	order by fp.products_status,fp.products_addtime desc
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from rb_financial_products
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_financial_products
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.FinancialProducts" >
+    insert into rb_financial_products (id, products_title, products_status, 
+      products_type, products_min_profit, products_max_profit, 
+      products_time_limit, products_publish_date, 
+      products_scale, products_invest_begin, products_income_distribution, 
+      products_adduser, products_addtime, products_updateuser, 
+      products_updatetime, products_content
+      )
+    values (#{id,jdbcType=INTEGER}, #{productsTitle,jdbcType=VARCHAR}, #{productsStatus,jdbcType=INTEGER}, 
+      #{productsType,jdbcType=INTEGER}, #{productsMinProfit,jdbcType=DECIMAL}, #{productsMaxProfit,jdbcType=DECIMAL}, 
+      #{productsTimeLimit,jdbcType=INTEGER}, #{productsPublishDate,jdbcType=TIMESTAMP}, 
+      #{productsScale,jdbcType=INTEGER}, #{productsInvestBegin,jdbcType=INTEGER}, #{productsIncomeDistribution,jdbcType=VARCHAR}, 
+      #{productsAdduser,jdbcType=INTEGER}, #{productsAddtime,jdbcType=TIMESTAMP}, #{productsUpdateuser,jdbcType=INTEGER}, 
+      #{productsUpdatetime,jdbcType=TIMESTAMP}, #{productsContent,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.FinancialProducts" >
+    insert into rb_financial_products
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="productsTitle != null" >
+        products_title,
+      </if>
+      <if test="productsStatus != null" >
+        products_status,
+      </if>
+      <if test="productsType != null" >
+        products_type,
+      </if>
+      <if test="productsMinProfit != null" >
+        products_min_profit,
+      </if>
+      <if test="productsMaxProfit != null" >
+        products_max_profit,
+      </if>
+      <if test="productsTimeLimit != null" >
+        products_time_limit,
+      </if>
+      <if test="productsPublishDate != null" >
+        products_publish_date,
+      </if>
+      <if test="productsScale != null" >
+        products_scale,
+      </if>
+      <if test="productsInvestBegin != null" >
+        products_invest_begin,
+      </if>
+      <if test="productsIncomeDistribution != null" >
+        products_income_distribution,
+      </if>
+      <if test="productsAdduser != null" >
+        products_adduser,
+      </if>
+      <if test="productsAddtime != null" >
+        products_addtime,
+      </if>
+      <if test="productsUpdateuser != null" >
+        products_updateuser,
+      </if>
+      <if test="productsUpdatetime != null" >
+        products_updatetime,
+      </if>
+      <if test="productsContent != null" >
+        products_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="productsTitle != null" >
+        #{productsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="productsStatus != null" >
+        #{productsStatus,jdbcType=INTEGER},
+      </if>
+      <if test="productsType != null" >
+        #{productsType,jdbcType=INTEGER},
+      </if>
+      <if test="productsMinProfit != null" >
+        #{productsMinProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="productsMaxProfit != null" >
+        #{productsMaxProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="productsTimeLimit != null" >
+        #{productsTimeLimit,jdbcType=INTEGER},
+      </if>
+      <if test="productsPublishDate != null" >
+        #{productsPublishDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productsScale != null" >
+        #{productsScale,jdbcType=INTEGER},
+      </if>
+      <if test="productsInvestBegin != null" >
+        #{productsInvestBegin,jdbcType=INTEGER},
+      </if>
+      <if test="productsIncomeDistribution != null" >
+        #{productsIncomeDistribution,jdbcType=VARCHAR},
+      </if>
+      <if test="productsAdduser != null" >
+        #{productsAdduser,jdbcType=INTEGER},
+      </if>
+      <if test="productsAddtime != null" >
+        #{productsAddtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productsUpdateuser != null" >
+        #{productsUpdateuser,jdbcType=INTEGER},
+      </if>
+      <if test="productsUpdatetime != null" >
+        #{productsUpdatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productsContent != null" >
+        #{productsContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.FinancialProducts" >
+    update rb_financial_products
+    <set >
+      <if test="productsTitle != null" >
+        products_title = #{productsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="productsStatus != null" >
+        products_status = #{productsStatus,jdbcType=INTEGER},
+      </if>
+      <if test="productsType != null" >
+        products_type = #{productsType,jdbcType=INTEGER},
+      </if>
+      <if test="productsMinProfit != null" >
+        products_min_profit = #{productsMinProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="productsMaxProfit != null" >
+        products_max_profit = #{productsMaxProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="productsTimeLimit != null" >
+        products_time_limit = #{productsTimeLimit,jdbcType=INTEGER},
+      </if>
+      <if test="productsPublishDate != null" >
+        products_publish_date = #{productsPublishDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productsScale != null" >
+        products_scale = #{productsScale,jdbcType=INTEGER},
+      </if>
+      <if test="productsInvestBegin != null" >
+        products_invest_begin = #{productsInvestBegin,jdbcType=INTEGER},
+      </if>
+      <if test="productsIncomeDistribution != null" >
+        products_income_distribution = #{productsIncomeDistribution,jdbcType=VARCHAR},
+      </if>
+      <if test="productsAdduser != null" >
+        products_adduser = #{productsAdduser,jdbcType=INTEGER},
+      </if>
+      <if test="productsAddtime != null" >
+        products_addtime = #{productsAddtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productsUpdateuser != null" >
+        products_updateuser = #{productsUpdateuser,jdbcType=INTEGER},
+      </if>
+      <if test="productsUpdatetime != null" >
+        products_updatetime = #{productsUpdatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="productsContent != null" >
+        products_content = #{productsContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.rbao.east.entity.FinancialProducts" >
+    update rb_financial_products
+    set products_title = #{productsTitle,jdbcType=VARCHAR},
+      products_status = #{productsStatus,jdbcType=INTEGER},
+      products_type = #{productsType,jdbcType=INTEGER},
+      products_min_profit = #{productsMinProfit,jdbcType=DECIMAL},
+      products_max_profit = #{productsMaxProfit,jdbcType=DECIMAL},
+      products_time_limit = #{productsTimeLimit,jdbcType=INTEGER},
+      products_publish_date = #{productsPublishDate,jdbcType=TIMESTAMP},
+      products_scale = #{productsScale,jdbcType=INTEGER},
+      products_invest_begin = #{productsInvestBegin,jdbcType=INTEGER},
+      products_income_distribution = #{productsIncomeDistribution,jdbcType=VARCHAR},
+      products_adduser = #{productsAdduser,jdbcType=INTEGER},
+      products_addtime = #{productsAddtime,jdbcType=TIMESTAMP},
+      products_updateuser = #{productsUpdateuser,jdbcType=INTEGER},
+      products_updatetime = #{productsUpdatetime,jdbcType=TIMESTAMP},
+      products_content = #{productsContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.FinancialProducts" >
+    update rb_financial_products
+    set products_title = #{productsTitle,jdbcType=VARCHAR},
+      products_status = #{productsStatus,jdbcType=INTEGER},
+      products_type = #{productsType,jdbcType=INTEGER},
+      products_min_profit = #{productsMinProfit,jdbcType=DECIMAL},
+      products_max_profit = #{productsMaxProfit,jdbcType=DECIMAL},
+      products_time_limit = #{productsTimeLimit,jdbcType=INTEGER},
+      products_publish_date = #{productsPublishDate,jdbcType=TIMESTAMP},
+      products_scale = #{productsScale,jdbcType=INTEGER},
+      products_invest_begin = #{productsInvestBegin,jdbcType=INTEGER},
+      products_income_distribution = #{productsIncomeDistribution,jdbcType=VARCHAR},
+      products_adduser = #{productsAdduser,jdbcType=INTEGER},
+      products_addtime = #{productsAddtime,jdbcType=TIMESTAMP},
+      products_updateuser = #{productsUpdateuser,jdbcType=INTEGER},
+      products_updatetime = #{productsUpdatetime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

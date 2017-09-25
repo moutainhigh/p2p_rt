@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.SysSmsConfigMapper">
+		<!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache" />-->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.SysSmsConfig">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sys_sms_account" property="sysSmsAccount"
+			jdbcType="VARCHAR" />
+		<result column="sys_sms_password" property="sysSmsPassword"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, sys_sms_account, sys_sms_password
+	</sql>
+	<select id="selectAll" resultMap="BaseResultMap"
+		parameterType="com.rbao.east.entity.SysSmsConfig">
+		select
+		*
+		from sys_sms_config where 1=1
+		<if test="sysSmsAccount != null and sysSmsAccount != ''">
+			and sysSmsAccount=#{sysSmsAccount}
+		</if>
+		<if test="sysSmsPassword != null and sysSmsPassword != ''">
+			and sysSmsPassword=#{sysSmsPassword}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from sys_sms_config
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from sys_sms_config
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.SysSmsConfig">
+		insert into sys_sms_config (id, sys_sms_account, sys_sms_password
+		)
+		values (#{id,jdbcType=INTEGER}, #{sysSmsAccount,jdbcType=VARCHAR},
+		#{sysSmsPassword,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.SysSmsConfig">
+		insert into sys_sms_config
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="sysSmsAccount != null">
+				sys_sms_account,
+			</if>
+			<if test="sysSmsPassword != null">
+				sys_sms_password,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="sysSmsAccount != null">
+				#{sysSmsAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="sysSmsPassword != null">
+				#{sysSmsPassword,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.SysSmsConfig">
+		update sys_sms_config
+		<set>
+			<if test="sysSmsAccount != null">
+				sys_sms_account = #{sysSmsAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="sysSmsPassword != null">
+				sys_sms_password = #{sysSmsPassword,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.SysSmsConfig">
+		update sys_sms_config
+		set sys_sms_account = #{sysSmsAccount,jdbcType=VARCHAR},
+		sys_sms_password = #{sysSmsPassword,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

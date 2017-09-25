@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.TagMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.Tag">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="tag_name" property="tagName" jdbcType="VARCHAR" />
+		<result column="tag_code" property="tagCode" jdbcType="VARCHAR" />
+		<result column="tag_sequence" property="tagSequence" jdbcType="INTEGER" />
+		<result column="tag_ishidden" property="tagIshidden" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, tag_name, tag_code, tag_sequence, tag_ishidden
+	</sql>
+
+	<select id="checkCode" parameterType="Map" resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from rb_dis_tag
+		where tag_code = #{tagCode}
+	</select>
+
+	<select id="getTagsCount" resultType="java.lang.Integer"
+		parameterType="Map">
+		select count(1)
+		from rb_dis_tag
+		<where>
+			<if test="tagName != null">
+				and tag_name like CONCAT('%', #{tagName}, '%')
+			</if>
+			<if test="tagCode != null">
+				and tag_code like CONCAT('%', #{tagCode}, '%')
+			</if>
+			<if test="tagSequence != null">
+				and tag_sequence = #{tagSequence,jdbcType=INTEGER}
+			</if>
+			<if test="tagIshidden != null">
+				and tag_ishidden = #{tagIshidden,jdbcType=INTEGER}
+			</if>
+		</where>
+	</select>
+
+	<select id="getTags" resultMap="BaseResultMap" parameterType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_dis_tag
+		<where>
+			<if test="tagName != null">
+				and tag_name like CONCAT('%', #{tagName}, '%')
+			</if>
+			<if test="tagCode != null">
+				and tag_code like CONCAT('%', #{tagCode}, '%')
+			</if>
+			<if test="tagSequence != null">
+				and tag_sequence = #{tagSequence,jdbcType=INTEGER}
+			</if>
+			<if test="tagIshidden != null">
+				and tag_ishidden = #{tagIshidden,jdbcType=INTEGER}
+			</if>
+		</where>
+	</select>
+
+	<!-- 默认自动生成代码 -->
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_dis_tag
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		rb_dis_tag
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.Tag">
+		insert into rb_dis_tag (id,
+		tag_name, tag_code,
+		tag_sequence, tag_ishidden)
+		values
+		(#{id,jdbcType=INTEGER}, #{tagName,jdbcType=VARCHAR},
+		#{tagCode,jdbcType=VARCHAR},
+		#{tagSequence,jdbcType=INTEGER},
+		#{tagIshidden,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.Tag">
+		insert into rb_dis_tag
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="tagName != null">
+				tag_name,
+			</if>
+			<if test="tagCode != null">
+				tag_code,
+			</if>
+			<if test="tagSequence != null">
+				tag_sequence,
+			</if>
+			<if test="tagIshidden != null">
+				tag_ishidden,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="tagName != null">
+				#{tagName,jdbcType=VARCHAR},
+			</if>
+			<if test="tagCode != null">
+				#{tagCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tagSequence != null">
+				#{tagSequence,jdbcType=INTEGER},
+			</if>
+			<if test="tagIshidden != null">
+				#{tagIshidden,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.Tag">
+		update rb_dis_tag
+		<set>
+			<if test="tagName != null">
+				tag_name = #{tagName,jdbcType=VARCHAR},
+			</if>
+			<if test="tagCode != null">
+				tag_code = #{tagCode,jdbcType=VARCHAR},
+			</if>
+			<if test="tagSequence != null">
+				tag_sequence = #{tagSequence,jdbcType=INTEGER},
+			</if>
+			<if test="tagIshidden != null">
+				tag_ishidden = #{tagIshidden,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.Tag">
+		update rb_dis_tag
+		set tag_name = #{tagName,jdbcType=VARCHAR},
+		tag_code =
+		#{tagCode,jdbcType=VARCHAR},
+		tag_sequence =
+		#{tagSequence,jdbcType=INTEGER},
+		tag_ishidden =
+		#{tagIshidden,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

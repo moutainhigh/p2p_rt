@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.UserBankMapper">
+		<!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache" />-->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.UserBank">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="bank_id" property="bankId" jdbcType="INTEGER" />
+		<result column="bank_branch" property="bankBranch" jdbcType="VARCHAR" />
+		<result column="bank_city" property="bankCity" jdbcType="VARCHAR" />
+		<result column="bank_addtime" property="bankAddtime" jdbcType="TIMESTAMP" />
+		<result column="bank_addip" property="bankAddip" jdbcType="VARCHAR" />
+		<result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+		<result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+		<association property="user" column="user_id" javaType="com.rbao.east.entity.User" 
+  			select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+   	    <association property="allBank" column="bank_id" javaType="com.rbao.east.entity.AllBank" 
+  			select="com.rbao.east.mapper.AllBankMapper.selectByPrimaryKey" />
+ 
+	</resultMap>
+	
+	<resultMap id="BaseResultMap2" type="com.rbao.east.entity.UserBank">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="bank_id" property="bankId" jdbcType="INTEGER" />
+		<result column="bank_branch" property="bankBranch" jdbcType="VARCHAR" />
+		<result column="bank_city" property="bankCity" jdbcType="VARCHAR" />
+		<result column="bank_addtime" property="bankAddtime" jdbcType="TIMESTAMP" />
+		<result column="bank_addip" property="bankAddip" jdbcType="VARCHAR" />
+		<result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+		<result column="bankName" property="bankName" jdbcType="VARCHAR" />
+		<result column="userRealname" property="userRealname" jdbcType="VARCHAR" />
+		
+<!-- 		<association property="user" column="user_id" javaType="com.rbao.east.entity.User" 
+  			select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+   	    <association property="allBank" column="bank_id" javaType="com.rbao.east.entity.AllBank" 
+  			select="com.rbao.east.mapper.AllBankMapper.selectByPrimaryKey" /> -->
+ 
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		id, user_id, bank_id, bank_branch, bank_city, bank_addtime,bank_name,
+		bank_addip,bank_account
+	</sql>
+	 <select id="selectByUserId" resultMap="BaseResultMap" parameterType="Map" >
+   	 select 
+   	 *
+    	from rb_user_bank where 1=1 and
+     <if test="userId!=null and userId!=''">
+    	user_id=#{userId}
+    </if>
+  	</select>
+	<select id="selectTotalCount" resultType="int" parameterType="Map">
+		select count(*) FROM rb_user_bank ub ,rb_user u ,rb_all_bank ab
+		WHERE ub.user_id=u.id AND ub.bank_id=ab.id
+		<if test="id !=null">
+			and id =#{id}
+		</if>
+		<if test="userAccount !=null">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="bankId !=null">
+			and bank_id =#{bankId}
+		</if>
+		<if test="userId !=null">
+			and user_id =#{userId}
+		</if>
+		<if test="bankAddtime !=null">
+			and bank_addtime =#{bankAddtime}
+		</if>
+		<if test="bankAccount !=null">
+			and bank_account =#{bankAccount}
+		</if>
+	</select>
+	<select id="selectByEntity" resultMap="BaseResultMap2"
+		parameterType="Map">
+		SELECT u.user_account userAccount,u.user_realname userRealname,ab.bank_name bankName,ub.* FROM
+		rb_user_bank ub ,rb_user u ,rb_all_bank ab
+		WHERE ub.user_id=u.id AND ub.bank_id=ab.id
+		<if test="id !=null">
+			and id =#{id}
+		</if>
+		<if test="userAccount !=null">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="bankId !=null">
+			and bank_id =#{bankId}
+		</if>
+		<if test="userId !=null">
+			and user_id =#{userId}
+		</if>
+		<if test="bankAddtime !=null">
+			and bank_addtime =#{bankAddtime}
+		</if>
+		<if test="bankAccount !=null">
+			and bank_account =#{bankAccount}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user_bank
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<!-- 查询用户信息关联卡信息 -->
+	<select id="selectByUserPrimaryKey" resultType="java.lang.String"
+		parameterType="java.lang.Integer">
+		select
+		bank_account
+		from rb_user_bank
+		where user_id = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_user_bank
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByUserId" parameterType="java.lang.Integer">
+		delete from rb_user_bank
+		where user_id = #{userId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.UserBank">
+		insert into rb_user_bank (id, user_id, bank_id,
+		bank_branch, bank_city, bank_addtime,
+		bank_addip,bank_account)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{bankId,jdbcType=INTEGER},
+		#{bankBranch,jdbcType=VARCHAR}, #{bankCity,jdbcType=VARCHAR}, #{bankAddtime,jdbcType=TIMESTAMP},
+		#{bankAddip,jdbcType=VARCHAR},#{bankAccount,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.UserBank">
+		insert into rb_user_bank
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="bankId != null">
+				bank_id,
+			</if>
+			<if test="bankBranch != null">
+				bank_branch,
+			</if>
+			<if test="bankCity != null">
+				bank_city,
+			</if>
+			<if test="bankAddtime != null">
+				bank_addtime,
+			</if>
+			<if test="bankAddip != null">
+				bank_addip,
+			</if>
+			<if test="bankAccount != null">
+				bank_account,
+			</if>
+			<if test="bankName != null">
+				bank_name,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="bankId != null">
+				#{bankId,jdbcType=INTEGER},
+			</if>
+			<if test="bankBranch != null">
+				#{bankBranch,jdbcType=VARCHAR},
+			</if>
+			<if test="bankCity != null">
+				#{bankCity,jdbcType=VARCHAR},
+			</if>
+			<if test="bankAddtime != null">
+				#{bankAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="bankAddip != null">
+				#{bankAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="bankAccount != null">
+				#{bankAccount,jdbcType=VARCHAR},
+			</if>
+		<if test="bankName != null">
+				#{bankName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.UserBank">
+		update rb_user_bank
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="bankId != null">
+				bank_id = #{bankId,jdbcType=INTEGER},
+			</if>
+			<if test="bankBranch != null">
+				bank_branch = #{bankBranch,jdbcType=VARCHAR},
+			</if>
+			<if test="bankCity != null">
+				bank_city = #{bankCity,jdbcType=VARCHAR},
+			</if>
+			<if test="bankAddtime != null">
+				bank_addtime = #{bankAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="bankAddip != null">
+				bank_addip = #{bankAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="bankAccount != null">
+				bank_account=#{bankAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="bankName!= null">
+				bank_name=#{bankName,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.UserBank">
+		update rb_user_bank
+		set user_id = #{userId,jdbcType=INTEGER},
+		bank_id = #{bankId,jdbcType=INTEGER},
+		bank_branch = #{bankBranch,jdbcType=VARCHAR},
+		bank_city = #{bankCity,jdbcType=VARCHAR},
+		bank_addtime = #{bankAddtime,jdbcType=TIMESTAMP},
+		bank_addip = #{bankAddip,jdbcType=VARCHAR},
+		bank_account=#{bankAccount,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

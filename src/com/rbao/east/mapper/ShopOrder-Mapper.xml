@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.ShopOrderMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.ShopOrder" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="goods_count" property="goodsCount" jdbcType="INTEGER" />
+    <result column="cast_credit" property="castCredit" jdbcType="INTEGER" />
+    <result column="recv_address" property="recvAddress" jdbcType="VARCHAR" />
+    <result column="recv_user" property="recvUser" jdbcType="VARCHAR" />
+    <result column="recv_tel" property="recvTel" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="add_ip" property="addIp" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="vsion" property="vsion" jdbcType="INTEGER" />
+    <result column="flag1" property="flag1" jdbcType="INTEGER" />
+    <result column="misc1" property="misc1" jdbcType="VARCHAR" />
+    <result column="misc2" property="misc2" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, order_no, goods_id, goods_count, cast_credit, recv_address, recv_user, 
+    recv_tel, status, remark, create_time, update_time, vsion, flag1, misc1, misc2
+  </sql>
+  
+  <select id="selectAll" resultType="map" parameterType="map">
+  	SELECT 
+  		u.user_account userName,
+  		g.goods_name goodsName
+  	FROM 
+  	rb_shop_order o 
+  	INNER JOIN rb_user u ON o.user_id=u.id 
+  	INNER JOIN rb_shop_goods g ON o.goods_id=g.id
+  	where
+  		1=1
+  		<if test="status!=null and status!=''">
+  			and o.status=#{status}
+  		</if>
+  	order by o.id desc
+  </select>
+  
+  <select id="selectByEntity" resultType="map" parameterType="map">
+  	select 
+  		o.id id,
+	  	u.user_account userName,
+	  	o.order_no orderNo,
+	  	g.goods_name goodsName,
+	  	g.require_credit requireCredit,
+	  	g.log_path logPath,
+	  	o.goods_count goodsCount,
+	  	o.create_time createTime,
+	  	o.recv_address recvAddress,
+	  	o.recv_user recvUser ,
+	  	o.recv_tel recvTel,
+	  	o.status status,
+	  	
+	  	o.misc1 misc1,
+	  	o.misc2 misc2
+  	FROM
+	  	rb_shop_order o,
+	  	rb_shop_goods g,
+	  	rb_user u
+  	WHERE
+  	 u.id=o.user_id and o.goods_id=g.id
+	  	<if test="goodsName !=null and goodsName != ''">
+	  		and g.goods_name like CONCAT('%',#{goodsName},'%')
+	  	</if>
+	  	<if test="userName !=null and userName != ''">
+	  		and u.user_account like CONCAT('%',#{userName} ,'%')
+	  	</if>
+	  	<if test="orderNo !=null and orderNo !='' ">
+	  		and o.order_no=#{orderNo}
+	  	</if>
+	    	
+  		<if test="beginTime !=null and beginTime !=''">
+  			<![CDATA[ and DATE_FORMAT(o.create_time,'%Y-%m-%d') >= #{beginTime}   ]]>
+  		</if>
+  		<if test="endTime !=null and endTime !=''  ">
+  			<![CDATA[ and DATE_FORMAT(o.create_time,'%Y-%m-%d') <= #{endTime}     ]]>
+  		</if>
+  		
+  		<if test="status !=null and status !=''">
+  			and o.status=#{status}
+  		</if>
+  		
+  		<if test="recvTel !=null and recvTel !='' ">
+  			and o.recv_tel=#{recvTel}
+  		</if>
+  		
+  		
+  		
+  		
+  	
+  	
+  	
+  	ORDER BY o.id DESC;
+  	
+  	
+  
+  
+  
+  </select>
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_shop_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_shop_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.ShopOrder" >
+    insert into rb_shop_order (id, user_id, order_no, 
+      goods_id, goods_count, cast_credit, 
+      recv_address, recv_user, recv_tel, 
+      status, remark, create_time, 
+      update_time, vsion, flag1, 
+      misc1, misc2)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{orderNo,jdbcType=VARCHAR}, 
+      #{goodsId,jdbcType=INTEGER}, #{goodsCount,jdbcType=INTEGER}, #{castCredit,jdbcType=INTEGER}, 
+      #{recvAddress,jdbcType=VARCHAR}, #{recvUser,jdbcType=VARCHAR}, #{recvTel,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{vsion,jdbcType=INTEGER}, #{flag1,jdbcType=INTEGER}, 
+      #{misc1,jdbcType=VARCHAR}, #{misc2,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.ShopOrder" >
+    insert into rb_shop_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="orderNo != null" >
+        order_no,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="goodsCount != null" >
+        goods_count,
+      </if>
+      <if test="castCredit != null" >
+        cast_credit,
+      </if>
+      <if test="recvAddress != null" >
+        recv_address,
+      </if>
+      <if test="recvUser != null" >
+        recv_user,
+      </if>
+      <if test="recvTel != null" >
+        recv_tel,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="vsion != null" >
+        vsion,
+      </if>
+      <if test="flag1 != null" >
+        flag1,
+      </if>
+      <if test="misc1 != null" >
+        misc1,
+      </if>
+      <if test="misc2 != null" >
+        misc2,
+      </if>
+      <if test="addIp != null" >
+        add_ip,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orderNo != null" >
+        #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsCount != null" >
+        #{goodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="castCredit != null" >
+        #{castCredit,jdbcType=INTEGER},
+      </if>
+      <if test="recvAddress != null" >
+        #{recvAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="recvUser != null" >
+        #{recvUser,jdbcType=VARCHAR},
+      </if>
+      <if test="recvTel != null" >
+        #{recvTel,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="vsion != null" >
+        #{vsion,jdbcType=INTEGER},
+      </if>
+      <if test="flag1 != null" >
+        #{flag1,jdbcType=INTEGER},
+      </if>
+      <if test="misc1 != null" >
+        #{misc1,jdbcType=VARCHAR},
+      </if>
+      <if test="misc2 != null" >
+        #{misc2,jdbcType=VARCHAR},
+      </if>
+       <if test="addIp != null" >
+        #{addIp,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.ShopOrder" >
+    update rb_shop_order
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="orderNo != null" >
+        order_no = #{orderNo,jdbcType=VARCHAR},
+      </if>
+      <if test="goodsId != null" >
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="goodsCount != null" >
+        goods_count = #{goodsCount,jdbcType=INTEGER},
+      </if>
+      <if test="castCredit != null" >
+        cast_credit = #{castCredit,jdbcType=INTEGER},
+      </if>
+      <if test="recvAddress != null" >
+        recv_address = #{recvAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="recvUser != null" >
+        recv_user = #{recvUser,jdbcType=VARCHAR},
+      </if>
+      <if test="recvTel != null" >
+        recv_tel = #{recvTel,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      
+      <if test="flag1 != null" >
+        flag1 = #{flag1,jdbcType=INTEGER},
+      </if>
+      <if test="misc1 != null" >
+        misc1 = #{misc1,jdbcType=VARCHAR},
+      </if>
+      <if test="misc2 != null" >
+        misc2 = #{misc2,jdbcType=VARCHAR},
+      </if>
+      vsion = vsion+1
+    </set>
+    where id = #{id,jdbcType=INTEGER} and vsion = #{vsion,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.ShopOrder" >
+    update rb_shop_order
+    set user_id = #{userId,jdbcType=INTEGER},
+      order_no = #{orderNo,jdbcType=VARCHAR},
+      goods_id = #{goodsId,jdbcType=INTEGER},
+      goods_count = #{goodsCount,jdbcType=INTEGER},
+      cast_credit = #{castCredit,jdbcType=INTEGER},
+      recv_address = #{recvAddress,jdbcType=VARCHAR},
+      recv_user = #{recvUser,jdbcType=VARCHAR},
+      recv_tel = #{recvTel,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      vsion = #{vsion,jdbcType=INTEGER},
+      flag1 = #{flag1,jdbcType=INTEGER},
+      misc1 = #{misc1,jdbcType=VARCHAR},
+      misc2 = #{misc2,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

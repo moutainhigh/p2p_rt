@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.SysModuleMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.SysModule">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="module_name" property="moduleName" jdbcType="VARCHAR" />
+		<result column="module_url" property="moduleUrl" jdbcType="VARCHAR" />
+		<result column="module_unicode" property="moduleUnicode"
+			jdbcType="VARCHAR" />
+		<result column="module_describe" property="moduleDescribe"
+			jdbcType="VARCHAR" />
+		<result column="module_sequence" property="moduleSequence"
+			jdbcType="INTEGER" />
+		<result column="module_view" property="moduleView" jdbcType="INTEGER" />
+		<result column="module_parent_id" property="moduleParentId"
+			jdbcType="INTEGER" />
+		<result column="moduleParentName" property="moduleParentName"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getMenuList" parameterType="long" resultMap="BaseResultMap">
+		SELECT s.id,s.module_name ,s.module_url FROM sys_module s LEFT JOIN
+		sys_role_module rm ON s.id=rm.sys_module_id
+		LEFT JOIN sys_role r ON
+		rm.sys_role_id=r.id LEFT JOIN sys_user_role ur ON r.id=ur.sys_role_id
+		LEFT JOIN rb_user u ON ur.sys_user_id=u.id
+		WHERE s.module_parent_id=0
+		AND u.id=#{id} and r.role_status=1 and s.module_view=1
+		GROUP BY s.id
+		ORDER BY s.module_sequence
+	</select>
+
+	<select id="getRightGroupList" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		SELECT s.id,s.module_name,s.module_url
+		FROM sys_module s LEFT JOIN sys_role_module rm ON s.id=rm.sys_module_id
+		LEFT JOIN sys_role r ON rm.sys_role_id=r.id
+		LEFT JOIN sys_user_role ur ON r.id=ur.sys_role_id
+		LEFT JOIN rb_user u ON ur.sys_user_id=u.id
+		WHERE s.module_parent_id=#{right_id} AND u.id=#{userId} and r.role_status=1
+		and s.module_view=1
+		GROUP BY s.id
+		ORDER BY s.module_sequence
+	</select>
+
+
+	<select id="getTreeModelByUserId" parameterType="long"
+		resultType="TreeModel">
+		SELECT s.id,s.module_name as title,s.module_parent_id as pid,s.module_url as
+		url FROM sys_module s LEFT JOIN sys_role_module rm ON
+		s.id=rm.sys_module_id
+		LEFT JOIN sys_role r ON rm.sys_role_id=r.id LEFT
+		JOIN sys_user_role ur ON r.id=ur.sys_role_id
+		LEFT JOIN rb_user u ON
+		ur.sys_user_id=u.id
+		WHERE u.id=#{userId} and r.role_status=1 and
+		s.module_view=1
+		GROUP BY s.id
+	</select>
+
+
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select *,(SELECT module_name FROM sys_module WHERE id=m.module_parent_id) AS
+		moduleParentName
+		from sys_module m
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from sys_module
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.SysModule">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into sys_module ( module_name, module_url,
+		module_unicode, module_describe, module_sequence,
+		module_view, module_parent_id)
+		values (#{moduleName,jdbcType=VARCHAR}, #{moduleUrl,jdbcType=VARCHAR},
+		#{moduleUnicode,jdbcType=VARCHAR}, #{moduleDescribe,jdbcType=VARCHAR},
+		#{moduleSequence,jdbcType=INTEGER},
+		#{moduleView,jdbcType=INTEGER},#{moduleParentId,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.SysModule">
+		insert into sys_module
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="moduleName != null">
+				module_name,
+			</if>
+			<if test="moduleUrl != null">
+				module_url,
+			</if>
+			<if test="moduleUnicode != null">
+				module_unicode,
+			</if>
+			<if test="moduleDescribe != null">
+				module_describe,
+			</if>
+			<if test="moduleSequence != null">
+				module_sequence,
+			</if>
+			<if test="moduleView != null">
+				module_view,
+			</if>
+			<if test="moduleParentId != null">
+				module_parent_id,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="moduleName != null">
+				#{moduleName,jdbcType=VARCHAR},
+			</if>
+			<if test="moduleUrl != null">
+				#{moduleUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="moduleUnicode != null">
+				#{moduleUnicode,jdbcType=VARCHAR},
+			</if>
+			<if test="moduleDescribe != null">
+				#{moduleDescribe,jdbcType=VARCHAR},
+			</if>
+			<if test="moduleSequence != null">
+				#{moduleSequence,jdbcType=INTEGER},
+			</if>
+			<if test="moduleView != null">
+				#{moduleView,jdbcType=INTEGER},
+			</if>
+			<if test="moduleParentId != null">
+				#{moduleParentId,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.SysModule">
+		update sys_module
+		<set>
+			<if test="moduleName != null">
+				module_name = #{moduleName,jdbcType=VARCHAR},
+			</if>
+			<if test="moduleUrl != null">
+				module_url = #{moduleUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="moduleUnicode != null">
+				module_unicode = #{moduleUnicode,jdbcType=VARCHAR},
+			</if>
+			<if test="moduleDescribe != null">
+				module_describe = #{moduleDescribe,jdbcType=VARCHAR},
+			</if>
+			<if test="moduleSequence != null">
+				module_sequence = #{moduleSequence,jdbcType=INTEGER},
+			</if>
+			<if test="moduleView != null">
+				module_view = #{moduleView,jdbcType=INTEGER},
+			</if>
+			<if test="moduleParentId != null">
+				module_parent_id = #{moduleParentId,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.SysModule">
+		update sys_module
+		set module_name = #{moduleName,jdbcType=VARCHAR},
+		module_url = #{moduleUrl,jdbcType=VARCHAR},
+		module_unicode = #{moduleUnicode,jdbcType=VARCHAR},
+		module_describe = #{moduleDescribe,jdbcType=VARCHAR},
+		module_sequence = #{moduleSequence,jdbcType=INTEGER},
+		module_view = #{moduleView,jdbcType=INTEGER},
+		module_parent_id = #{moduleParentId,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

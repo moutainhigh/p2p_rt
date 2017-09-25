@@ -1,0 +1,1479 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.UserMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.User">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="type_id" property="typeId" jdbcType="INTEGER" />
+		<result column="user_account" property="userAccount" jdbcType="VARCHAR" />
+		<result column="user_password" property="userPassword"
+			jdbcType="VARCHAR" />
+		<result column="user_paypassword" property="userPaypassword"
+			jdbcType="VARCHAR" />
+		<result column="user_vouch" property="userVouch" jdbcType="INTEGER" />
+		<result column="autoRed_flag" property="autoRedFlag" jdbcType="INTEGER" />
+		<result column="user_islock" property="userIslock" jdbcType="INTEGER" />
+		<result column="invite_userid" property="inviteUserid"
+			jdbcType="INTEGER" />
+		<result column="invite_money" property="inviteMoney" jdbcType="VARCHAR" />
+		<result column="card_type" property="cardType" jdbcType="INTEGER" />
+		<result column="card_number" property="cardNumber" jdbcType="VARCHAR" />
+		<result column="card_front_img" property="cardFrontImg"
+			jdbcType="VARCHAR" />
+		<result column="card_back_img" property="cardBackImg" jdbcType="VARCHAR" />
+		<result column="user_nation" property="userNation" jdbcType="VARCHAR" />
+		<result column="user_realname" property="userRealname"
+			jdbcType="VARCHAR" />
+		<result column="user_integral" property="userIntegral"
+			jdbcType="VARCHAR" />
+		<result column="avatar_status" property="avatarStatus"
+			jdbcType="INTEGER" />
+		<result column="realname_status" property="realnameStatus"
+			jdbcType="INTEGER" />
+		<result column="email_status" property="emailStatus" jdbcType="INTEGER" />
+		<result column="phone_status" property="phoneStatus" jdbcType="INTEGER" />
+		<result column="video_status" property="videoStatus" jdbcType="INTEGER" />
+		<result column="scene_status" property="sceneStatus" jdbcType="INTEGER" />
+		<result column="user_email" property="userEmail" jdbcType="VARCHAR" />
+		<result column="user_sex" property="userSex" jdbcType="VARCHAR" />
+		<result column="avatar_img" property="avatarImg" jdbcType="VARCHAR" />
+		<result column="user_tel" property="userTel" jdbcType="VARCHAR" />
+		<result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+		<result column="user_qq" property="userQq" jdbcType="VARCHAR" />
+		<result column="user_question" property="userQuestion"
+			jdbcType="VARCHAR" />
+		<result column="user_answer" property="userAnswer" jdbcType="VARCHAR" />
+		<result column="user_birthday" property="userBirthday"
+			jdbcType="TIMESTAMP" />
+		<result column="add_black_time" property="addBlackTime"
+			jdbcType="TIMESTAMP" />
+		<result column="user_province" property="userProvince"
+			jdbcType="VARCHAR" />
+		<result column="user_city" property="userCity" jdbcType="VARCHAR" />
+		<result column="user_area" property="userArea" jdbcType="VARCHAR" />
+		<result column="user_address" property="userAddress" jdbcType="VARCHAR" />
+		<result column="user_remind" property="userRemind" jdbcType="VARCHAR" />
+		<result column="user_privacy" property="userPrivacy" jdbcType="VARCHAR" />
+		<result column="user_addtime" property="userAddtime" jdbcType="TIMESTAMP" />
+		<result column="user_addip" property="userAddip" jdbcType="VARCHAR" />
+		<result column="user_logintime" property="userLogintime"
+			jdbcType="TIMESTAMP" />
+		<result column="user_loginip" property="userLoginip" jdbcType="VARCHAR" />
+		<result column="is_system" property="isSystem" jdbcType="INTEGER" />
+		<result column="is_black_list" property="isBlackList" jdbcType="INTEGER" />
+		
+		
+		<result column="rt_user_flag" property="rtUserFlag" jdbcType="VARCHAR" />
+	 	<association property="type" column="type_id"
+			javaType="com.rbao.east.entity.UserType" select="com.rbao.east.mapper.UserTypeMapper.selectByPrimaryKey" />
+			
+		 <association property="bankAccount" column="id"
+			jdbcType="VARCHAR" select="com.rbao.east.mapper.UserBankMapper.selectByUserPrimaryKey" />
+	</resultMap>
+	
+	
+	
+	<resultMap id="BaseResultMap2" type="com.rbao.east.entity.User">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="type_id" property="typeId" jdbcType="INTEGER" />
+		<result column="user_account" property="userAccount" jdbcType="VARCHAR" />
+		<result column="user_password" property="userPassword"
+			jdbcType="VARCHAR" />
+		<result column="user_paypassword" property="userPaypassword"
+			jdbcType="VARCHAR" />
+		<result column="user_vouch" property="userVouch" jdbcType="INTEGER" />
+		<result column="autoRed_flag" property="autoRedFlag" jdbcType="INTEGER" />
+		<result column="user_islock" property="userIslock" jdbcType="INTEGER" />
+		<result column="invite_userid" property="inviteUserid"
+			jdbcType="INTEGER" />
+		<result column="invite_money" property="inviteMoney" jdbcType="VARCHAR" />
+		<result column="card_type" property="cardType" jdbcType="INTEGER" />
+		<result column="card_number" property="cardNumber" jdbcType="VARCHAR" />
+		<result column="card_front_img" property="cardFrontImg"
+			jdbcType="VARCHAR" />
+		<result column="card_back_img" property="cardBackImg" jdbcType="VARCHAR" />
+		<result column="user_nation" property="userNation" jdbcType="VARCHAR" />
+		<result column="user_realname" property="userRealname"
+			jdbcType="VARCHAR" />
+		<result column="user_integral" property="userIntegral"
+			jdbcType="VARCHAR" />
+		<result column="avatar_status" property="avatarStatus"
+			jdbcType="INTEGER" />
+		<result column="realname_status" property="realnameStatus"
+			jdbcType="INTEGER" />
+		<result column="email_status" property="emailStatus" jdbcType="INTEGER" />
+		<result column="phone_status" property="phoneStatus" jdbcType="INTEGER" />
+		<result column="video_status" property="videoStatus" jdbcType="INTEGER" />
+		<result column="scene_status" property="sceneStatus" jdbcType="INTEGER" />
+		<result column="user_email" property="userEmail" jdbcType="VARCHAR" />
+		<result column="user_sex" property="userSex" jdbcType="VARCHAR" />
+		<result column="avatar_img" property="avatarImg" jdbcType="VARCHAR" />
+		<result column="user_tel" property="userTel" jdbcType="VARCHAR" />
+		<result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+		<result column="user_qq" property="userQq" jdbcType="VARCHAR" />
+		<result column="user_question" property="userQuestion"
+			jdbcType="VARCHAR" />
+		<result column="user_answer" property="userAnswer" jdbcType="VARCHAR" />
+		<result column="user_birthday" property="userBirthday"
+			jdbcType="TIMESTAMP" />
+		<result column="add_black_time" property="addBlackTime"
+			jdbcType="TIMESTAMP" />
+		<result column="user_province" property="userProvince"
+			jdbcType="VARCHAR" />
+		<result column="user_city" property="userCity" jdbcType="VARCHAR" />
+		<result column="user_area" property="userArea" jdbcType="VARCHAR" />
+		<result column="user_address" property="userAddress" jdbcType="VARCHAR" />
+		<result column="user_remind" property="userRemind" jdbcType="VARCHAR" />
+		<result column="user_privacy" property="userPrivacy" jdbcType="VARCHAR" />
+		<result column="user_addtime" property="userAddtime" jdbcType="TIMESTAMP" />
+		<result column="user_addip" property="userAddip" jdbcType="VARCHAR" />
+		<result column="user_logintime" property="userLogintime"
+			jdbcType="TIMESTAMP" />
+		<result column="user_loginip" property="userLoginip" jdbcType="VARCHAR" />
+		<result column="is_system" property="isSystem" jdbcType="INTEGER" />
+		<result column="is_black_list" property="isBlackList" jdbcType="INTEGER" />	
+		<result column="rt_user_flag" property="rtUserFlag" jdbcType="VARCHAR" />
+		
+		
+		<!-- 用户类型 -->
+		<result column="T_id" property="type.id" jdbcType="VARCHAR" />
+		<result column="T_type" property="type.type" jdbcType="VARCHAR" />
+		<result column="T_name" property="type.name" jdbcType="VARCHAR" />
+		<result column="T_sort" property="type.sort" jdbcType="VARCHAR" />
+		<result column="T_status" property="type.status" jdbcType="VARCHAR" />
+		<result column="T_briefly" property="type.briefly" jdbcType="VARCHAR" />
+		<result column="T_remark" property="type.remark" jdbcType="VARCHAR" />
+		<!-- 银行卡号 -->
+		<result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+	</resultMap>
+
+	
+	<!-- 用户注册统计 -->
+	<select id="registerSummary" resultType="Map">
+		SELECT
+			province,
+			SUM(day_add) 'day_add',
+			SUM(total_add) 'total_add'
+		FROM (
+			SELECT
+    			CASE
+        			WHEN u.user_province='' THEN '其他'
+        			WHEN u.user_province IS NULL THEN '其他'
+        			ELSE u.user_province
+    			END AS 'province',
+    			SUM(
+        			CASE
+            			WHEN DATE_FORMAT(u.user_addtime, '%y-%m-%d')=DATE_FORMAT(NOW(), '%y-%m-%d') THEN 1
+            			ELSE 0
+        			END
+    			) AS 'day_add',
+    			SUM(
+        			CASE
+            			WHEN DATE_FORMAT(u.user_addtime, '%y-%m-%d')=DATE_FORMAT(NOW(), '%y-%m-%d') THEN 0
+            			ELSE 1
+        			END
+    			) AS 'total_add'
+			FROM
+    			rb_user u
+			GROUP BY
+    			u.user_province
+    	) AS t
+    	GROUP BY
+    		province
+	</select>
+	
+	
+	
+	
+	<!-- 统计待审核的认证信息 -->
+	<select id="summaryNoCheckCount" resultType="Integer" parameterType="Map">
+		SELECT COUNT(*) FROM rb_user WHERE is_system = 2 AND (realname_status = #{realname_status}
+		OR email_status = #{email_status} OR phone_status = #{phone_status}
+		OR video_status = #{video_status} OR scene_status = #{scene_status})
+	</select>
+	
+	<!-- 统计用户注册数量 -->
+	<select id="summaryRegisterCount" resultType="int" parameterType="Date">
+		SELECT COUNT(*) FROM rb_user WHERE is_system = 2
+		<if test="date != null">
+			<![CDATA[ AND DATE_FORMAT(user_addtime, '%y-%m-%d') = DATE_FORMAT(#{date}, '%y-%m-%d') ]]>
+		</if>
+	</select>
+	
+	<!-- 统计前台用户 -->
+	<select id="countAllUsers" resultType="int">
+		SELECT COUNT(*) FROM rb_user WHERE is_system = 2
+	</select>
+	
+	<!-- 根据邀请人id查询 -->
+	<select id="selectByInviteUserId" resultType="Map"
+		parameterType="Map">
+		SELECT u.id id,
+		v.vip_status vipStatus,
+		u.user_account userAccount,
+		u.user_realname userRealname,
+		u.invite_money inviteMoney,
+		u.user_addtime userAddtime
+		FROM rb_user u LEFT JOIN rb_vip_user v ON
+		u.id = v.user_id
+		WHERE 1=1
+		<if test="inviteUserid != null and inviteUserid !=''">
+			and u.invite_userid = #{inviteUserid}
+		</if>
+		order by userAddtime desc
+	</select>
+	<select id="selectInviteUserIdCount" resultType="int"
+		parameterType="Map">
+		SELECT count(*)
+		FROM rb_user u LEFT JOIN rb_vip_user v ON u.id =
+		v.user_id WHERE 1=1
+		<if test="inviteUserid != null and inviteUserid !=''">
+			and u.invite_userid = #{inviteUserid}
+		</if>
+	</select>
+	<!-- 第三方登陆 查询  -->
+	<select id="getUserByUid" resultMap="BaseResultMap" parameterType="Map">
+			SELECT * FROM rb_user
+			WHERE  isThirdparty=#{isThirdparty} AND uid=#{uid}
+	</select>
+
+	<!-- 查询资料是否完整 -->
+	<select id="selectUserMessage" resultType="Map" parameterType="Map">
+		SELECT
+		u.id id,
+		u.user_account userAccount,
+		u.user_realname userRealName,
+		IF(
+		ISNULL(o.user_id),
+		'信息不完整',
+		'信息完整'
+		) otherMsg ,
+		IF(
+		ISNULL(e.user_id),
+		'信息不完整',
+		'信息完整'
+		) eMsg ,
+		IF(
+		ISNULL(f.user_id),
+		'信息不完整',
+		'信息完整'
+		) fMsg ,
+		IF(
+		ISNULL(h.user_id),
+		'信息不完整',
+		'信息完整'
+		) hMsg ,
+		IF(
+		ISNULL(per.user_id),
+		'信息不完整',
+		'信息完整'
+		) perMsg ,
+		IF(
+		ISNULL(pb.user_id),
+		'信息不完整',
+		'信息完整'
+		) pbMsg ,
+		IF(
+		ISNULL(s.user_id),
+		'信息不完整',
+		'信息完整'
+		) sMsg ,
+		IF(
+		ISNULL(un.user_id),
+		'信息不完整',
+		'信息完整'
+		) unMsg ,
+		IF(
+		ISNULL(r.user_id),
+		'信息不完整',
+		'信息完整'
+		) rMsg
+		FROM
+		rb_user u
+		LEFT JOIN rb_other_message o
+		ON u.id = o.user_id
+		LEFT JOIN
+		rb_education_message e
+		ON u.id = e.user_id
+		LEFT JOIN rb_finance_message
+		f
+		ON u.id = f.user_id
+		LEFT JOIN rb_house_message h
+		ON u.id = h.user_id
+		LEFT JOIN rb_personal_message per
+		ON u.id = per.user_id
+		LEFT JOIN
+		rb_private_business_message pb
+		ON u.id = pb.user_id
+		LEFT JOIN
+		rb_relation_message r
+		ON u.id = r.user_id
+		LEFT JOIN rb_spouse_message s
+		ON u.id = s.user_id
+		LEFT JOIN rb_unit_message un
+		ON u.id = un.user_id
+		where 1=1
+		<if test="userAccount != null and userAccount != ''">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="isSystem!=null and isSystem!=''">
+			and u.is_system=${isSystem}
+		</if>
+		order by u.id desc
+	</select>
+	<select id="selectUserMessageTotalCount" resultType="int"
+		parameterType="Map" fetchSize="200">
+		SELECT
+		COUNT(*)
+		FROM
+		rb_user u
+		LEFT JOIN rb_other_message o
+		ON u.id =
+		o.user_id
+		LEFT JOIN rb_education_message e
+		ON u.id = e.user_id
+		LEFT JOIN
+		rb_finance_message f
+		ON u.id = f.user_id
+		LEFT JOIN rb_house_message h
+		ON
+		u.id = h.user_id
+		LEFT JOIN rb_personal_message per
+		ON u.id = per.user_id
+		LEFT JOIN rb_private_business_message pb
+		ON u.id = pb.user_id
+		LEFT JOIN
+		rb_relation_message r
+		ON u.id = r.user_id
+		LEFT JOIN rb_spouse_message s
+		ON u.id = s.user_id
+		LEFT JOIN rb_unit_message un
+		ON u.id = un.user_id
+		where 1=1
+		<if test="userAccount != null and userAccount != ''">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="isSystem!=null and isSystem!=''">
+			and u.is_system=#{isSystem}
+		</if>
+	</select>
+
+
+	<select id="selectUserTotalCount" resultType="int"
+		parameterType="Map" fetchSize="200">
+		select
+		count(*)
+		from rb_user where 1=1
+		<if test="userAccount != null and userAccount != ''">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="userRealname!=null and userRealname!=''">
+			and user_realname like CONCAT('%', #{userRealname}, '%')
+		</if>
+		<if test="userSex!=null and userSex!=''">
+			and user_sex=#{userSex}
+		</if>
+		<if test="cardNumber!=null and cardNumber!=''">
+			and card_number like CONCAT('%', #{cardNumber}, '%')
+		</if>
+		<if test="userPhone!=null and userPhone!=''">
+			and user_phone like CONCAT('%', #{userPhone}, '%')
+		</if>
+		<if test="realnameStatus!=null and realnameStatus!=''">
+			and realname_status=#{realnameStatus}
+		</if>
+		<if test="phoneStatus!=null and phoneStatus!=''">
+			and phone_status=#{phoneStatus}
+		</if>
+		<if test="emailStatus!=null and emailStatus!=''">
+			and email_status=#{emailStatus}
+		</if>
+		<if test="videoStatus!=null and videoStatus!=''">
+			and video_status=#{videoStatus}
+		</if>
+		<if test="sceneStatus!=null and sceneStatus!=''">
+			and scene_status=#{sceneStatus}
+		</if>
+		<if test="beginTime !=null and beginTime !=''">
+   			 <![CDATA[	and DATE_FORMAT(user_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+		</if>
+		<if test="endTime !=null and endTime !=''">
+    
+    		<![CDATA[	and DATE_FORMAT(user_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+		</if>
+		<if test="isSystem!=null and isSystem!=''">
+			and is_system=#{isSystem}
+		</if>
+		<if test="userBeginId!=null and userBeginId!=''">
+			 <![CDATA[ and id>=#{userBeginId} ]]>
+		</if>
+		<if test="isBlackList!=null">
+			and is_black_list=#{isBlackList}
+		</if>
+		<if test="beginTimeBlack !=null and beginTimeBlack !=''">
+    
+    		<![CDATA[	and DATE_FORMAT(add_black_time,'%Y-%m-%d') >=  #{beginTimeBlack }  ]]>
+		</if>
+		<if test="endTimeBlack !=null and endTimeBlack !=''">
+    
+    		<![CDATA[	and DATE_FORMAT(add_black_time,'%Y-%m-%d') <=  #{endTimeBlack }  ]]>
+		</if>
+		<if test="rtUserFlag!=null">
+			and rt_user_flag like CONCAT('%', #{rtUserFlag}, '%')
+		</if>
+		order by id desc
+	</select>
+
+	<select id="selectUserList" resultMap="BaseResultMap"
+		parameterType="Map" fetchSize="200">
+		select
+		*
+		from rb_user where 1=1
+		<if test="userAccount != null and userAccount != ''">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="userRealname!=null and userRealname!=''">
+			and user_realname like CONCAT('%', #{userRealname}, '%')
+		</if>
+		<if test="userSex!=null and userSex!=''">
+			and user_sex=#{userSex}
+		</if>
+		<if test="cardNumber!=null and cardNumber!=''">
+			and card_number like CONCAT('%', #{cardNumber}, '%')
+		</if>
+		<if test="userPhone!=null and userPhone!=''">
+			and user_phone like CONCAT('%', #{userPhone}, '%')
+		</if>
+		<if test="realnameStatus!=null and realnameStatus!=''">
+			and realname_status=#{realnameStatus}
+		</if>
+		<if test="phoneStatus!=null and phoneStatus!=''">
+			and phone_status=#{phoneStatus}
+		</if>
+		<if test="emailStatus!=null and emailStatus!=''">
+			and email_status=#{emailStatus}
+		</if>
+		<if test="videoStatus!=null and videoStatus!=''">
+			and video_status=#{videoStatus}
+		</if>
+		<if test="sceneStatus!=null and sceneStatus!=''">
+			and scene_status=#{sceneStatus}
+		</if>
+		<if test="beginTime !=null and beginTime !=''">
+    
+    		<![CDATA[	and DATE_FORMAT(user_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+		</if>
+		<if test="endTime !=null and endTime !=''">
+    
+    		<![CDATA[	and DATE_FORMAT(user_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+		</if>
+		<if test="isSystem!=null and isSystem!=''">
+			and is_system=#{isSystem}
+		</if>
+		<if test="userBeginId!=null and userBeginId!=''">
+			 <![CDATA[ and id>=#{userBeginId} ]]>
+		</if>
+		<if test="isBlackList!=null">
+			and is_black_list=#{isBlackList}
+		</if>
+		<if test="beginTimeBlack !=null and beginTimeBlack !=''">
+    
+    		<![CDATA[	and DATE_FORMAT(add_black_time,'%Y-%m-%d') >=  #{beginTimeBlack }  ]]>
+		</if>
+		<if test="endTimeBlack !=null and endTimeBlack !=''">
+    
+    		<![CDATA[	and DATE_FORMAT(add_black_time,'%Y-%m-%d') <=  #{endTimeBlack }  ]]>
+		</if>
+		<if test="rtUserFlag!=null">
+			and rt_user_flag like CONCAT('%', #{rtUserFlag}, '%')
+		</if>
+		order by id desc
+	</select>
+	
+	<select id="selectUserListToExcel" resultMap="BaseResultMap2"
+		parameterType="Map" fetchSize="200">
+		select
+		u.*,
+		
+		t.id T_id,
+		t.type T_type,
+		t.name T_name,
+		t.sort T_sort,
+		t.status T_status,
+		t.briefly T_briefly,
+		t.remark T_remark,
+		
+		ub.bank_account		
+		from rb_user u
+		 left join rb_user_type t on t.id=u.type_id
+		 left join rb_user_bank ub on u.id=ub.user_id
+		where 1=1
+		<if test="userAccount != null and userAccount != ''">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="userRealname!=null and userRealname!=''">
+			and user_realname like CONCAT('%', #{userRealname}, '%')
+		</if>
+		<if test="userSex!=null and userSex!=''">
+			and user_sex=#{userSex}
+		</if>
+		<if test="cardNumber!=null and cardNumber!=''">
+			and card_number like CONCAT('%', #{cardNumber}, '%')
+		</if>
+		<if test="userPhone!=null and userPhone!=''">
+			and user_phone like CONCAT('%', #{userPhone}, '%')
+		</if>
+		<if test="realnameStatus!=null and realnameStatus!=''">
+			and realname_status=#{realnameStatus}
+		</if>
+		<if test="phoneStatus!=null and phoneStatus!=''">
+			and phone_status=#{phoneStatus}
+		</if>
+		<if test="emailStatus!=null and emailStatus!=''">
+			and email_status=#{emailStatus}
+		</if>
+		<if test="videoStatus!=null and videoStatus!=''">
+			and video_status=#{videoStatus}
+		</if>
+		<if test="sceneStatus!=null and sceneStatus!=''">
+			and scene_status=#{sceneStatus}
+		</if>
+		<if test="beginTime !=null and beginTime !=''">
+    
+    		<![CDATA[	and DATE_FORMAT(user_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+		</if>
+		<if test="endTime !=null and endTime !=''">
+    
+    		<![CDATA[	and DATE_FORMAT(user_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+		</if>
+		<if test="isSystem!=null and isSystem!=''">
+			and is_system=#{isSystem}
+		</if>
+		<if test="userBeginId!=null and userBeginId!=''">
+			 <![CDATA[ and u.id>=#{userBeginId} ]]>
+		</if>
+		<if test="isBlackList!=null">
+			and is_black_list=#{isBlackList}
+		</if>
+		<if test="beginTimeBlack !=null and beginTimeBlack !=''">
+    
+    		<![CDATA[	and DATE_FORMAT(add_black_time,'%Y-%m-%d') >=  #{beginTimeBlack }  ]]>
+		</if>
+		<if test="endTimeBlack !=null and endTimeBlack !=''">
+    
+    		<![CDATA[	and DATE_FORMAT(add_black_time,'%Y-%m-%d') <=  #{endTimeBlack }  ]]>
+		</if>
+		<if test="rtUserFlag!=null">
+			and rt_user_flag like CONCAT('%', #{rtUserFlag}, '%')
+		</if>
+		order by u.id desc
+	</select>
+
+	<delete id="deleteUserRoleByUserId" parameterType="map">
+		DELETE FROM
+		sys_user_role
+		WHERE sys_user_id=#{userId}
+	</delete>
+
+	<delete id="deleteUserRoleByUserIds" parameterType="java.lang.Integer">
+		DELETE FROM
+		sys_user_role
+		WHERE sys_user_id=#{userId}
+	</delete>
+
+
+	<insert id="inserUserRoleList" parameterType="map">
+		INSERT INTO sys_user_role(sys_role_id,sys_user_id)
+		VALUES
+		<foreach collection="roleList" item="item" index="index"
+			separator=",">
+			( #{item}, #{userId})
+		</foreach>
+	</insert>
+
+	<select id="selectUserByName" resultMap="BaseResultMap"
+		parameterType="Map" fetchSize="200">
+		select
+		*
+		from rb_user where 1=1
+		<if test="userAccount != null and userAccount != ''">
+			and user_account = #{userAccount}
+		</if>
+		<if test="userEmail != null and userEmail != ''">
+			and user_email = #{userEmail}
+		</if>
+
+		order by id desc
+	</select>
+
+	<select id="shwoUserList" resultMap="BaseResultMap"
+		parameterType="map">
+		SELECT distinct u.* FROM rb_user u
+		LEFT JOIN sys_user_role ur ON
+		u.id=ur.sys_user_id
+		LEFT JOIN sys_role r ON ur.sys_role_id=r.id
+		WHERE
+		r.role_status=1 AND u.is_system=1
+		<if test="userAccount != null and userAccount != ''">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="userRealname!=null and userRealname!=''">
+			and user_realname like CONCAT('%', #{userRealname}, '%')
+		</if>
+		<if test="userSex!=null and userSex!=''">
+			and user_sex=#{userSex}
+		</if>
+		<if test="cardNumber!=null and cardNumber!=''">
+			and card_number like CONCAT('%', #{cardNumber}, '%')
+		</if>
+		<if test="userPhone!=null and userPhone!=''">
+			and user_phone like CONCAT('%', #{userPhone}, '%')
+		</if>
+		<if test="userBeginID!=null and userBeginID!=''">
+			<![CDATA[and u.id >=#{userBeginID} ]]>
+		</if> 
+		<foreach collection="roleChildIds" close=")" item="role_id"
+			open="AND (" separator="OR">
+			r.id=#{role_id}
+		</foreach>
+		or ( u.id NOT IN (select distinct sur.sys_user_id from sys_user_role
+		sur)
+		AND u.is_system=1
+		<if test="userAccount != null and userAccount != ''">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="userRealname!=null and userRealname!=''">
+			and user_realname like CONCAT('%', #{userRealname}, '%')
+		</if>
+		<if test="userSex!=null and userSex!=''">
+			and user_sex=#{userSex}
+		</if>
+		<if test="cardNumber!=null and cardNumber!=''">
+			and card_number like CONCAT('%', #{cardNumber}, '%')
+		</if>
+		<if test="userPhone!=null and userPhone!=''">
+			and user_phone like CONCAT('%', #{userPhone}, '%')
+		</if>
+		<if test="userBeginID!=null and userBeginID!=''">
+			<![CDATA[and u.id >=#{userBeginID} ]]>
+		</if> 
+		)
+		ORDER BY u.id desc
+	</select>
+
+	<select id="isAdminByUserId" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		SELECT u.id FROM sys_role r LEFT JOIN sys_user_role ur
+		ON
+		r.id=ur.sys_role_id LEFT JOIN rb_user u ON u.id=ur.sys_user_id
+		WHERE
+		r.role_status=1 AND u.id= #{userId} AND r.role_super=0
+		GROUP BY r.id
+	</select>
+	<select id="selectByRoleName" resultMap="BaseResultMap"
+		parameterType="Map">
+		SELECT u.id
+		,u.user_account,u.user_realname,u.user_phone,u.avatar_img,u.user_qq
+		FROM sys_role r LEFT JOIN sys_user_role ur
+		ON r.id=ur.sys_role_id LEFT
+		JOIN rb_user u ON u.id=ur.sys_user_id
+		WHERE 
+		r.role_status=1 AND u.id>101
+		<if test="roleName!=null and roleName!=''">
+			and r.role_name=#{roleName}
+		</if>
+	</select>
+
+
+	<select id="shwoUserListCount" resultType="java.lang.Integer"
+		parameterType="map">
+		SELECT COUNT(distinct u.id) FROM rb_user u
+		LEFT JOIN sys_user_role ur
+		ON u.id=ur.sys_user_id
+		LEFT JOIN sys_role r ON ur.sys_role_id=r.id
+		WHERE r.role_status=1 AND u.is_system=1
+		<if test="userAccount != null and userAccount != ''">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="userRealname!=null and userRealname!=''">
+			and user_realname like CONCAT('%', #{userRealname}, '%')
+		</if>
+		<if test="userSex!=null and userSex!=''">
+			and user_sex=#{userSex}
+		</if>
+		<if test="cardNumber!=null and cardNumber!=''">
+			and card_number like CONCAT('%', #{cardNumber}, '%')
+		</if>
+		<if test="userPhone!=null and userPhone!=''">
+			and user_phone like CONCAT('%', #{userPhone}, '%')
+		</if>
+		<if test="userBeginID!=null and userBeginID!=''">
+			<![CDATA[and u.id >=#{userBeginID} ]]>
+		</if> 
+		<foreach collection="roleChildIds" close=")" item="role_id"
+			open="AND (" separator="OR">
+			r.id=#{role_id}
+		</foreach>
+		or ( u.id NOT IN (select distinct sur.sys_user_id from sys_user_role
+		sur)
+		AND u.is_system=1
+		<if test="userAccount != null and userAccount != ''">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="userRealname!=null and userRealname!=''">
+			and user_realname like CONCAT('%', #{userRealname}, '%')
+		</if>
+		<if test="userSex!=null and userSex!=''">
+			and user_sex=#{userSex}
+		</if>
+		<if test="cardNumber!=null and cardNumber!=''">
+			and card_number like CONCAT('%', #{cardNumber}, '%')
+		</if>
+		<if test="userPhone!=null and userPhone!=''">
+			and user_phone like CONCAT('%', #{userPhone}, '%')
+		</if>
+		<if test="userBeginID!=null and userBeginID!=''">
+			<![CDATA[and u.id >=#{userBeginID} ]]>
+		</if> 
+		)
+		ORDER BY u.id desc
+	</select>
+
+
+
+
+	<sql id="Base_Column_List">
+		id, type_id, user_account, user_password, user_paypassword,
+		user_vouch,
+		user_islock,
+		invite_userid, invite_money, card_type,
+		card_number, card_front_img, card_back_img,
+		user_nation, user_realname,
+		user_integral, avatar_status,
+		realname_status, email_status,
+		phone_status, video_status, scene_status, user_email, user_sex,
+		avatar_img,
+		user_tel,
+		user_phone, user_qq, user_question, user_answer,
+		user_birthday, user_province,
+		user_city,
+		user_area, user_address,
+		user_remind, user_privacy, user_addtime, user_addip,
+		user_logintime,
+		user_loginip, is_system,autoRed_flag,is_black_list,add_black_time,rt_user_flag
+	</sql>
+	<select id="selectByPrimaryKeyandparam" resultMap="BaseResultMap"
+		parameterType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user
+		where id = #{id,jdbcType=INTEGER}
+
+		<if test="isSystem!=null and isSystem!=''">
+			and is_system=${isSystem}
+		</if>
+		<if test="inviteUserId!=null">
+			and invite_userid=#{inviteUserId}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+	<select id="selectByUserUid" resultMap="BaseResultMap"
+		parameterType="String">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user
+		where user_account = #{userAccount,jdbcType=VARCHAR}
+		or (user_phone=#{userPhone,jdbcType=VARCHAR} and phone_status=2)
+	</select>
+	<select id="selectByUserUid2" resultMap="BaseResultMap"
+		parameterType="String">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user
+		where user_phone = #{userPhone}
+	</select>
+	<select id="checkUserByEmail" resultMap="BaseResultMap"
+		parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user where user_email=#{userEmail}
+	</select>
+
+<select id="checkUserByEmail2" resultMap="BaseResultMap"
+		parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user where user_email=#{userEmail} and user_account=#{userAccount}
+	</select>
+	
+	<select id="findUserByPhone" resultMap="BaseResultMap"
+		parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user where  user_phone=#{userPhone}
+	</select>
+
+	<select id="selectForSelectedList" resultType="Map" parameterType="Map">
+		SELECT u.id uid,u.user_account userAccount,acc.available_money availableMoney,IFNULL(ts.tenderMoney,0) tenderMoney
+			,u.user_realname realname,u.card_number cardNum,u.user_addtime createTime,u.user_phone phone
+		FROM rb_user u INNER JOIN rb_user_account acc ON u.id = acc.user_id 
+		 LEFT JOIN v_user_tendersum ts ON u.id = ts.user_id
+		 WHERE u.is_system = 2
+		 <if test="username != null">
+		 	and u.user_account like CONCAT('%', #{username}, '%')
+		 </if>
+		ORDER BY userAccount ASC 
+	</select>
+	
+	
+	
+	
+	<!-- 查询用户名，邮箱，手机，证件号码是否存在 -->
+	<select id="selectUserByParam" resultMap="BaseResultMap"
+		parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user where 1=1
+		<if test="id!=null and id!=''">
+			and id=#{id}
+		</if>
+		<if test="userAccount!=null and userAccount!=''">
+			and user_account=#{userAccount}
+		</if>
+		<if test="userEmail!=null and userEmail!=''">
+			and user_email=#{userEmail} and email_status=2
+		</if>
+		<if test="userPhone!=null and userPhone!=''">
+			and user_phone=#{userPhone}
+		</if>
+		<if test="userRealname!=null and userRealname!=''">
+			and user_realname=#{userRealname} and realname_status=2
+		</if>
+		<if test="cardNumber!=null and cardNumber!=''">
+			and card_number=#{cardNumber}
+		</if>
+	</select>
+
+	<select id="selectUserByStatus" resultMap="BaseResultMap"
+		parameterType="map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user where 1=1
+		<if test="id!=null and id!=''">
+			and id=#{id}
+		</if>
+		<if test="realnameStatus!=null and realnameStatus!=''">
+			and realname_status=#{realnameStatus}
+		</if>
+		<if test="emailStatus!=null and emailStatus!=''">
+			and email_status=#{emailStatus}
+		</if>
+		<if test="phoneStatus!=null and phoneStatus!=''">
+			and phone_status=#{phoneStatus}
+		</if>
+		<if test="videoStatus!=null and videoStatus!=''">
+			and video_status=#{videoStatus}
+		</if>
+		<if test="sceneStatus!=null and sceneStatus!=''">
+			and scene_status=#{sceneStatus}
+		</if>
+	</select>
+
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		rb_user
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<delete id="deleteByPrimaryKeyandparam" parameterType="Map">
+		delete from rb_user
+		where id = #{id,jdbcType=INTEGER}
+		<if test="isSystem!=null and isSystem!=''">
+			and is_system=#{isSystem}
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.User">
+		insert into rb_user (id,
+		type_id, user_account,
+		user_password, user_paypassword, user_vouch,
+		user_islock, invite_userid, invite_money,
+		card_type, card_number,
+		card_front_img,
+		card_back_img, user_nation, user_realname,
+		user_integral, avatar_status, realname_status,
+		email_status,
+		phone_status, video_status,
+		scene_status, user_email, user_sex,
+		avatar_img, user_tel, user_phone,
+		user_qq, user_question, user_answer,
+		user_birthday, add_black_time,user_province, user_city,
+		user_area, user_address,
+		user_remind,
+		user_privacy, user_addtime, user_addip,
+		user_logintime,
+		user_loginip, is_system,is_black_list,rt_user_flag
+		)
+		values (#{id,jdbcType=INTEGER},
+		#{typeId,jdbcType=INTEGER},
+		#{userAccount,jdbcType=VARCHAR},
+		#{userPassword,jdbcType=VARCHAR}, #{userPaypassword,jdbcType=VARCHAR},
+		#{userVouch,jdbcType=INTEGER},
+		#{userIslock,jdbcType=INTEGER},
+		#{inviteUserid,jdbcType=INTEGER},
+		#{inviteMoney,jdbcType=VARCHAR},
+		#{cardType,jdbcType=INTEGER}, #{cardNumber,jdbcType=VARCHAR},
+		#{cardFrontImg,jdbcType=VARCHAR},
+		#{cardBackImg,jdbcType=VARCHAR},
+		#{userNation,jdbcType=VARCHAR},
+		#{userRealname,jdbcType=VARCHAR},
+		#{userIntegral,jdbcType=VARCHAR}, #{avatarStatus,jdbcType=INTEGER},
+		#{realnameStatus,jdbcType=INTEGER},
+		#{emailStatus,jdbcType=INTEGER},
+		#{phoneStatus,jdbcType=INTEGER},
+		#{videoStatus,jdbcType=INTEGER},
+		#{sceneStatus,jdbcType=INTEGER}, #{userEmail,jdbcType=VARCHAR},
+		#{userSex,jdbcType=VARCHAR},
+		#{avatarImg,jdbcType=VARCHAR},
+		#{userTel,jdbcType=VARCHAR},
+		#{userPhone,jdbcType=VARCHAR},
+		#{userQq,jdbcType=VARCHAR}, #{userQuestion,jdbcType=VARCHAR},
+		#{userAnswer,jdbcType=VARCHAR},
+		#{userBirthday,jdbcType=DATE},
+		#{addBlackTime,jdbcType=TIMESTAMP},
+		#{userProvince,jdbcType=VARCHAR},
+		#{userCity,jdbcType=VARCHAR},
+		#{userArea,jdbcType=VARCHAR}, #{userAddress,jdbcType=VARCHAR},
+		#{userRemind,jdbcType=VARCHAR},
+		#{userPrivacy,jdbcType=VARCHAR},
+		#{userAddtime,jdbcType=TIMESTAMP},
+		#{userAddip,jdbcType=VARCHAR},
+		#{userLogintime,jdbcType=TIMESTAMP}, #{userLoginip,jdbcType=VARCHAR},
+		#{isSystem,jdbcType=INTEGER},
+		#{isBlackList,jdbcType=INTEGER},
+		#{rtUserFlag,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.User"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into rb_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="typeId != null">
+				type_id,
+			</if>
+			<if test="userAccount != null">
+				user_account,
+			</if>
+			<if test="userPassword != null">
+				user_password,
+			</if>
+			<if test="userPaypassword != null">
+				user_paypassword,
+			</if>
+			<if test="userVouch != null">
+				user_vouch,
+			</if>
+			<if test="userIslock != null">
+				user_islock,
+			</if>
+			<if test="inviteUserid != null">
+				invite_userid,
+			</if>
+			<if test="inviteMoney != null">
+				invite_money,
+			</if>
+			<if test="cardType != null">
+				card_type,
+			</if>
+			<if test="cardNumber != null">
+				card_number,
+			</if>
+			<if test="cardFrontImg != null">
+				card_front_img,
+			</if>
+			<if test="cardBackImg != null">
+				card_back_img,
+			</if>
+			<if test="userNation != null">
+				user_nation,
+			</if>
+			<if test="userRealname != null">
+				user_realname,
+			</if>
+			<if test="userIntegral != null">
+				user_integral,
+			</if>
+			<if test="avatarStatus != null">
+				avatar_status,
+			</if>
+			<if test="realnameStatus != null">
+				realname_status,
+			</if>
+			<if test="emailStatus != null">
+				email_status,
+			</if>
+			<if test="phoneStatus != null">
+				phone_status,
+			</if>
+			<if test="videoStatus != null">
+				video_status,
+			</if>
+			<if test="sceneStatus != null">
+				scene_status,
+			</if>
+			<if test="userEmail != null">
+				user_email,
+			</if>
+			<if test="userSex != null">
+				user_sex,
+			</if>
+			<if test="avatarImg != null">
+				avatar_img,
+			</if>
+			<if test="userTel != null">
+				user_tel,
+			</if>
+			<if test="userPhone != null">
+				user_phone,
+			</if>
+			<if test="userQq != null">
+				user_qq,
+			</if>
+			<if test="userQuestion != null">
+				user_question,
+			</if>
+			<if test="userAnswer != null">
+				user_answer,
+			</if>
+			<if test="userBirthday != null">
+				user_birthday,
+			</if>
+			<if test="addBlackTime != null">
+				add_black_time,
+			</if>
+			<if test="userProvince != null">
+				user_province,
+			</if>
+			<if test="userCity != null">
+				user_city,
+			</if>
+			<if test="userArea != null">
+				user_area,
+			</if>
+			<if test="userAddress != null">
+				user_address,
+			</if>
+			<if test="userRemind != null">
+				user_remind,
+			</if>
+			<if test="userPrivacy != null">
+				user_privacy,
+			</if>
+			<if test="userAddtime != null">
+				user_addtime,
+			</if>
+			<if test="userAddip != null">
+				user_addip,
+			</if>
+			<if test="userLogintime != null">
+				user_logintime,
+			</if>
+			<if test="userLoginip != null">
+				user_loginip,
+			</if>
+			<if test="isSystem != null">
+				is_system,
+			</if>
+			<if test="isThirdparty != null">
+				isThirdparty,
+			</if>
+			<if test="isBlackList != null">
+				is_black_list,
+			</if>
+			<if test="uid != null">
+				uid,
+			</if>
+			<if test="rtUserFlag != null">
+				rt_user_flag,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="typeId != null">
+				#{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="userAccount != null">
+				#{userAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="userPassword != null">
+				#{userPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="userPaypassword != null">
+				#{userPaypassword,jdbcType=VARCHAR},
+			</if>
+			<if test="userVouch != null">
+				#{userVouch,jdbcType=INTEGER},
+			</if>
+			<if test="userIslock != null">
+				#{userIslock,jdbcType=INTEGER},
+			</if>
+			<if test="inviteUserid != null">
+				#{inviteUserid,jdbcType=INTEGER},
+			</if>
+			<if test="inviteMoney != null">
+				#{inviteMoney,jdbcType=VARCHAR},
+			</if>
+			<if test="cardType != null">
+				#{cardType,jdbcType=INTEGER},
+			</if>
+			<if test="cardNumber != null">
+				#{cardNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="cardFrontImg != null">
+				#{cardFrontImg,jdbcType=VARCHAR},
+			</if>
+			<if test="cardBackImg != null">
+				#{cardBackImg,jdbcType=VARCHAR},
+			</if>
+			<if test="userNation != null">
+				#{userNation,jdbcType=VARCHAR},
+			</if>
+			<if test="userRealname != null">
+				#{userRealname,jdbcType=VARCHAR},
+			</if>
+			<if test="userIntegral != null">
+				#{userIntegral,jdbcType=VARCHAR},
+			</if>
+			<if test="avatarStatus != null">
+				#{avatarStatus,jdbcType=INTEGER},
+			</if>
+			<if test="realnameStatus != null">
+				#{realnameStatus,jdbcType=INTEGER},
+			</if>
+			<if test="emailStatus != null">
+				#{emailStatus,jdbcType=INTEGER},
+			</if>
+			<if test="phoneStatus != null">
+				#{phoneStatus,jdbcType=INTEGER},
+			</if>
+			<if test="videoStatus != null">
+				#{videoStatus,jdbcType=INTEGER},
+			</if>
+			<if test="sceneStatus != null">
+				#{sceneStatus,jdbcType=INTEGER},
+			</if>
+			<if test="userEmail != null">
+				#{userEmail,jdbcType=VARCHAR},
+			</if>
+			<if test="userSex != null">
+				#{userSex,jdbcType=VARCHAR},
+			</if>
+			<if test="avatarImg != null">
+				#{avatarImg,jdbcType=VARCHAR},
+			</if>
+			<if test="userTel != null">
+				#{userTel,jdbcType=VARCHAR},
+			</if>
+			<if test="userPhone != null">
+				#{userPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="userQq != null">
+				#{userQq,jdbcType=VARCHAR},
+			</if>
+			<if test="userQuestion != null">
+				#{userQuestion,jdbcType=VARCHAR},
+			</if>
+			<if test="userAnswer != null">
+				#{userAnswer,jdbcType=VARCHAR},
+			</if>
+			<if test="userBirthday != null">
+				#{userBirthday,jdbcType=DATE},
+			</if>
+			<if test="addBlackTime != null">
+				#{addBlackTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="userProvince != null">
+				#{userProvince,jdbcType=VARCHAR},
+			</if>
+			<if test="userCity != null">
+				#{userCity,jdbcType=VARCHAR},
+			</if>
+			<if test="userArea != null">
+				#{userArea,jdbcType=VARCHAR},
+			</if>
+			<if test="userAddress != null">
+				#{userAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="userRemind != null">
+				#{userRemind,jdbcType=VARCHAR},
+			</if>
+			<if test="userPrivacy != null">
+				#{userPrivacy,jdbcType=VARCHAR},
+			</if>
+			<if test="userAddtime != null">
+				#{userAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="userAddip != null">
+				#{userAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="userLogintime != null">
+				#{userLogintime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="userLoginip != null">
+				#{userLoginip,jdbcType=VARCHAR},
+			</if>
+			<if test="isSystem != null">
+				#{isSystem,jdbcType=INTEGER},
+			</if>
+			<if test="isThirdparty != null">
+				#{isThirdparty,jdbcType=INTEGER},
+			</if>
+			<if test="isBlackList != null">
+				#{isBlackList,jdbcType=INTEGER},
+			</if>
+			<if test="uid != null">
+				#{uid,jdbcType=VARCHAR},
+			</if>
+			<if test="rtUserFlag != null">
+				#{rtUserFlag,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.User">
+		update rb_user
+		<set>
+			<if test="typeId != null">
+				type_id = #{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="userAccount != null">
+				user_account = #{userAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="userPassword != null">
+				user_password = #{userPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="userPaypassword != null">
+				user_paypassword = #{userPaypassword,jdbcType=VARCHAR},
+			</if>
+			<if test="userVouch != null">
+				user_vouch = #{userVouch,jdbcType=INTEGER},
+			</if>
+			<if test="userIslock != null">
+				user_islock = #{userIslock,jdbcType=INTEGER},
+			</if>
+			<if test="inviteUserid != null">
+				invite_userid = #{inviteUserid,jdbcType=INTEGER},
+			</if>
+			<if test="inviteMoney != null">
+				invite_money = #{inviteMoney,jdbcType=VARCHAR},
+			</if>
+			<if test="autoRedFlag != null">
+				autoRed_flag = #{autoRedFlag,jdbcType=INTEGER},
+			</if>
+			<if test="cardType != null">
+				card_type = #{cardType,jdbcType=INTEGER},
+			</if>
+			<if test="cardNumber != null">
+				card_number = #{cardNumber,jdbcType=VARCHAR},
+			</if>
+			<if test="cardFrontImg != null">
+				card_front_img = #{cardFrontImg,jdbcType=VARCHAR},
+			</if>
+			<if test="cardBackImg != null">
+				card_back_img = #{cardBackImg,jdbcType=VARCHAR},
+			</if>
+			<if test="userNation != null">
+				user_nation = #{userNation,jdbcType=VARCHAR},
+			</if>
+			<if test="userRealname != null">
+				user_realname = #{userRealname,jdbcType=VARCHAR},
+			</if>
+			<if test="userIntegral != null">
+				user_integral = #{userIntegral,jdbcType=VARCHAR},
+			</if>
+			<if test="avatarStatus != null">
+				avatar_status = #{avatarStatus,jdbcType=INTEGER},
+			</if>
+			<if test="realnameStatus != null">
+				realname_status = #{realnameStatus,jdbcType=INTEGER},
+			</if>
+			<if test="emailStatus != null">
+				email_status = #{emailStatus,jdbcType=INTEGER},
+			</if>
+			<if test="phoneStatus != null">
+				phone_status = #{phoneStatus,jdbcType=INTEGER},
+			</if>
+			<if test="videoStatus != null">
+				video_status = #{videoStatus,jdbcType=INTEGER},
+			</if>
+			<if test="sceneStatus != null">
+				scene_status = #{sceneStatus,jdbcType=INTEGER},
+			</if>
+			<if test="userEmail != null">
+				user_email = #{userEmail,jdbcType=VARCHAR},
+			</if>
+			<if test="userSex != null">
+				user_sex = #{userSex,jdbcType=VARCHAR},
+			</if>
+			<if test="avatarImg != null">
+				avatar_img = #{avatarImg,jdbcType=VARCHAR},
+			</if>
+			<if test="userTel != null">
+				user_tel = #{userTel,jdbcType=VARCHAR},
+			</if>
+			<if test="userPhone != null">
+				user_phone = #{userPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="userQq != null">
+				user_qq = #{userQq,jdbcType=VARCHAR},
+			</if>
+			<if test="userQuestion != null">
+				user_question = #{userQuestion,jdbcType=VARCHAR},
+			</if>
+			<if test="userAnswer != null">
+				user_answer = #{userAnswer,jdbcType=VARCHAR},
+			</if>
+			<if test="userBirthday != null">
+				user_birthday = #{userBirthday,jdbcType=DATE},
+			</if>
+			<if test="addBlackTime != null">
+				add_black_time = #{addBlackTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="userProvince != null">
+				user_province = #{userProvince,jdbcType=VARCHAR},
+			</if>
+			<if test="userCity != null">
+				user_city = #{userCity,jdbcType=VARCHAR},
+			</if>
+			<if test="userArea != null">
+				user_area = #{userArea,jdbcType=VARCHAR},
+			</if>
+			<if test="userAddress != null">
+				user_address = #{userAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="userRemind != null">
+				user_remind = #{userRemind,jdbcType=VARCHAR},
+			</if>
+			<if test="userPrivacy != null">
+				user_privacy = #{userPrivacy,jdbcType=VARCHAR},
+			</if>
+			<if test="userAddtime != null">
+				user_addtime = #{userAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="userAddip != null">
+				user_addip = #{userAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="userLogintime != null">
+				user_logintime = #{userLogintime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="userLoginip != null">
+				user_loginip = #{userLoginip,jdbcType=VARCHAR},
+			</if>
+			<if test="isSystem != null">
+				is_system = #{isSystem,jdbcType=INTEGER},
+			</if>
+			<if test="isBlackList != null">
+				is_black_list = #{isBlackList,jdbcType=INTEGER},
+			</if>
+			<if test="rtUserFlag != null">
+				rt_user_flag = #{rtUserFlag,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.User">
+		update rb_user
+		set
+		type_id = #{typeId,jdbcType=INTEGER},
+		user_account =
+		#{userAccount,jdbcType=VARCHAR},
+		user_password =
+		#{userPassword,jdbcType=VARCHAR},
+		user_paypassword =
+		#{userPaypassword,jdbcType=VARCHAR},
+		user_vouch =
+		#{userVouch,jdbcType=INTEGER},
+		user_islock =
+		#{userIslock,jdbcType=INTEGER},
+		invite_userid =
+		#{inviteUserid,jdbcType=INTEGER},
+		invite_money =
+		#{inviteMoney,jdbcType=VARCHAR},
+		card_type =
+		#{cardType,jdbcType=INTEGER},
+		card_number =
+		#{cardNumber,jdbcType=VARCHAR},
+		card_front_img =
+		#{cardFrontImg,jdbcType=VARCHAR},
+		card_back_img =
+		#{cardBackImg,jdbcType=VARCHAR},
+		user_nation =
+		#{userNation,jdbcType=VARCHAR},
+		user_realname =
+		#{userRealname,jdbcType=VARCHAR},
+		user_integral =
+		#{userIntegral,jdbcType=VARCHAR},
+		avatar_status =
+		#{avatarStatus,jdbcType=INTEGER},
+		realname_status =
+		#{realnameStatus,jdbcType=INTEGER},
+		email_status =
+		#{emailStatus,jdbcType=INTEGER},
+		phone_status =
+		#{phoneStatus,jdbcType=INTEGER},
+		video_status =
+		#{videoStatus,jdbcType=INTEGER},
+		scene_status =
+		#{sceneStatus,jdbcType=INTEGER},
+		user_email =
+		#{userEmail,jdbcType=VARCHAR},
+		user_sex = #{userSex,jdbcType=VARCHAR},
+		avatar_img = #{avatarImg,jdbcType=VARCHAR},
+		user_tel =
+		#{userTel,jdbcType=VARCHAR},
+		user_phone =
+		#{userPhone,jdbcType=VARCHAR},
+		user_qq = #{userQq,jdbcType=VARCHAR},
+		user_question = #{userQuestion,jdbcType=VARCHAR},
+		user_answer =
+		#{userAnswer,jdbcType=VARCHAR},
+		user_birthday =
+		#{userBirthday,jdbcType=DATE},
+		add_black_time =
+		#{addBlackTime,jdbcType=TIMESTAMP},
+		user_province =
+		#{userProvince,jdbcType=VARCHAR},
+		user_city =
+		#{userCity,jdbcType=VARCHAR},
+		user_area = #{userArea,jdbcType=VARCHAR},
+		user_address = #{userAddress,jdbcType=VARCHAR},
+		user_remind =
+		#{userRemind,jdbcType=VARCHAR},
+		user_privacy =
+		#{userPrivacy,jdbcType=VARCHAR},
+		user_addtime =
+		#{userAddtime,jdbcType=TIMESTAMP},
+		user_addip =
+		#{userAddip,jdbcType=VARCHAR},
+		user_logintime =
+		#{userLogintime,jdbcType=TIMESTAMP},
+		user_loginip =
+		#{userLoginip,jdbcType=VARCHAR},
+		is_system =
+		#{isSystem,jdbcType=INTEGER},
+		is_black_list=#{isBlackList,jdbcType=INTEGER},
+		rt_user_flag=#{rtUserFlag,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

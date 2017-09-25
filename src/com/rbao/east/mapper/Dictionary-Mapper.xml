@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.DictionaryMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.Dictionary">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="dic_name" property="dicName" jdbcType="VARCHAR" />
+		<result column="dic_code" property="dicCode" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+		<result column="dic_url" property="dicUrl" jdbcType="VARCHAR" />
+		<result column="dic_attach" property="dicAttach" jdbcType="VARCHAR" />
+		<result column="dic_sequence" property="dicSequence" jdbcType="INTEGER" />
+		<result column="dic_ishidden" property="dicIshidden" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, dic_name, dic_code, parent_id, dic_url, dic_attach,
+		dic_sequence,
+		dic_ishidden
+	</sql>
+	
+	<select id="getDicByCode" resultMap="BaseResultMap"  parameterType="string">
+		select
+		<include refid="Base_Column_List" />
+		from rb_dictionary
+		where dic_ishidden = 1
+		and dic_code = #{dicCode}
+	</select>
+
+	<!-- 地址树 -->
+	<select id="selectAll" resultType="TreeModel" parameterType="Dictionary">
+		select id ,dic_name as title ,parent_id as pid from rb_dictionary
+	</select>
+
+	<select id="checkCodeExist" parameterType="Map" resultType="java.lang.Integer">
+		select count(*)
+		from rb_dictionary
+		<where>
+			<if test="dicCode != null">
+				and dic_code = #{dicCode}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByParentId" resultMap="BaseResultMap"
+		parameterType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_dictionary
+		<where>
+			<if test="parentId != null">
+				and parent_id = #{parentId}
+			</if>
+			<if test="dicIshidden != null">
+				and dic_ishidden = #{dicIshidden}
+			</if>
+		</where>
+	</select>
+
+	<select id="getCountByParentId" resultType="java.lang.Integer"
+		parameterType="Map">
+		select count(*)
+		<include refid="Base_Column_List" />
+		from rb_dictionary
+		<where>
+			<if test="parentId != null">
+				and parent_id = #{parentId}
+			</if>
+			<if test="dicIshidden != null">
+				and dic_ishidden = #{dicIshidden}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByCon" resultMap="BaseResultMap"
+		parameterType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_dictionary
+		<where>
+			<if test="parentId != null">
+				and parent_id = #{parentId}
+			</if>
+			<if test="dicName != null">
+				and dic_name like CONCAT('%', #{dicName}, '%')
+			</if>
+			<if test="dicCode != null">
+				and dic_code like CONCAT('%', #{dicCode}, '%')
+			</if>
+			<if test="dicUrl != null">
+				and dic_url like CONCAT('%', #{dicUrl}, '%')
+			</if>
+			<if test="dicAttach != null">
+				and dic_attach like CONCAT('%', #{dicAttach}, '%')
+			</if>
+			<if test="dicSequence != null">
+				and dic_sequence = #{dicSequence}
+			</if>
+			<if test="dicIshidden != null">
+				and dic_ishidden = #{dicIshidden}
+			</if>
+		</where>
+		order by dic_sequence asc
+	</select>
+
+	<select id="getCountByCon" resultType="java.lang.Integer"
+		parameterType="Map">
+		select count(*)
+		<include refid="Base_Column_List" />
+		from rb_dictionary
+		<where>
+			<if test="parentId != null">
+				and parent_id = #{parentId}
+			</if>
+			<if test="dicName != null">
+				and dic_name like CONCAT('%', #{dicName}, '%')
+			</if>
+			<if test="dicCode != null">
+				and dic_code like CONCAT('%', #{dicCode}, '%')
+			</if>
+			<if test="dicUrl != null">
+				and dic_url like CONCAT('%', #{dicUrl}, '%')
+			</if>
+			<if test="dicAttach != null">
+				and dic_attach like CONCAT('%', #{dicAttach}, '%')
+			</if>
+			<if test="dicSequence != null">
+				and dic_sequence = #{dicSequence}
+			</if>
+			<if test="dicIshidden != null">
+				and dic_ishidden = #{dicIshidden}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_dictionary
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		rb_dictionary
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="com.rbao.east.entity.Dictionary">
+		insert into rb_dictionary (id,
+		dic_name, dic_code,
+		parent_id, dic_url, dic_attach,
+		dic_sequence,
+		dic_ishidden)
+		values (#{id,jdbcType=INTEGER},
+		#{dicName,jdbcType=VARCHAR},
+		#{dicCode,jdbcType=VARCHAR},
+		#{parentId,jdbcType=INTEGER}, #{dicUrl,jdbcType=VARCHAR},
+		#{dicAttach,jdbcType=VARCHAR},
+		#{dicSequence,jdbcType=INTEGER},
+		#{dicIshidden,jdbcType=INTEGER})
+	</insert>
+
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.Dictionary">
+		insert into rb_dictionary
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="dicName != null">
+				dic_name,
+			</if>
+			<if test="dicCode != null">
+				dic_code,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="dicUrl != null">
+				dic_url,
+			</if>
+			<if test="dicAttach != null">
+				dic_attach,
+			</if>
+			<if test="dicSequence != null">
+				dic_sequence,
+			</if>
+			<if test="dicIshidden != null">
+				dic_ishidden,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="dicName != null">
+				#{dicName,jdbcType=VARCHAR},
+			</if>
+			<if test="dicCode != null">
+				#{dicCode,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="dicUrl != null">
+				#{dicUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="dicAttach != null">
+				#{dicAttach,jdbcType=VARCHAR},
+			</if>
+			<if test="dicSequence != null">
+				#{dicSequence,jdbcType=INTEGER},
+			</if>
+			<if test="dicIshidden != null">
+				#{dicIshidden,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.Dictionary">
+		update rb_dictionary
+		<set>
+			<if test="dicName != null">
+				dic_name = #{dicName,jdbcType=VARCHAR},
+			</if>
+			<if test="dicCode != null">
+				dic_code = #{dicCode,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="dicUrl != null">
+				dic_url = #{dicUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="dicAttach != null">
+				dic_attach = #{dicAttach,jdbcType=VARCHAR},
+			</if>
+			<if test="dicSequence != null">
+				dic_sequence = #{dicSequence,jdbcType=INTEGER},
+			</if>
+			<if test="dicIshidden != null">
+				dic_ishidden = #{dicIshidden,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.Dictionary">
+		update
+		rb_dictionary
+		set dic_name = #{dicName,jdbcType=VARCHAR},
+		dic_code =
+		#{dicCode,jdbcType=VARCHAR},
+		parent_id = #{parentId,jdbcType=INTEGER},
+		dic_url = #{dicUrl,jdbcType=VARCHAR},
+		dic_attach =
+		#{dicAttach,jdbcType=VARCHAR},
+		dic_sequence =
+		#{dicSequence,jdbcType=INTEGER},
+		dic_ishidden =
+		#{dicIshidden,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

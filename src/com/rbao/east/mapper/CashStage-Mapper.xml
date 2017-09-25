@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.CashStageMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.CashStage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="min_money" property="minMoney" jdbcType="DECIMAL" />
+    <result column="max_money" property="maxMoney" jdbcType="DECIMAL" />
+    <result column="cash_fee" property="cashFee" jdbcType="DECIMAL" />
+    <result column="add_user" property="addUser" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="add_ip" property="addIp" jdbcType="VARCHAR" />
+    <result column="update_user" property="updateUser" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="update_ip" property="updateIp" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <association property="addUsers" column="add_user"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+	<association property="updateUsers" column="update_user"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, min_money, max_money, cash_fee, add_user, add_time, add_ip, update_user, update_time, 
+    update_ip, remark
+  </sql>
+  
+  <!-- 提现手续费 -->
+  <select id="getCashFee" resultType="BIGDECIMAL" parameterType="Map">
+  	SELECT cash_fee cashFee FROM rb_cash_stage WHERE 1=1 
+  	<if test="cashMoney!=null">
+	  	<![CDATA[ and min_money <= #{cashMoney} AND max_money >= #{cashMoney} ]]>
+  	</if>
+  </select>
+  
+  <!-- 分页 -->
+  <select id="selectByEntity" resultMap="BaseResultMap" parameterType="Map">
+  	select * from rb_cash_stage
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_cash_stage
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_cash_stage
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.CashStage" >
+    insert into rb_cash_stage (id, min_money, max_money, 
+      cash_fee, add_user, add_time, 
+      add_ip, update_user, update_time, 
+      update_ip, remark)
+    values (#{id,jdbcType=INTEGER}, #{minMoney,jdbcType=DECIMAL}, #{maxMoney,jdbcType=DECIMAL}, 
+      #{cashFee,jdbcType=DECIMAL}, #{addUser,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{addIp,jdbcType=VARCHAR}, #{updateUser,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateIp,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.CashStage" >
+    insert into rb_cash_stage
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="minMoney != null" >
+        min_money,
+      </if>
+      <if test="maxMoney != null" >
+        max_money,
+      </if>
+      <if test="cashFee != null" >
+        cash_fee,
+      </if>
+      <if test="addUser != null" >
+        add_user,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="addIp != null" >
+        add_ip,
+      </if>
+      <if test="updateUser != null" >
+        update_user,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="updateIp != null" >
+        update_ip,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="minMoney != null" >
+        #{minMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="maxMoney != null" >
+        #{maxMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="cashFee != null" >
+        #{cashFee,jdbcType=DECIMAL},
+      </if>
+      <if test="addUser != null" >
+        #{addUser,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateIp != null" >
+        #{updateIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.CashStage" >
+    update rb_cash_stage
+    <set >
+      <if test="minMoney != null" >
+        min_money = #{minMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="maxMoney != null" >
+        max_money = #{maxMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="cashFee != null" >
+        cash_fee = #{cashFee,jdbcType=DECIMAL},
+      </if>
+      <if test="addUser != null" >
+        add_user = #{addUser,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        add_ip = #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="updateUser != null" >
+        update_user = #{updateUser,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateIp != null" >
+        update_ip = #{updateIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.CashStage" >
+    update rb_cash_stage
+    set min_money = #{minMoney,jdbcType=DECIMAL},
+      max_money = #{maxMoney,jdbcType=DECIMAL},
+      cash_fee = #{cashFee,jdbcType=DECIMAL},
+      add_user = #{addUser,jdbcType=INTEGER},
+      add_time = #{addTime,jdbcType=TIMESTAMP},
+      add_ip = #{addIp,jdbcType=VARCHAR},
+      update_user = #{updateUser,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_ip = #{updateIp,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

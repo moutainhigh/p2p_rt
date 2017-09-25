@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.ExtFieldMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.ExtField" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="fld_code" property="fldCode" jdbcType="VARCHAR" />
+    <result column="fld_name" property="fldName" jdbcType="VARCHAR" />
+    <result column="fld_desc" property="fldDesc" jdbcType="VARCHAR" />
+    <result column="fld_in_table" property="fldInTable" jdbcType="VARCHAR" />
+    <result column="fld_type" property="fldType" jdbcType="CHAR" />
+    <result column="style_code" property="styleCode" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, fld_code, fld_name, fld_desc, fld_in_table, fld_type, style_code, sort, remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_ext_field
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_ext_field
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.ExtField" >
+    insert into rb_ext_field (id, fld_code, fld_name, 
+      fld_desc, fld_in_table, fld_type, 
+      style_code, sort, remark
+      )
+    values (#{id,jdbcType=INTEGER}, #{fldCode,jdbcType=VARCHAR}, #{fldName,jdbcType=VARCHAR}, 
+      #{fldDesc,jdbcType=VARCHAR}, #{fldInTable,jdbcType=VARCHAR}, #{fldType,jdbcType=CHAR}, 
+      #{styleCode,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.ExtField" >
+    insert into rb_ext_field
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="fldCode != null" >
+        fld_code,
+      </if>
+      <if test="fldName != null" >
+        fld_name,
+      </if>
+      <if test="fldDesc != null" >
+        fld_desc,
+      </if>
+      <if test="fldInTable != null" >
+        fld_in_table,
+      </if>
+      <if test="fldType != null" >
+        fld_type,
+      </if>
+      <if test="styleCode != null" >
+        style_code,
+      </if>
+      <if test="sort != null" >
+        sort,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="fldCode != null" >
+        #{fldCode,jdbcType=VARCHAR},
+      </if>
+      <if test="fldName != null" >
+        #{fldName,jdbcType=VARCHAR},
+      </if>
+      <if test="fldDesc != null" >
+        #{fldDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="fldInTable != null" >
+        #{fldInTable,jdbcType=VARCHAR},
+      </if>
+      <if test="fldType != null" >
+        #{fldType,jdbcType=CHAR},
+      </if>
+      <if test="styleCode != null" >
+        #{styleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.ExtField" >
+    update rb_ext_field
+    <set >
+      <if test="fldCode != null" >
+        fld_code = #{fldCode,jdbcType=VARCHAR},
+      </if>
+      <if test="fldName != null" >
+        fld_name = #{fldName,jdbcType=VARCHAR},
+      </if>
+      <if test="fldDesc != null" >
+        fld_desc = #{fldDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="fldInTable != null" >
+        fld_in_table = #{fldInTable,jdbcType=VARCHAR},
+      </if>
+      <if test="fldType != null" >
+        fld_type = #{fldType,jdbcType=CHAR},
+      </if>
+      <if test="styleCode != null" >
+        style_code = #{styleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sort != null" >
+        sort = #{sort,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.ExtField" >
+    update rb_ext_field
+    set fld_code = #{fldCode,jdbcType=VARCHAR},
+      fld_name = #{fldName,jdbcType=VARCHAR},
+      fld_desc = #{fldDesc,jdbcType=VARCHAR},
+      fld_in_table = #{fldInTable,jdbcType=VARCHAR},
+      fld_type = #{fldType,jdbcType=CHAR},
+      style_code = #{styleCode,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 查询基本信息列表(根据rb_borrow表中的id进行查询基本信息) -->
+  <select id="getAllExtInfo" resultType="Map" parameterType="Map">
+  	SELECT
+  		ref.id AS fid, 
+		rev.id AS vid, 
+		ref.fld_code AS fFldCode, 
+		ref.fld_name AS fFldName, 
+		ref.fld_desc AS fFldDesc, 
+		ref.fld_in_table AS fFldInTable, 
+		ref.fld_type AS fFldType, 
+		ref.style_code AS fStyleCode, 
+		ref.sort AS fSort, 
+		ref.remark AS fRemark, 
+		rev.tb_related_id AS vRelatedId, 
+		rev.fld_id AS vFid, 
+		rev.f_value AS vValue, 
+		rev.f_valuew AS vValuew, 
+		rev.upt_time AS uptTime 
+	FROM 
+		rb_ext_field AS ref 
+		LEFT JOIN rb_ext_value AS rev ON ref.id = rev.fld_id 
+		AND 
+		rev.tb_related_id = #{borrowId,jdbcType=INTEGER} 
+	WHERE 
+		ref.fld_in_table = #{fldInTable,jdbcType=VARCHAR} 
+		ORDER BY 
+		fsort ASC 
+  </select>
+  
+</mapper>

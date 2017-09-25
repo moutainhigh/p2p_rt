@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.EducationMessageMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.EducationMessage">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="max_education" property="maxEducation"
+			jdbcType="INTEGER" />
+		<result column="college" property="college" jdbcType="VARCHAR" />
+		<result column="major" property="major" jdbcType="VARCHAR" />
+		<result column="date_from" property="dateFrom" jdbcType="TIMESTAMP" />
+		<result column="date_to" property="dateTo" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, max_education, college, major, date_from, date_to
+	</sql>
+	<select id="selectEduByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_education_message
+		where user_id = #{userId}
+
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_education_message
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_education_message
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.EducationMessage">
+		insert into rb_education_message (id, user_id, max_education,
+		college, major, date_from,
+		date_to)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{maxEducation,jdbcType=INTEGER},
+		#{college,jdbcType=VARCHAR}, #{major,jdbcType=VARCHAR}, #{dateFrom,jdbcType=TIMESTAMP},
+		#{dateTo,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.EducationMessage">
+		insert into rb_education_message
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="maxEducation != null">
+				max_education,
+			</if>
+			<if test="college != null">
+				college,
+			</if>
+			<if test="major != null">
+				major,
+			</if>
+			<if test="dateFrom != null">
+				date_from,
+			</if>
+			<if test="dateTo != null">
+				date_to,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="maxEducation != null">
+				#{maxEducation,jdbcType=INTEGER},
+			</if>
+			<if test="college != null">
+				#{college,jdbcType=VARCHAR},
+			</if>
+			<if test="major != null">
+				#{major,jdbcType=VARCHAR},
+			</if>
+			<if test="dateFrom != null">
+				#{dateFrom,jdbcType=TIMESTAMP},
+			</if>
+			<if test="dateTo != null">
+				#{dateTo,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.EducationMessage">
+		update rb_education_message
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="maxEducation != null">
+				max_education = #{maxEducation,jdbcType=INTEGER},
+			</if>
+			<if test="college != null">
+				college = #{college,jdbcType=VARCHAR},
+			</if>
+			<if test="major != null">
+				major = #{major,jdbcType=VARCHAR},
+			</if>
+			<if test="dateFrom != null">
+				date_from = #{dateFrom,jdbcType=TIMESTAMP},
+			</if>
+			<if test="dateTo != null">
+				date_to = #{dateTo,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.EducationMessage">
+		update rb_education_message
+		set user_id = #{userId,jdbcType=INTEGER},
+		max_education = #{maxEducation,jdbcType=INTEGER},
+		college = #{college,jdbcType=VARCHAR},
+		major = #{major,jdbcType=VARCHAR},
+		date_from = #{dateFrom,jdbcType=TIMESTAMP},
+		date_to = #{dateTo,jdbcType=TIMESTAMP}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.TreeModelMapper">
+	<!--<cache type="org.mybatis.caches.ehcache.EhcacheCache" />
+	<cache-ref namespace="com.rbao.east.mapper.UserMapper" />
+	<cache-ref namespace="com.rbao.east.mapper.SysModuleMapper" />  -->
+	<select id="getTreeModelByUserId" parameterType="long"
+		resultType="TreeModel">
+		SELECT s.id,s.module_name as title,s.module_parent_id as pid,s.module_url as
+		url FROM sys_module s LEFT JOIN sys_role_module rm ON
+		s.id=rm.sys_module_id
+		LEFT JOIN sys_role r ON rm.sys_role_id=r.id LEFT
+		JOIN sys_user_role ur ON r.id=ur.sys_role_id
+		LEFT JOIN rb_user u ON
+		ur.sys_user_id=u.id
+		WHERE u.id=#{userId} and r.role_status=1 and
+		s.module_view=1
+		GROUP BY s.id
+	</select>
+	<!-- 得到角色树 -->
+	<select id="getSysRoleTreeByUserId" parameterType="long"
+		resultType="TreeModel">
+		SELECT r.id,r.role_name as title,r.role_super as pid FROM sys_role r LEFT
+		JOIN sys_user_role ur
+		ON r.id=ur.sys_role_id LEFT JOIN rb_user u ON
+		u.id=ur.sys_user_id
+		WHERE r.role_status=1 AND u.id= #{userId} and r.id > 1
+		GROUP BY r.id
+	</select>
+		<!-- 得到所有角色树 -->
+	<select id="getAllSysRoleTree" parameterType="long"
+		resultType="TreeModel">
+		SELECT r.id,r.role_name as title,r.role_super as pid FROM sys_role r LEFT
+		JOIN sys_user_role ur
+		ON r.id=ur.sys_role_id LEFT JOIN rb_user u ON
+		u.id=ur.sys_user_id
+		WHERE r.role_status=1
+		GROUP BY r.id
+	</select>
+
+	<!-- 得到角色权限树 -->
+	<select id="getTreeModelByRoleId" parameterType="long"
+		resultType="TreeModel">
+		SELECT s.id,s.module_name as title,s.module_parent_id as pid FROM sys_module
+		s
+		LEFT JOIN sys_role_module rm ON s.id=rm.sys_module_id
+		LEFT JOIN sys_role r
+		ON r.id=rm.sys_role_id
+		WHERE r.role_status=1 and s.module_view=1 AND
+		r.id=#{roleId}
+		GROUP BY s.id
+	</select>
+
+
+	<!-- 得到权限树节点下的权限信息 -->
+	<select id="getTreeModelListByRightId" parameterType="map"
+		resultType="SysModule">
+		SELECT distinct m.id,m.module_name as moduleName,m.module_sequence as
+		moduleSequence,m.module_url as moduleUrl,m.module_describe as
+		moduleDescribe,m.module_view as moduleView FROM sys_role_module rm
+		LEFT JOIN sys_module m ON rm.sys_module_id=m.id
+		LEFT JOIN sys_role r ON rm.sys_role_id=r.id
+		LEFT JOIN sys_user_role ur ON
+		ur.sys_role_id=r.id
+		WHERE ur.sys_user_id=#{userId}
+		AND r.role_status=1 and m.module_view=1
+		<if test="module_name ==null">
+			AND m.module_parent_id=#{moduleId} OR m.id=#{moduleId}
+		</if>
+		<if test="module_name !=null">
+			and m.module_name like CONCAT('%', #{module_name}, '%')
+		</if>
+	</select>
+	<!-- 得到权限树节点下权限信息总条数 -->
+	<select id="getTreeModelListCountByRightId" parameterType="map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(distinct m.id) FROM sys_role_module rm
+		LEFT JOIN
+		sys_module m ON rm.sys_module_id=m.id
+		LEFT JOIN sys_role r ON rm.sys_role_id=r.id
+		LEFT JOIN sys_user_role ur ON
+		ur.sys_role_id=r.id
+		WHERE ur.sys_user_id=#{userId}
+		AND r.role_status=1 and m.module_view=1
+		<if test="module_name ==null">
+			AND m.module_parent_id=#{moduleId} OR m.id=#{moduleId}
+		</if>
+		<if test="module_name !=null">
+			and m.module_name like CONCAT('%', #{module_name}, '%')
+		</if>
+	</select>
+
+	<!-- 得到用户角色树 -->
+	<select id="getUserRoleListByUserId" parameterType="long"
+		resultType="TreeModel">
+		SELECT r.id,r.role_name as title,r.role_super as pid FROM sys_role r
+		LEFT
+		JOIN sys_user_role ur ON r.id=ur.sys_role_id
+		LEFT JOIN rb_user u ON
+		u.id=ur.sys_user_id
+		WHERE r.role_status=1 AND u.id=#{userId} and r.id > 1
+		GROUP BY r.id
+	</select>
+
+
+
+	<select id="showUserListByRoleId" parameterType="long"
+		resultType="TreeModel">
+		SELECT distinct u.id,u.user_account as title FROM rb_user u
+		LEFT JOIN
+		sys_user_role ur ON u.id=ur.sys_user_id
+		LEFT JOIN sys_role r ON
+		ur.sys_role_id=r.id
+		WHERE r.role_status=1 AND u.is_system=1 
+		<foreach collection="roleChildIds" close=")" item="role_id"
+			open="AND (" separator="OR">
+			r.id=#{role_id}
+		</foreach>
+		<if test="userBeginId != null">
+		 and u.id >= #{userBeginId}
+		</if>
+		ORDER BY u.id
+	</select>
+
+	<select id="selectAllFrontUser" resultType="TreeModel"
+		parameterType="long">
+		SELECT
+		r.id,r.user_account AS title
+		FROM rb_user r
+		WHERE is_system=2
+
+		ORDER BY id DESC
+	</select>
+
+</mapper>

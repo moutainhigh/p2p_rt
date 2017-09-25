@@ -1,0 +1,785 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.BorrowTransferMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.BorrowTransfer">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="tender_id" property="tenderId" jdbcType="INTEGER" />
+		<result column="transfer_money" property="transferMoney"
+			jdbcType="DECIMAL" />
+		<result column="transfer_status" property="transferStatus"
+			jdbcType="INTEGER" />
+		<result column="transfer_interest_rate" property="transferInterestRate"
+			jdbcType="DECIMAL" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+		<result column="transfer_fee" property="transferFee" jdbcType="DECIMAL" />
+		<result column="last_auction_money" property="lastAuctionMoney"
+			jdbcType="DECIMAL" />
+		<result column="repossessed_capital" property="repossessedCapital"
+			jdbcType="DECIMAL" />
+		<result column="repossessed_interest" property="repossessedInterest" jdbcType="DECIMAL" />
+		<result column="succ_time" property="succTime" jdbcType="TIMESTAMP" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="accept_user_id" property="acceptUserId" jdbcType="INTEGER" />
+		<result column="avatar_img" property="avatarImg" jdbcType="VARCHAR" />
+		<result column="create_ip" property="createIp" jdbcType="VARCHAR" />
+		<result column="borrow_title" property="borrowTitle" jdbcType="VARCHAR" />
+		<result column="bid_kind" property="bidKind" jdbcType="INTEGER" />
+		<result column="residualMaturity" property="residualMaturity"
+			jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, tender_id, transfer_money, transfer_status, transfer_interest_rate,
+		create_time,succ_time,user_id,accept_user_id,
+		end_time, transfer_fee,repossessed_capital,last_auction_money,create_ip,repossessed_interest
+		
+	</sql>
+	
+	<!-- 债权转让统计 -->
+	<select id="transferSummary" parameterType="Map" resultType="Map">
+		SELECT
+		    borrow.borrow_title,
+		    COUNT(transfer_id) 'surplus_count',
+		    tender_user.user_account 'borrow_user_account',
+		    tender_user.user_realname 'borrow_user_realname',
+		    transfer.create_time,
+		    transfer.repossessed_interest,
+		    SUM(transfer.repossessed_interest + transfer.repossessed_capital) 'worth',
+		    transfer.last_auction_money,
+		    transfer.transfer_fee,
+		    transfer.last_auction_money - SUM(transfer.repossessed_interest + transfer.repossessed_capital) 'profit_loss',
+		    users.user_account,
+		    users.user_realname,
+		    transfer.end_time
+		FROM
+		    rb_borrow_transfer transfer,
+		    rb_borrow_tender tender,
+		    rb_user tender_user,
+		    rb_borrow borrow,
+		    rb_borrow_transfer_repossessed transfer_repossessed,
+		    rb_user users
+		WHERE
+		    transfer.tender_id = tender.id
+		    AND borrow.id = tender.borrow_id
+		    AND borrow.user_id = tender_user.id
+		    AND transfer_repossessed.transfer_id = transfer.id
+		    AND transfer.accept_user_id = users.id
+		    <if test="borrow_user_account != null">
+		    	AND tender_user.user_account LIKE CONCAT('%', #{borrow_user_account}, '%')
+		    </if>
+		    <if test="user_account != null">
+		    	AND users.user_account LIKE CONCAT('%', #{user_account}, '%')
+		    </if>
+		    <if test="create_time_begin != null">
+		   		<![CDATA[	AND DATE_FORMAT(transfer.create_time, '%y-%m-%d') >= #{create_time_begin}	]]>
+		   	</if>
+		   	<if test="create_time_end != null">
+		   		<![CDATA[	AND DATE_FORMAT(transfer.create_time, '%y-%m-%d') <= #{create_time_end}	]]>
+		   	</if>
+		   	<if test="end_time_begin != null">
+		   		<![CDATA[	AND DATE_FORMAT(transfer.end_time, '%y-%m-%d') >= #{end_time_begin}	]]>
+		   	</if>
+		   	<if test="end_time_end != null">
+		   		<![CDATA[	AND DATE_FORMAT(transfer.end_time, '%y-%m-%d') <= #{end_time_end}	]]>
+		   	</if>
+		GROUP BY
+		    borrow.borrow_title
+	</select>
+	
+	<!-- 债权转让统计总记录数 -->
+	<select id="getTransferTotalCount" parameterType="Map" resultType="Map">
+		SELECT
+		    count(*)
+		FROM
+		    rb_borrow_transfer transfer,
+		    rb_borrow_tender tender,
+		    rb_user tender_user,
+		    rb_borrow borrow,
+		    rb_borrow_transfer_repossessed transfer_repossessed,
+		    rb_user users
+		WHERE
+		    transfer.tender_id = tender.id
+		    AND borrow.id = tender.borrow_id
+		    AND borrow.user_id = tender_user.id
+		    AND transfer_repossessed.transfer_id = transfer.id
+		    AND transfer.accept_user_id = users.id
+		    <if test="borrow_user_account != null">
+		    	AND tender_user.user_account LIKE CONCAT('%', #{borrow_user_account}, '%')
+		    </if>
+		    <if test="user_account != null">
+		    	AND users.user_account LIKE CONCAT('%', #{user_account}, '%')
+		    </if>
+		    <if test="create_time_begin != null">
+		   		<![CDATA[	AND DATE_FORMAT(transfer.create_time, '%y-%m-%d') >= #{create_time_begin}	]]>
+		   	</if>
+		   	<if test="create_time_end != null">
+		   		<![CDATA[	AND DATE_FORMAT(transfer.create_time, '%y-%m-%d') <= #{create_time_end}	]]>
+		   	</if>
+		   	<if test="end_time_begin != null">
+		   		<![CDATA[	AND DATE_FORMAT(transfer.end_time, '%y-%m-%d') >= #{end_time_begin}	]]>
+		   	</if>
+		   	<if test="end_time_end != null">
+		   		<![CDATA[	AND DATE_FORMAT(transfer.end_time, '%y-%m-%d') <= #{end_time_end}	]]>
+		   	</if>
+		GROUP BY
+		    borrow.borrow_title
+	</select>
+	
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,(SELECT COUNT(1) FROM rb_borrow_transfer_repossessed tr WHERE
+		tr.transfer_id=bt.id) AS residualMaturity
+		from rb_borrow_transfer bt
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_borrow_transfer
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<!-- 根据参数，查询数据 -->
+	<select id="getByTransferUserid" resultMap="BaseResultMap"
+		parameterType="Map">
+		select
+		*
+		from rb_borrow_transfer
+		where 1 = 1
+		<if test="inStatus != null">
+			and transfer_status in
+			<foreach collection="inStatus" item="item" index="index"
+				open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="userId != null">
+			and user_id = #{userId}
+		</if>
+		order by id desc;
+	</select>
+	
+	<select id="getByTenderIdAndStatus" resultMap="BaseResultMap"
+		parameterType="Map">
+		select
+		*
+		from rb_borrow_transfer
+		where tender_id = #{tenderId,jdbcType=INTEGER}
+		<if test="inStatus != null">
+			and transfer_status in
+			<foreach collection="inStatus" item="item" index="index"
+				open="(" separator="," close=")">
+				#{inStatus}
+			</foreach>
+		</if>
+		order by id desc;
+	</select>
+
+	<select id="selectBorrowTransferByUserId" parameterType="map" resultType="java.util.HashMap">
+		SELECT bta.*,b.borrow_title FROM rb_borrow_transfer_auction bta
+		LEFT JOIN rb_borrow_transfer bt ON bta.transfer_id=bt.id
+		LEFT JOIN rb_borrow_tender bte ON bt.tender_id=bte.id
+		LEFT JOIN rb_borrow b ON bte.borrow_id=b.id
+		WHERE bta.user_id=#{userId}
+		<if test="borrowTitle !=null">
+			AND	b.borrow_title LIKE CONCAT('%', #{borrowTitle}, '%')
+		</if>
+		ORDER BY bta.create_time DESC
+	</select>
+
+	<select id="selectBorrowTransferCountByUserId" parameterType="map" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM rb_borrow_transfer_auction bta
+		LEFT JOIN rb_borrow_transfer bt ON bta.transfer_id=bt.id
+		LEFT JOIN rb_borrow_tender bte ON bt.tender_id=bte.id
+		LEFT JOIN rb_borrow b ON bte.borrow_id=b.id
+		WHERE bta.user_id=#{userId}
+		<if test="borrowTitle !=null">
+			AND b.borrow_title LIKE CONCAT('%', #{borrowTitle}, '%')
+		</if>
+		ORDER BY bta.create_time DESC
+	</select>
+
+
+	<select id="selectBorrowTransferPastDues" parameterType="map" resultMap="BaseResultMap">
+	SELECT bt.*,b.borrow_title FROM rb_borrow_transfer bt
+	LEFT JOIN rb_borrow_tender bte ON bt.tender_id=bte.id
+	LEFT JOIN rb_borrow b ON bte.borrow_id=b.id
+	<![CDATA[WHERE 	bt.end_time<=NOW() AND  bt.transfer_status=1 ]]>
+	</select>
+
+
+	<select id="selectBorrowTransferRepossessedIds" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		SELECT repossessed_id FROM rb_borrow_transfer_repossessed
+		WHERE transfer_id=#{transferId}
+	</select>
+
+	<select id="selectBorrowRepossessedByTransferId" parameterType="map"
+		resultType="java.util.HashMap">
+		SELECT br.* FROM rb_borrow_transfer bt
+		LEFT JOIN rb_borrow_transfer_repossessed btr ON bt.id=btr.transfer_id
+		INNER JOIN rb_borrow_repossessed br ON btr.repossessed_id=br.id
+		WHERE bt.id=#{transferId}
+	</select>
+
+	<select id="selectBorrowRepossessedCountByTransferId"
+		parameterType="map" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM rb_borrow_transfer bt
+		LEFT JOIN rb_borrow_transfer_repossessed btr ON bt.id=btr.transfer_id
+		INNER JOIN rb_borrow_repossessed br ON btr.repossessed_id=br.id
+		WHERE bt.id=#{transferId}
+	</select>
+
+
+	<select id="selectBorrowTransferAuction" parameterType="map"
+		resultType="java.util.HashMap">
+		SELECT bta.*,u.user_account as userAccount
+		FROM rb_borrow_transfer bt
+		inner JOIN rb_borrow_transfer_auction bta ON bt.id=bta.transfer_id
+		LEFT JOIN rb_user u ON u.id=bta.user_id
+		WHERE bt.id=#{transferId}
+		<if test="userAccount !=null">
+			AND u.user_account LIKE CONCAT('%', #{userAccount}, '%')
+		</if>
+		ORDER BY bta.auction_money DESC
+	</select>
+
+
+	<select id="selectBorrowTransferAuctionCount" parameterType="map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM rb_borrow_transfer bt
+		inner JOIN rb_borrow_transfer_auction bta ON bt.id=bta.transfer_id
+		LEFT JOIN rb_user u ON u.id=bta.user_id
+		WHERE bt.id=#{transferId}
+		<if test="userAccount !=null">
+			AND u.user_account LIKE CONCAT('%', #{userAccount}, '%')
+		</if>
+		ORDER BY bta.auction_money DESC
+	</select>
+
+
+	<select id="getBorrowTransferListOnIndex" parameterType="map"
+		resultMap="BaseResultMap">
+		SELECT btr.*,b.borrow_title,u.avatar_img,b.bid_kind FROM rb_borrow_transfer btr
+		LEFT JOIN rb_borrow_tender bt ON btr.tender_id=bt.id
+		LEFT JOIN rb_borrow b ON bt.borrow_id=b.id
+		LEFT JOIN rb_user u ON bt.user_id=u.id
+		WHERE btr.transfer_status=1
+		ORDER BY btr.create_time ASC
+		LIMIT 5
+	</select>
+
+	<select id="selectBorrowTransList" parameterType="map"
+		resultType="java.util.HashMap">
+		SELECT btr.*,b.borrow_title,b.id as borrowId,b.bid_kind,b.tender_award,b.proportion_rate,b.part_amount,b.repayment_style,u.user_account,u.user_realname userRealName,u.user_province,
+		u.user_city,
+		u.user_area,
+		u.user_logintime,u.avatar_img,NOW() AS nowDate FROM rb_borrow_transfer btr
+		LEFT JOIN rb_borrow_tender bt ON btr.tender_id=bt.id
+		LEFT JOIN rb_borrow b ON bt.borrow_id=b.id
+		LEFT JOIN rb_user u ON u.id=bt.user_id
+		<where>
+			<if test="transferStatus !=null">
+				AND btr.transfer_status=#{transferStatus}
+			</if>
+			<if test="borrowTitle !=null ">
+				AND b.borrow_title LIKE CONCAT('%', #{borrowTitle}, '%')
+			</if>
+			<if test="userAccount != null">
+				AND u.user_account LIKE CONCAT('%', #{userAccount}, '%')
+			</if>
+		</where>
+		<choose>
+			<when test="orderType == 2">
+				<if test="checkNum == 1">
+					ORDER BY btr.transfer_interest_rate desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.transfer_interest_rate asc
+				</if>
+			</when>
+			<when test="orderType == 3">
+				<if test="checkNum == 1">
+					ORDER BY btr.repossessed_capital desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.repossessed_capital asc
+				</if>
+			</when>
+			<when test="orderType == 4">
+				<if test="checkNum == 1">
+					ORDER BY btr.transfer_money desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.transfer_money asc
+				</if>
+			</when>
+			<when test="orderType == 5">
+				<if test="checkNum == 1">
+					ORDER BY btr.last_auction_money desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.last_auction_money asc
+				</if>
+			</when>
+			<when test="orderType == 6">
+				<if test="checkNum == 1">
+					ORDER BY btr.end_time desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.end_time asc
+				</if>
+			</when>
+			<otherwise>
+				ORDER BY btr.create_time ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="selectBorrowCountTransList" parameterType="map"
+		resultType="java.lang.Integer">
+		SELECT Count(1) FROM rb_borrow_transfer btr
+		LEFT JOIN rb_borrow_tender bt ON btr.tender_id=bt.id
+		LEFT JOIN rb_borrow b ON bt.borrow_id=b.id
+		LEFT JOIN rb_user u ON u.id=bt.user_id
+		<where>
+			
+			<if test="transferStatus !=null">
+				AND btr.transfer_status=#{transferStatus}
+			</if>
+			<if test="borrowTitle !=null ">
+				AND b.borrow_title LIKE CONCAT('%', #{borrowTitle}, '%')
+			</if>
+			<if test="userAccount != null">
+				AND u.user_account LIKE CONCAT('%', #{userAccount}, '%')
+			</if>
+		</where>
+		
+		<choose>
+			<when test="orderType == 2">
+				ORDER BY btr.transfer_interest_rate desc
+			</when>
+			<when test="orderType == 3">
+				ORDER BY btr.repossessed_capital desc
+			</when>
+			<when test="orderType == 4">
+				ORDER BY btr.transfer_money desc
+			</when>
+			<when test="orderType == 5">
+				ORDER BY btr.last_auction_money desc
+			</when>
+			<when test="orderType == 6">
+				ORDER BY btr.end_time desc
+			</when>
+			<otherwise>
+				ORDER BY btr.create_time ASC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="selectBorrowTransListData" parameterType="map" resultType="java.util.HashMap">
+		SELECT btr.*,b.borrow_title,b.annual_interest_rate,b.id as borrowId,b.bid_kind,b.tender_award,b.proportion_rate,b.part_amount,b.repayment_style,u.user_account,u.user_realname userRealName,u.user_province,
+		u.user_city,DATEDIFF(btr.end_time, NOW()) leftDays,
+		u.user_area,
+		u.user_logintime,u.avatar_img,NOW() AS nowDate FROM rb_borrow_transfer btr
+		LEFT JOIN rb_borrow_tender bt ON btr.tender_id=bt.id
+		LEFT JOIN rb_borrow b ON bt.borrow_id=b.id
+		LEFT JOIN rb_user u ON u.id=bt.user_id
+		<where>
+			1 = 1
+			<if test="transferStatus !=null">
+				AND btr.transfer_status=#{transferStatus}
+			</if>
+			<if test="borrowTitle !=null ">
+				AND b.borrow_title LIKE CONCAT('%', #{borrowTitle}, '%')
+			</if>
+			<if test="userAccount != null">
+				AND u.user_account LIKE CONCAT('%', #{userAccount}, '%')
+			</if>
+			
+			<!-- 标种 -->
+			<if test="borrowtypeArrays != null">
+				<foreach collection="borrowtypeArrays" item="term" open=" AND (" close=" )" separator="or">
+						b.bid_kind = #{term }
+				</foreach>
+			</if>
+			<!-- 利率 -->
+			<if test="rateArrays != null">
+				<foreach collection="rateArrays" item="term" open=" AND (" close=" )" separator="or">
+						<choose>
+							<when test="term == '12'">
+								<![CDATA[ b.annual_interest_rate <=12]]>
+							</when>
+							<when test="term == '1218'">
+								<![CDATA[( b.annual_interest_rate >= 12 AND b.annual_interest_rate <=18  )]]>
+							</when>
+							<when test="term == '18'">
+								<![CDATA[b.annual_interest_rate >= 18 ]]>
+							</when>
+						</choose>
+				</foreach>
+			</if>
+			<!-- 期限 -->
+			<if test="dateArrays != null">
+				<foreach collection="dateArrays" item="term" open=" AND (" close=" )" separator="or">
+						<choose>
+							<when test="term == '3090'">
+								<![CDATA[( if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) >= 30 AND if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=90  )]]>
+							</when>
+							<when test="term == '90180'">
+								<![CDATA[( if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) >= 90 AND if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=180  )]]>
+							</when>
+							<when test="term == '180360'">
+								<![CDATA[( if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) >= 180 AND if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=360  )]]>
+							</when>
+						</choose>
+				</foreach>
+			</if>
+			<!-- 还款方式 -->
+			<if test="securitymodeArrays != null">
+				<foreach collection="securitymodeArrays" item="term" open=" AND (" close=" )" separator="or">
+						b.repayment_style = #{term}
+				</foreach>
+			</if>
+		</where>
+		<choose>
+			<when test="orderType == 2">
+				<if test="checkNum == 1">
+					ORDER BY btr.transfer_interest_rate desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.transfer_interest_rate asc
+				</if>
+			</when>
+			<when test="orderType == 3">
+				<if test="checkNum == 1">
+					ORDER BY btr.repossessed_capital desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.repossessed_capital asc
+				</if>
+			</when>
+			<when test="orderType == 4">
+				<if test="checkNum == 1">
+					ORDER BY btr.transfer_money desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.transfer_money asc
+				</if>
+			</when>
+			<when test="orderType == 5">
+				<if test="checkNum == 1">
+					ORDER BY btr.last_auction_money desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.last_auction_money asc
+				</if>
+			</when>
+			<when test="orderType == 6">
+				<if test="checkNum == 1">
+					ORDER BY btr.end_time desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.end_time asc
+				</if>
+			</when>
+			<otherwise>
+				ORDER BY btr.create_time ASC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="selectBorrowCountTransListData" parameterType="map" resultType="java.lang.Integer">
+		SELECT Count(1)  FROM rb_borrow_transfer btr
+		LEFT JOIN rb_borrow_tender bt ON btr.tender_id=bt.id
+		LEFT JOIN rb_borrow b ON bt.borrow_id=b.id
+		LEFT JOIN rb_user u ON u.id=bt.user_id
+		<where>
+			1 = 1
+			<if test="transferStatus !=null">
+				AND btr.transfer_status=#{transferStatus}
+			</if>
+			<if test="borrowTitle !=null ">
+				AND b.borrow_title LIKE CONCAT('%', #{borrowTitle}, '%')
+			</if>
+			<if test="userAccount != null">
+				AND u.user_account LIKE CONCAT('%', #{userAccount}, '%')
+			</if>
+			
+			<!-- 标种 -->
+			<if test="borrowtypeArrays != null">
+				<foreach collection="borrowtypeArrays" item="term" open=" AND (" close=" )" separator="or">
+						b.bid_kind = #{term }
+				</foreach>
+			</if>
+			<!-- 利率 -->
+			<if test="rateArrays != null">
+				<foreach collection="rateArrays" item="term" open=" AND (" close=" )" separator="or">
+						<choose>
+                            <when test="term == '12'">
+                                <![CDATA[ b.annual_interest_rate <=12]]>
+                            </when>
+                            <when test="term == '1218'">
+                                <![CDATA[( b.annual_interest_rate >= 12 AND b.annual_interest_rate <=18  )]]>
+                            </when>
+                            <when test="term == '18'">
+                                <![CDATA[b.annual_interest_rate >= 18 ]]>
+                            </when>
+						</choose>
+				</foreach>
+			</if>
+			<!-- 期限 -->
+			<if test="dateArrays != null">
+				<foreach collection="dateArrays" item="term" open=" AND (" close=" )" separator="or">
+						<choose>
+							<when test="term == '3090'">
+								<![CDATA[( if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) >= 30 AND if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=90  )]]>
+							</when>
+							<when test="term == '90180'">
+								<![CDATA[( if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) >= 90 AND if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=180  )]]>
+							</when>
+							<when test="term == '180360'">
+								<![CDATA[( if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) >= 180 AND if(b.is_day=1,b.borrow_time_limit,borrow_time_limit*30) <=360  )]]>
+							</when>
+						</choose>
+				</foreach>
+			</if>
+			<!-- 还款方式 -->
+			<if test="securitymodeArrays != null">
+				<foreach collection="securitymodeArrays" item="term" open=" AND (" close=" )" separator="or">
+						b.repayment_style = #{term}
+				</foreach>
+			</if>
+		</where>
+		<choose>
+			<when test="orderType == 2">
+				<if test="checkNum == 1">
+					ORDER BY btr.transfer_interest_rate desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.transfer_interest_rate asc
+				</if>
+			</when>
+			<when test="orderType == 3">
+				<if test="checkNum == 1">
+					ORDER BY btr.repossessed_capital desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.repossessed_capital asc
+				</if>
+			</when>
+			<when test="orderType == 4">
+				<if test="checkNum == 1">
+					ORDER BY btr.transfer_money desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.transfer_money asc
+				</if>
+			</when>
+			<when test="orderType == 5">
+				<if test="checkNum == 1">
+					ORDER BY btr.last_auction_money desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.last_auction_money asc
+				</if>
+			</when>
+			<when test="orderType == 6">
+				<if test="checkNum == 1">
+					ORDER BY btr.end_time desc
+				</if>
+				<if test="checkNum == 0">
+					ORDER BY btr.end_time asc
+				</if>
+			</when>
+			<otherwise>
+				ORDER BY btr.create_time ASC
+			</otherwise>
+		</choose>
+	</select>
+
+
+
+	<insert id="insertborrowTransferRepossess" parameterType="map">
+
+		insert into rb_borrow_transfer_repossessed (transfer_id,
+		repossessed_id)
+		values
+		<foreach collection="waitRepoList" item="item" index="index"
+			separator=",">
+			( #{transferId}, #{item.id})
+		</foreach>
+
+	</insert>
+
+	<insert id="insert" parameterType="com.rbao.east.entity.BorrowTransfer">
+		insert into rb_borrow_transfer (id, tender_id, transfer_money,
+		transfer_status, transfer_interest_rate, create_time,
+		end_time, transfer_fee)
+		values (#{id,jdbcType=INTEGER}, #{tenderId,jdbcType=INTEGER},
+		#{transferMoney,jdbcType=DECIMAL},
+		#{transferStatus,jdbcType=INTEGER}, #{transferInterestRate,jdbcType=DECIMAL},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{endTime,jdbcType=TIMESTAMP}, #{transferFee,jdbcType=DECIMAL})
+	</insert>
+	
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.BorrowTransfer"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into rb_borrow_transfer
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		
+		<if test="repossessedInterest != null">
+				repossessed_interest,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+		
+			<if test="id != null">
+				id,
+			</if>
+			<if test="tenderId != null">
+				tender_id,
+			</if>
+			<if test="transferMoney != null">
+				transfer_money,
+			</if>
+			<if test="transferStatus != null">
+				transfer_status,
+			</if>
+			<if test="transferInterestRate != null">
+				transfer_interest_rate,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="endTime != null">
+				end_time,
+			</if>
+			<if test="transferFee != null">
+				transfer_fee,
+			</if>
+			<if test="createIp != null">
+				create_ip,
+			</if>
+			<if test="repossessedCapital != null">
+				repossessed_capital,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+		
+		<if test="repossessedInterest != null">
+				#{repossessedInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+		
+		
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="tenderId != null">
+				#{tenderId,jdbcType=INTEGER},
+			</if>
+			<if test="transferMoney != null">
+				#{transferMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="transferStatus != null">
+				#{transferStatus,jdbcType=INTEGER},
+			</if>
+			<if test="transferInterestRate != null">
+				#{transferInterestRate,jdbcType=DECIMAL},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endTime != null">
+				#{endTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="transferFee != null">
+				#{transferFee,jdbcType=DECIMAL},
+			</if>
+			<if test="createIp != null">
+				#{createIp,jdbcType=VARCHAR},
+			</if>
+			<if test="repossessedCapital != null">
+				#{repossessedCapital,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.BorrowTransfer">
+		update rb_borrow_transfer
+		<set>
+			<if test="tenderId != null">
+				tender_id = #{tenderId,jdbcType=INTEGER},
+			</if>
+			<if test="transferMoney != null">
+				transfer_money = #{transferMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="transferStatus != null">
+				transfer_status = #{transferStatus,jdbcType=INTEGER},
+			</if>
+			<if test="transferInterestRate != null">
+				transfer_interest_rate = #{transferInterestRate,jdbcType=DECIMAL},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endTime != null">
+				end_time = #{endTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="transferFee != null">
+				transfer_fee = #{transferFee,jdbcType=DECIMAL},
+			</if>
+			<if test="lastAuctionMoney != null">
+				last_auction_money = #{lastAuctionMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="acceptUserId != null">
+				accept_user_id = #{acceptUserId,jdbcType=INTEGER},
+			</if>
+			<if test="succTime != null">
+				succ_time = #{succTime,jdbcType=TIMESTAMP},
+			</if>
+			
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.BorrowTransfer">
+		update rb_borrow_transfer
+		set tender_id = #{tenderId,jdbcType=INTEGER},
+		transfer_money = #{transferMoney,jdbcType=DECIMAL},
+		transfer_status = #{transferStatus,jdbcType=INTEGER},
+		transfer_interest_rate = #{transferInterestRate,jdbcType=DECIMAL},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		end_time = #{endTime,jdbcType=TIMESTAMP},
+		transfer_fee = #{transferFee,jdbcType=DECIMAL}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="findBorrowTransferDeal" resultType="Map" parameterType="Map">
+	SELECT 
+		u.user_account userAccount,
+		t.agreement_path agreePath,
+		t.agreement_time agreeTime,
+		rbt.transfer_money transferMoney,
+		rbt.last_auction_money lastMoney,
+		us.user_account tansferAccount 
+	FROM
+	     rb_borrow_transfer rbt 
+	     INNER JOIN rb_borrow_tender t ON rbt.tender_id=t.id
+	     INNER JOIN rb_user u ON u.id=t.user_id
+	     INNER JOIN rb_borrow_transfer_auction ta ON ta.transfer_id=rbt.id
+	     INNER JOIN rb_user us ON us.id=ta.user_id
+<where>
+			ta.status = 2
+	     <if test="userAccount!=null and userAccount!=''">
+	     	and u.user_account=#{userAccout}
+	     </if>
+	      <if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(t.agreement_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+	    </if>
+	    <if test="endTime !=null and endTime !=''">
+	    	<![CDATA[	and DATE_FORMAT(t.agreement_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+	    </if>
+</where>
+	</select>
+</mapper>

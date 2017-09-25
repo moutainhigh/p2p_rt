@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.RelationMessageMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.RelationMessage">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="address_tel" property="addressTel" jdbcType="VARCHAR" />
+		<result column="mobile_phone" property="mobilePhone" jdbcType="VARCHAR" />
+		<result column="province" property="province" jdbcType="VARCHAR" />
+		<result column="city" property="city" jdbcType="VARCHAR" />
+		<result column="area" property="area" jdbcType="VARCHAR" />
+		<result column="postcode" property="postcode" jdbcType="VARCHAR" />
+		<result column="new_address" property="newAddress" jdbcType="VARCHAR" />
+		<result column="linkman2_name" property="linkman2Name"
+			jdbcType="VARCHAR" />
+		<result column="linkman2_relation" property="linkman2Relation"
+			jdbcType="INTEGER" />
+		<result column="linkman2_phone" property="linkman2Phone"
+			jdbcType="VARCHAR" />
+		<result column="linkman2_tel" property="linkman2Tel" jdbcType="VARCHAR" />
+		<result column="linkman3_name" property="linkman3Name"
+			jdbcType="VARCHAR" />
+		<result column="linkman3_relation" property="linkman3Relation"
+			jdbcType="INTEGER" />
+		<result column="linkman3_phone" property="linkman3Phone"
+			jdbcType="VARCHAR" />
+		<result column="linkman3_tel" property="linkman3Tel" jdbcType="VARCHAR" />
+		<result column="linkman4_name" property="linkman4Name"
+			jdbcType="VARCHAR" />
+		<result column="linkman4_relation" property="linkman4Relation"
+			jdbcType="INTEGER" />
+		<result column="linkman4_phone" property="linkman4Phone"
+			jdbcType="VARCHAR" />
+		<result column="linkman4_tel" property="linkman4Tel" jdbcType="VARCHAR" />
+		<result column="msn" property="msn" jdbcType="VARCHAR" />
+		<result column="qq" property="qq" jdbcType="VARCHAR" />
+		<result column="ww" property="ww" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, address_tel, mobile_phone, province, city, area, postcode,
+		new_address,
+		linkman2_name, linkman2_relation, linkman2_phone, linkman2_tel, linkman3_name,
+		linkman3_relation,
+		linkman3_phone, linkman3_tel, linkman4_name, linkman4_relation, linkman4_phone,
+		linkman4_tel,
+		msn, qq, ww
+	</sql>
+	<select id="selectByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_relation_message
+		where user_id = #{userId}
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_relation_message
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_relation_message
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.RelationMessage">
+		insert into rb_relation_message (id, user_id, address_tel,
+		mobile_phone, province, city,
+		area, postcode, new_address,
+		linkman2_name, linkman2_relation, linkman2_phone,
+		linkman2_tel, linkman3_name, linkman3_relation,
+		linkman3_phone, linkman3_tel, linkman4_name,
+		linkman4_relation, linkman4_phone, linkman4_tel,
+		msn, qq, ww)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{addressTel,jdbcType=VARCHAR},
+		#{mobilePhone,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR},
+		#{area,jdbcType=VARCHAR}, #{postcode,jdbcType=VARCHAR},
+		#{newAddress,jdbcType=VARCHAR},
+		#{linkman2Name,jdbcType=VARCHAR}, #{linkman2Relation,jdbcType=INTEGER},
+		#{linkman2Phone,jdbcType=VARCHAR},
+		#{linkman2Tel,jdbcType=VARCHAR}, #{linkman3Name,jdbcType=VARCHAR},
+		#{linkman3Relation,jdbcType=INTEGER},
+		#{linkman3Phone,jdbcType=VARCHAR}, #{linkman3Tel,jdbcType=VARCHAR},
+		#{linkman4Name,jdbcType=VARCHAR},
+		#{linkman4Relation,jdbcType=INTEGER},
+		#{linkman4Phone,jdbcType=VARCHAR}, #{linkman4Tel,jdbcType=VARCHAR},
+		#{msn,jdbcType=VARCHAR}, #{qq,jdbcType=VARCHAR},
+		#{ww,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.RelationMessage">
+		insert into rb_relation_message
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="addressTel != null">
+				address_tel,
+			</if>
+			<if test="mobilePhone != null">
+				mobile_phone,
+			</if>
+			<if test="province != null">
+				province,
+			</if>
+			<if test="city != null">
+				city,
+			</if>
+			<if test="area != null">
+				area,
+			</if>
+			<if test="postcode != null">
+				postcode,
+			</if>
+			<if test="newAddress != null">
+				new_address,
+			</if>
+			<if test="linkman2Name != null">
+				linkman2_name,
+			</if>
+			<if test="linkman2Relation != null">
+				linkman2_relation,
+			</if>
+			<if test="linkman2Phone != null">
+				linkman2_phone,
+			</if>
+			<if test="linkman2Tel != null">
+				linkman2_tel,
+			</if>
+			<if test="linkman3Name != null">
+				linkman3_name,
+			</if>
+			<if test="linkman3Relation != null">
+				linkman3_relation,
+			</if>
+			<if test="linkman3Phone != null">
+				linkman3_phone,
+			</if>
+			<if test="linkman3Tel != null">
+				linkman3_tel,
+			</if>
+			<if test="linkman4Name != null">
+				linkman4_name,
+			</if>
+			<if test="linkman4Relation != null">
+				linkman4_relation,
+			</if>
+			<if test="linkman4Phone != null">
+				linkman4_phone,
+			</if>
+			<if test="linkman4Tel != null">
+				linkman4_tel,
+			</if>
+			<if test="msn != null">
+				msn,
+			</if>
+			<if test="qq != null">
+				qq,
+			</if>
+			<if test="ww != null">
+				ww,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="addressTel != null">
+				#{addressTel,jdbcType=VARCHAR},
+			</if>
+			<if test="mobilePhone != null">
+				#{mobilePhone,jdbcType=VARCHAR},
+			</if>
+			<if test="province != null">
+				#{province,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				#{city,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				#{area,jdbcType=VARCHAR},
+			</if>
+			<if test="postcode != null">
+				#{postcode,jdbcType=VARCHAR},
+			</if>
+			<if test="newAddress != null">
+				#{newAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman2Name != null">
+				#{linkman2Name,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman2Relation != null">
+				#{linkman2Relation,jdbcType=INTEGER},
+			</if>
+			<if test="linkman2Phone != null">
+				#{linkman2Phone,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman2Tel != null">
+				#{linkman2Tel,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman3Name != null">
+				#{linkman3Name,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman3Relation != null">
+				#{linkman3Relation,jdbcType=INTEGER},
+			</if>
+			<if test="linkman3Phone != null">
+				#{linkman3Phone,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman3Tel != null">
+				#{linkman3Tel,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman4Name != null">
+				#{linkman4Name,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman4Relation != null">
+				#{linkman4Relation,jdbcType=INTEGER},
+			</if>
+			<if test="linkman4Phone != null">
+				#{linkman4Phone,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman4Tel != null">
+				#{linkman4Tel,jdbcType=VARCHAR},
+			</if>
+			<if test="msn != null">
+				#{msn,jdbcType=VARCHAR},
+			</if>
+			<if test="qq != null">
+				#{qq,jdbcType=VARCHAR},
+			</if>
+			<if test="ww != null">
+				#{ww,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.RelationMessage">
+		update rb_relation_message
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="addressTel != null">
+				address_tel = #{addressTel,jdbcType=VARCHAR},
+			</if>
+			<if test="mobilePhone != null">
+				mobile_phone = #{mobilePhone,jdbcType=VARCHAR},
+			</if>
+			<if test="province != null">
+				province = #{province,jdbcType=VARCHAR},
+			</if>
+			<if test="city != null">
+				city = #{city,jdbcType=VARCHAR},
+			</if>
+			<if test="area != null">
+				area = #{area,jdbcType=VARCHAR},
+			</if>
+			<if test="postcode != null">
+				postcode = #{postcode,jdbcType=VARCHAR},
+			</if>
+			<if test="newAddress != null">
+				new_address = #{newAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman2Name != null">
+				linkman2_name = #{linkman2Name,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman2Relation != null">
+				linkman2_relation = #{linkman2Relation,jdbcType=INTEGER},
+			</if>
+			<if test="linkman2Phone != null">
+				linkman2_phone = #{linkman2Phone,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman2Tel != null">
+				linkman2_tel = #{linkman2Tel,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman3Name != null">
+				linkman3_name = #{linkman3Name,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman3Relation != null">
+				linkman3_relation = #{linkman3Relation,jdbcType=INTEGER},
+			</if>
+			<if test="linkman3Phone != null">
+				linkman3_phone = #{linkman3Phone,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman3Tel != null">
+				linkman3_tel = #{linkman3Tel,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman4Name != null">
+				linkman4_name = #{linkman4Name,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman4Relation != null">
+				linkman4_relation = #{linkman4Relation,jdbcType=INTEGER},
+			</if>
+			<if test="linkman4Phone != null">
+				linkman4_phone = #{linkman4Phone,jdbcType=VARCHAR},
+			</if>
+			<if test="linkman4Tel != null">
+				linkman4_tel = #{linkman4Tel,jdbcType=VARCHAR},
+			</if>
+			<if test="msn != null">
+				msn = #{msn,jdbcType=VARCHAR},
+			</if>
+			<if test="qq != null">
+				qq = #{qq,jdbcType=VARCHAR},
+			</if>
+			<if test="ww != null">
+				ww = #{ww,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.RelationMessage">
+		update rb_relation_message
+		set user_id = #{userId,jdbcType=INTEGER},
+		address_tel = #{addressTel,jdbcType=VARCHAR},
+		mobile_phone = #{mobilePhone,jdbcType=VARCHAR},
+		province = #{province,jdbcType=VARCHAR},
+		city = #{city,jdbcType=VARCHAR},
+		area = #{area,jdbcType=VARCHAR},
+		postcode = #{postcode,jdbcType=VARCHAR},
+		new_address = #{newAddress,jdbcType=VARCHAR},
+		linkman2_name = #{linkman2Name,jdbcType=VARCHAR},
+		linkman2_relation = #{linkman2Relation,jdbcType=INTEGER},
+		linkman2_phone = #{linkman2Phone,jdbcType=VARCHAR},
+		linkman2_tel = #{linkman2Tel,jdbcType=VARCHAR},
+		linkman3_name = #{linkman3Name,jdbcType=VARCHAR},
+		linkman3_relation = #{linkman3Relation,jdbcType=INTEGER},
+		linkman3_phone = #{linkman3Phone,jdbcType=VARCHAR},
+		linkman3_tel = #{linkman3Tel,jdbcType=VARCHAR},
+		linkman4_name = #{linkman4Name,jdbcType=VARCHAR},
+		linkman4_relation = #{linkman4Relation,jdbcType=INTEGER},
+		linkman4_phone = #{linkman4Phone,jdbcType=VARCHAR},
+		linkman4_tel = #{linkman4Tel,jdbcType=VARCHAR},
+		msn = #{msn,jdbcType=VARCHAR},
+		qq = #{qq,jdbcType=VARCHAR},
+		ww = #{ww,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

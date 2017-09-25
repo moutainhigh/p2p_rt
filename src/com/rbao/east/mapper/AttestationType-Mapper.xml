@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.AttestationTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.AttestationType" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="attestation_name" property="attestationName" jdbcType="VARCHAR" />
+    <result column="attestation_sequence" property="attestationSequence" jdbcType="VARCHAR" />
+    <result column="attestation_status" property="attestationStatus" jdbcType="INTEGER" />
+    <result column="attestation_score" property="attestationScore" jdbcType="INTEGER" />
+    <result column="attestation_summary" property="attestationSummary" jdbcType="VARCHAR" />
+    <result column="attestation_remark" property="attestationRemark" jdbcType="VARCHAR" />
+    <result column="attestation_datetime" property="attestationDatetime" jdbcType="TIMESTAMP" />
+    <result column="attestation_ip" property="attestationIp" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, attestation_name, attestation_sequence, attestation_status, attestation_score, 
+    attestation_summary, attestation_remark, attestation_datetime, attestation_ip
+  </sql>
+  <!-- 查询条数  -->
+  <select id="selectTotalCount" resultType="int"  parameterType="com.rbao.east.entity.AttestationType" >
+    SELECT count(*) FROM rb_attestation_type a where 1=1
+     <if test="attestationName != null and attestationName != ''" >
+        and a.attestation_name like CONCAT('%', #{attestationName}, '%')
+      </if>
+ order by a.attestation_sequence
+  </select>
+  <!-- 分页查询 -->
+  <select id="selectByEntity" resultMap="BaseResultMap"  parameterType="com.rbao.east.entity.AttestationType" >
+   SELECT * FROM rb_attestation_type a where 1=1
+   <if test="attestationName != null and attestationName != ''" >
+        and a.attestation_name like CONCAT('%', #{attestationName}, '%')
+      </if>
+ order by a.attestation_sequence
+  </select>
+  
+  <select id="selectList" resultMap="BaseResultMap"  parameterType="com.rbao.east.entity.AttestationType" >
+   SELECT * FROM rb_attestation_type a where 1=1
+   <if test="attestationName != null and attestationName != ''" >
+        and a.attestation_name = #{attestationName}
+   </if>
+   <if test="id!=null and id!=''">
+   	 and a.id=#{id}
+   </if>
+ order by a.attestation_sequence
+  </select>
+  <select id="selectTypeByUserId" resultMap="BaseResultMap" parameterType="Integer">
+		SELECT * FROM rb_attestation_type WHERE id NOT IN(SELECT attestation_typeid FROM rb_attestation_apply WHERE user_id=#{userId,jdbcType=INTEGER}) order by  id desc
+	</select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_attestation_type
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_attestation_type
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.AttestationType" >
+    insert into rb_attestation_type (id, attestation_name, attestation_sequence, 
+      attestation_status, attestation_score, attestation_summary, 
+      attestation_remark, attestation_datetime, 
+      attestation_ip)
+    values (#{id,jdbcType=INTEGER}, #{attestationName,jdbcType=VARCHAR}, #{attestationSequence,jdbcType=VARCHAR}, 
+      #{attestationStatus,jdbcType=INTEGER}, #{attestationScore,jdbcType=INTEGER}, #{attestationSummary,jdbcType=VARCHAR}, 
+      #{attestationRemark,jdbcType=VARCHAR}, #{attestationDatetime,jdbcType=TIMESTAMP}, 
+      #{attestationIp,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.AttestationType" >
+    insert into rb_attestation_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="attestationName != null" >
+        attestation_name,
+      </if>
+      <if test="attestationSequence != null" >
+        attestation_sequence,
+      </if>
+      <if test="attestationStatus != null" >
+        attestation_status,
+      </if>
+      <if test="attestationScore != null" >
+        attestation_score,
+      </if>
+      <if test="attestationSummary != null" >
+        attestation_summary,
+      </if>
+      <if test="attestationRemark != null" >
+        attestation_remark,
+      </if>
+      <if test="attestationDatetime != null" >
+        attestation_datetime,
+      </if>
+      <if test="attestationIp != null" >
+        attestation_ip,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="attestationName != null" >
+        #{attestationName,jdbcType=VARCHAR},
+      </if>
+      <if test="attestationSequence != null" >
+        #{attestationSequence,jdbcType=VARCHAR},
+      </if>
+      <if test="attestationStatus != null" >
+        #{attestationStatus,jdbcType=INTEGER},
+      </if>
+      <if test="attestationScore != null" >
+        #{attestationScore,jdbcType=INTEGER},
+      </if>
+      <if test="attestationSummary != null" >
+        #{attestationSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="attestationRemark != null" >
+        #{attestationRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="attestationDatetime != null" >
+        #{attestationDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="attestationIp != null" >
+        #{attestationIp,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.AttestationType" >
+    update rb_attestation_type
+    <set >
+      <if test="attestationName != null" >
+        attestation_name = #{attestationName,jdbcType=VARCHAR},
+      </if>
+      <if test="attestationSequence != null" >
+        attestation_sequence = #{attestationSequence,jdbcType=VARCHAR},
+      </if>
+      <if test="attestationStatus != null" >
+        attestation_status = #{attestationStatus,jdbcType=INTEGER},
+      </if>
+      <if test="attestationScore != null" >
+        attestation_score = #{attestationScore,jdbcType=INTEGER},
+      </if>
+      <if test="attestationSummary != null" >
+        attestation_summary = #{attestationSummary,jdbcType=VARCHAR},
+      </if>
+      <if test="attestationRemark != null" >
+        attestation_remark = #{attestationRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="attestationDatetime != null" >
+        attestation_datetime = #{attestationDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="attestationIp != null" >
+        attestation_ip = #{attestationIp,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.AttestationType" >
+    update rb_attestation_type
+    set attestation_name = #{attestationName,jdbcType=VARCHAR},
+      attestation_sequence = #{attestationSequence,jdbcType=VARCHAR},
+      attestation_status = #{attestationStatus,jdbcType=INTEGER},
+      attestation_score = #{attestationScore,jdbcType=INTEGER},
+      attestation_summary = #{attestationSummary,jdbcType=VARCHAR},
+      attestation_remark = #{attestationRemark,jdbcType=VARCHAR},
+      attestation_datetime = #{attestationDatetime,jdbcType=TIMESTAMP},
+      attestation_ip = #{attestationIp,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

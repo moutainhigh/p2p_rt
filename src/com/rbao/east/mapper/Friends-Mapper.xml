@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.FriendsMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.Friends">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="friends_userid" property="friendsUserid"
+			jdbcType="INTEGER" />
+		<result column="friends_username" property="friendsUsername"
+			jdbcType="VARCHAR" />
+		<result column="friends_status" property="friendsStatus"
+			jdbcType="INTEGER" />
+		<result column="friends_type" property="friendsType" jdbcType="INTEGER" />
+		<result column="friends_content" property="friendsContent"
+			jdbcType="VARCHAR" />
+		<result column="friends_addtime" property="friendsAddtime"
+			jdbcType="TIMESTAMP" />
+		<result column="friends_addip" property="friendsAddip"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, friends_userid, friends_username, friends_status,
+		friends_type, friends_content,
+		friends_addtime, friends_addip
+	</sql>
+	
+	<select id="selectFriendsCount" resultType="int" parameterType="Map">
+		SELECT  count(*)
+		FROM rb_friends f LEFT JOIN rb_user u1 ON f.user_id=u1.id LEFT JOIN rb_user u2 ON f.friends_userid=u2.id WHERE 1=1
+			<if test="userId != null and userId != ''">
+				and f.user_id = #{userId}
+			</if>
+			<if test="friendsType != null and friendsType != ''">
+				and f.friends_type = #{friendsType}
+			</if>
+	</select>
+	
+	<select id="selectFriendsList" resultType="Map" parameterType="Map">
+		SELECT  f.id id,
+				f.user_id userId,
+				u1.user_account userAccount,
+				u2.user_account friendsUserAccount,
+				f.friends_userid friendsUserId,
+				f.friends_username friendsUserName,
+				f.friends_status friendsStatus,
+				f.friends_type friendsType,
+				f.friends_content friendsContent,
+				f.friends_addtime friendsAddtime,
+				f.friends_addip friendsAddip
+		FROM rb_friends f LEFT JOIN rb_user u1 ON f.user_id=u1.id LEFT JOIN rb_user u2 ON f.friends_userid=u2.id WHERE 1=1
+			<if test="userId != null and userId != ''">
+				and f.user_id = #{userId}
+			</if>
+			<if test="friendsType != null and friendsType != ''">
+				and f.friends_type = #{friendsType}
+			</if>
+		order by f.friends_addtime desc
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_friends
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_friends
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.Friends">
+		insert into rb_friends (id, user_id, friends_userid,
+		friends_username, friends_status, friends_type,
+		friends_content, friends_addtime, friends_addip
+		)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{friendsUserid,jdbcType=INTEGER},
+		#{friendsUsername,jdbcType=VARCHAR},
+		#{friendsStatus,jdbcType=INTEGER}, #{friendsType,jdbcType=INTEGER},
+		#{friendsContent,jdbcType=VARCHAR},
+		#{friendsAddtime,jdbcType=TIMESTAMP}, #{friendsAddip,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.Friends">
+		insert into rb_friends
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="friendsUserid != null">
+				friends_userid,
+			</if>
+			<if test="friendsUsername != null">
+				friends_username,
+			</if>
+			<if test="friendsStatus != null">
+				friends_status,
+			</if>
+			<if test="friendsType != null">
+				friends_type,
+			</if>
+			<if test="friendsContent != null">
+				friends_content,
+			</if>
+			<if test="friendsAddtime != null">
+				friends_addtime,
+			</if>
+			<if test="friendsAddip != null">
+				friends_addip,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="friendsUserid != null">
+				#{friendsUserid,jdbcType=INTEGER},
+			</if>
+			<if test="friendsUsername != null">
+				#{friendsUsername,jdbcType=VARCHAR},
+			</if>
+			<if test="friendsStatus != null">
+				#{friendsStatus,jdbcType=INTEGER},
+			</if>
+			<if test="friendsType != null">
+				#{friendsType,jdbcType=INTEGER},
+			</if>
+			<if test="friendsContent != null">
+				#{friendsContent,jdbcType=VARCHAR},
+			</if>
+			<if test="friendsAddtime != null">
+				#{friendsAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="friendsAddip != null">
+				#{friendsAddip,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.Friends">
+		update rb_friends
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="friendsUserid != null">
+				friends_userid = #{friendsUserid,jdbcType=INTEGER},
+			</if>
+			<if test="friendsUsername != null">
+				friends_username = #{friendsUsername,jdbcType=VARCHAR},
+			</if>
+			<if test="friendsStatus != null">
+				friends_status = #{friendsStatus,jdbcType=INTEGER},
+			</if>
+			<if test="friendsType != null">
+				friends_type = #{friendsType,jdbcType=INTEGER},
+			</if>
+			<if test="friendsContent != null">
+				friends_content = #{friendsContent,jdbcType=VARCHAR},
+			</if>
+			<if test="friendsAddtime != null">
+				friends_addtime = #{friendsAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="friendsAddip != null">
+				friends_addip = #{friendsAddip,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.Friends">
+		update rb_friends
+		set user_id = #{userId,jdbcType=INTEGER},
+		friends_userid = #{friendsUserid,jdbcType=INTEGER},
+		friends_username = #{friendsUsername,jdbcType=VARCHAR},
+		friends_status = #{friendsStatus,jdbcType=INTEGER},
+		friends_type = #{friendsType,jdbcType=INTEGER},
+		friends_content = #{friendsContent,jdbcType=VARCHAR},
+		friends_addtime = #{friendsAddtime,jdbcType=TIMESTAMP},
+		friends_addip = #{friendsAddip,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,45 @@
+@charset "utf-8";
+/* CSS Document */
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, button, textarea, p, blockquote, th, td, a, span, img {
+    margin: 0;
+    padding: 0;
+    word-break: break-all;
+}
+:focus {
+    outline: 0 none;
+}
+html, body {
+    color: #606060;
+    font-family: "微软雅黑",Arial;
+    font-size: 14px;
+}
+.section{ display:block;}
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+	font-weight:normal;
+}
+img {
+    border: 0 none;
+    vertical-align: middle;
+}
+.fl {
+    float: left;
+}
+.fr {
+    float: right;
+}
+.pt50{ padding-top:50px;}
+.pt220{ padding-top:220px;}
+i {
+    font-style: normal;
+}
+
+.w1000{ width:1000px; margin:0 auto; height:100%;}
+.text600{ width:600px;}
+.title{ font-size:30px; color:#333;}
+.title i{ padding-right:10px;}
+.nr{ font-size:22px; line-height:1.7em; color:#707374; margin:30px 0;}
+.line{height:0px; border-top:1px solid #a0a2a3; width:100%; clear:both;}
+.nr p{ padding-bottom:30px;}
+.button_box{ width:206px; margin:0 auto;}
+.button{ background:url(../images/safeGuarantee/button.jpg) no-repeat; width:206px; height:54px; border:none; cursor:pointer;}

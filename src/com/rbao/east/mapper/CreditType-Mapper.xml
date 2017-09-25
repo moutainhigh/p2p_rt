@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.CreditTypeMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.CreditType">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="credit_name" property="creditName" jdbcType="VARCHAR" />
+		<result column="credit_code" property="creditCode" jdbcType="VARCHAR" />
+		<result column="credit_score" property="creditScore" jdbcType="INTEGER" />
+		<result column="credit_cycle" property="creditCycle" jdbcType="INTEGER" />
+		<result column="credit_award_times" property="creditAwardTimes"
+			jdbcType="INTEGER" />
+		<result column="credit_interval" property="creditInterval"
+			jdbcType="INTEGER" />
+		<result column="credit_remark" property="creditRemark"
+			jdbcType="VARCHAR" />
+		<result column="credit_opt_userid" property="creditOptUserid"
+			jdbcType="INTEGER" />
+		<result column="credit_opt_datetime" property="creditOptDatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="credit_opt_ip" property="creditOptIp" jdbcType="VARCHAR" />
+		<result column="credit_opt_updatetime" property="creditOptUpdatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="credit_opt_updateip" property="creditOptUpdateip"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, credit_name, credit_code, credit_score, credit_cycle,
+		credit_award_times, credit_interval,
+		credit_remark, credit_opt_userid, credit_opt_datetime, credit_opt_ip,
+		credit_opt_updatetime,
+		credit_opt_updateip
+	</sql>
+	<select id="selectTotalCount" resultType="int"
+		parameterType="com.rbao.east.entity.CreditType">
+		select
+		count(*)
+		from rb_credit_type where 1=1
+		<if test="creditName != null and creditName != ''">
+			and credit_name like CONCAT('%', #{creditName}, '%')
+		</if>
+		ORDER BY id
+	</select>
+	<select id="selectByEntity" resultMap="BaseResultMap"
+		parameterType="com.rbao.east.entity.CreditType">
+		select
+		*
+		from rb_credit_type where 1=1
+		<if test="creditName != null and creditName != ''">
+			and credit_name like CONCAT('%', #{creditName}, '%')
+		</if>
+		<if test="creditCode != null and creditCode != ''">
+			and credit_code =#{creditCode}
+		</if>
+		<if test="id != null">
+			and id !=#{id}
+		</if>
+		ORDER BY id
+	</select>
+	<select id="selectEntity" resultMap="BaseResultMap"
+		parameterType="com.rbao.east.entity.CreditType">
+		select
+		*
+		from rb_credit_type where 1=1
+		<if test="creditName != null and creditName != ''">
+			and credit_name = #{creditName}
+		</if>
+		<if test="creditCode!=null and creditCode!=''">
+			and credit_code=#{creditCode}
+		</if>
+		<if test="id !=null">
+			and id=#{id}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_credit_type
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_credit_type
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.CreditType">
+		insert into rb_credit_type (id, credit_name, credit_code,
+		credit_score, credit_cycle, credit_award_times,
+		credit_interval, credit_remark, credit_opt_userid,
+		credit_opt_datetime, credit_opt_ip, credit_opt_updatetime,
+		credit_opt_updateip)
+		values (#{id,jdbcType=INTEGER}, #{creditName,jdbcType=VARCHAR},
+		#{creditCode,jdbcType=VARCHAR},
+		#{creditScore,jdbcType=INTEGER}, #{creditCycle,jdbcType=BIT}, #{creditAwardTimes,jdbcType=TINYINT},
+		#{creditInterval,jdbcType=INTEGER}, #{creditRemark,jdbcType=VARCHAR},
+		#{creditOptUserid,jdbcType=INTEGER},
+		#{creditOptDatetime,jdbcType=TIMESTAMP},
+		#{creditOptIp,jdbcType=VARCHAR},
+		#{creditOptUpdatetime,jdbcType=TIMESTAMP},
+		#{creditOptUpdateip,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.CreditType">
+		insert into rb_credit_type
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="creditName != null">
+				credit_name,
+			</if>
+			<if test="creditCode != null">
+				credit_code,
+			</if>
+			<if test="creditScore != null">
+				credit_score,
+			</if>
+			<if test="creditCycle != null">
+				credit_cycle,
+			</if>
+			<if test="creditAwardTimes != null">
+				credit_award_times,
+			</if>
+			<if test="creditInterval != null">
+				credit_interval,
+			</if>
+			<if test="creditRemark != null">
+				credit_remark,
+			</if>
+			<if test="creditOptUserid != null">
+				credit_opt_userid,
+			</if>
+			<if test="creditOptDatetime != null">
+				credit_opt_datetime,
+			</if>
+			<if test="creditOptIp != null">
+				credit_opt_ip,
+			</if>
+			<if test="creditOptUpdatetime != null">
+				credit_opt_updatetime,
+			</if>
+			<if test="creditOptUpdateip != null">
+				credit_opt_updateip,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="creditName != null">
+				#{creditName,jdbcType=VARCHAR},
+			</if>
+			<if test="creditCode != null">
+				#{creditCode,jdbcType=VARCHAR},
+			</if>
+			<if test="creditScore != null">
+				#{creditScore,jdbcType=INTEGER},
+			</if>
+			<if test="creditCycle != null">
+				#{creditCycle,jdbcType=BIT},
+			</if>
+			<if test="creditAwardTimes != null">
+				#{creditAwardTimes,jdbcType=TINYINT},
+			</if>
+			<if test="creditInterval != null">
+				#{creditInterval,jdbcType=INTEGER},
+			</if>
+			<if test="creditRemark != null">
+				#{creditRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="creditOptUserid != null">
+				#{creditOptUserid,jdbcType=INTEGER},
+			</if>
+			<if test="creditOptDatetime != null">
+				#{creditOptDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creditOptIp != null">
+				#{creditOptIp,jdbcType=VARCHAR},
+			</if>
+			<if test="creditOptUpdatetime != null">
+				#{creditOptUpdatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creditOptUpdateip != null">
+				#{creditOptUpdateip,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.CreditType">
+		update rb_credit_type
+		<set>
+			<if test="creditName != null">
+				credit_name = #{creditName,jdbcType=VARCHAR},
+			</if>
+			<if test="creditCode != null">
+				credit_code = #{creditCode,jdbcType=VARCHAR},
+			</if>
+			<if test="creditScore != null">
+				credit_score = #{creditScore,jdbcType=INTEGER},
+			</if>
+			<if test="creditCycle != null">
+				credit_cycle = #{creditCycle,jdbcType=BIT},
+			</if>
+			<if test="creditAwardTimes != null">
+				credit_award_times = #{creditAwardTimes,jdbcType=TINYINT},
+			</if>
+			<if test="creditInterval != null">
+				credit_interval = #{creditInterval,jdbcType=INTEGER},
+			</if>
+			<if test="creditRemark != null">
+				credit_remark = #{creditRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="creditOptUserid != null">
+				credit_opt_userid = #{creditOptUserid,jdbcType=INTEGER},
+			</if>
+			<if test="creditOptDatetime != null">
+				credit_opt_datetime = #{creditOptDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creditOptIp != null">
+				credit_opt_ip = #{creditOptIp,jdbcType=VARCHAR},
+			</if>
+			<if test="creditOptUpdatetime != null">
+				credit_opt_updatetime = #{creditOptUpdatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="creditOptUpdateip != null">
+				credit_opt_updateip = #{creditOptUpdateip,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.CreditType">
+		update rb_credit_type
+		set credit_name = #{creditName,jdbcType=VARCHAR},
+		credit_code = #{creditCode,jdbcType=VARCHAR},
+		credit_score = #{creditScore,jdbcType=INTEGER},
+		credit_cycle = #{creditCycle,jdbcType=BIT},
+		credit_award_times = #{creditAwardTimes,jdbcType=TINYINT},
+		credit_interval = #{creditInterval,jdbcType=INTEGER},
+		credit_remark = #{creditRemark,jdbcType=VARCHAR},
+		credit_opt_userid = #{creditOptUserid,jdbcType=INTEGER},
+		credit_opt_datetime = #{creditOptDatetime,jdbcType=TIMESTAMP},
+		credit_opt_ip = #{creditOptIp,jdbcType=VARCHAR},
+		credit_opt_updatetime = #{creditOptUpdatetime,jdbcType=TIMESTAMP},
+		credit_opt_updateip = #{creditOptUpdateip,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.MessageCenterMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.MessageCenter">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="send_user_id" property="sendUserId" jdbcType="INTEGER" />
+		<result column="receive_user_id" property="receiveUserId"
+			jdbcType="INTEGER" />
+		<result column="message_title" property="messageTitle"
+			jdbcType="VARCHAR" />
+		<result column="message_status" property="messageStatus"
+			jdbcType="INTEGER" />
+		<result column="message_content" property="messageContent"
+			jdbcType="VARCHAR" />
+		<result column="message_send_datetime" property="messageSendDatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="message_send_ip" property="messageSendIp"
+			jdbcType="VARCHAR" />
+		<result column="notice_type_id" property="noticeTypeId"
+			jdbcType="INTEGER" />
+		<result column="message_address" property="messageAddress"
+			jdbcType="VARCHAR" />
+		<association property="sendUser" column="send_user_id"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+		<association property="receiveUser" column="receive_user_id"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+	</resultMap>
+	
+	<select id="getMessage" resultMap="BaseResultMap" parameterType="Map" >
+		SELECT
+			*
+		FROM
+			rb_message_center
+		WHERE 1 = 1
+		<if test="telPhone !=null and telPhone !=''">
+			and message_address = #{telPhone}
+		</if>
+		<if test="title !=null and  title !=''">
+			and message_title = #{title}
+		</if>
+		 <if test="smsCode !=null and smsCode !=''">
+			and message_content like CONCAT('%', #{smsCode}, '%')
+		</if> 
+		ORDER BY
+			id DESC
+		LIMIT 1
+	</select>
+	<select id="countUnReadMsg" parameterType="int" resultType="int">
+	SELECT COUNT(*) FROM rb_message_center WHERE 1=1 
+	<if test="receiveUserId != null and receiveUserId != ''">
+		AND receive_user_id = #{receiveUserId}
+	</if>
+	AND message_status = 0 AND notice_type_id = 1
+	</select>
+	
+	<select id="getFlagWithPhoneAndTime" resultMap="BaseResultMap"
+		parameterType="Map" >
+		select * from rb_message_center where message_address=#{tel};
+		
+	</select>
+	
+	<select id="selectMsgCenterTotalCount" resultType="int"
+		parameterType="Map" fetchSize="200">
+		select
+		count(*)
+		from rb_message_center where 1=1
+		<if test="messageTitle!=null and messageTitle!=''">
+			and message_title like CONCAT('%', #{messageTitle}, '%')
+		</if>
+		order by id desc
+	</select>
+
+	<select id="selectMsgCenterList" resultMap="BaseResultMap"
+		parameterType="Map" fetchSize="200">
+		select
+		*
+		from rb_message_center where 1=1
+		<if test="messageTitle!=null and messageTitle!=''">
+			and message_title like CONCAT('%', #{messageTitle}, '%')
+		</if>
+		order by id desc
+	</select>
+	
+	<!-- 前台用户查看站内信 -->
+	<select id="selectMsgCenterCount" resultType="int" parameterType="Map">
+		SELECT  count(*)
+		FROM rb_message_center mc LEFT JOIN rb_user u1 ON mc.send_user_id = u1.id 
+			LEFT JOIN rb_user u2 ON mc.receive_user_id = u2.id WHERE 1=1 
+		<if test="sendUserId != null and sendUserId != ''">
+			and mc.send_user_id = #{sendUserId} and mc.notice_type_id = 1
+		</if>
+		<if test="receiveUserId != null and receiveUserId != ''">
+			and mc.receive_user_id = #{receiveUserId} and mc.notice_type_id = 1
+		</if>
+		<if test="messageStatus != null and messageStatus != ''">
+			and mc.message_status = #{messageStatus} and mc.notice_type_id = 1
+		</if>
+	</select>
+	
+	<select id="selectMsgCenter" resultType="Map" parameterType="Map">
+		SELECT  mc.id id,
+				u1.user_account sendUserAccount,
+				u2.user_account receiveUserAccount,
+				mc.message_title messageTitle,
+				mc.message_send_datetime messageSendDateTime,
+				mc.message_content messageContent,
+				mc.message_status messageStatus,
+				mc.send_user_id sendUserId,
+				mc.receive_user_id receiveUserId,
+				mc.notice_type_id noticeTypeId
+		FROM rb_message_center mc LEFT JOIN rb_user u1 ON mc.send_user_id = u1.id 
+			LEFT JOIN rb_user u2 ON mc.receive_user_id = u2.id WHERE 1=1 
+		<if test="sendUserId != null and sendUserId != ''">
+			and mc.send_user_id = #{sendUserId} and mc.notice_type_id = 1
+		</if>
+		<if test="receiveUserId != null and receiveUserId != ''">
+			and mc.receive_user_id = #{receiveUserId} and mc.notice_type_id = 1
+		</if>
+		<if test="messageStatus != null and messageStatus != ''">
+			and mc.message_status = #{messageStatus} and mc.notice_type_id = 1
+		</if>
+		ORDER BY mc.message_send_datetime desc
+	</select>
+
+	<sql id="Base_Column_List">
+		id, send_user_id, receive_user_id, message_title, message_status,
+		message_content,
+		message_send_datetime, message_send_ip, notice_type_id,message_address
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_message_center
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_message_center
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.MessageCenter">
+		insert into rb_message_center (id, send_user_id, receive_user_id,
+		message_title, message_status, message_content,
+		message_send_datetime, message_send_ip, notice_type_id,message_address
+		)
+		values (#{id,jdbcType=INTEGER}, #{sendUserId,jdbcType=INTEGER},
+		#{receiveUserId,jdbcType=INTEGER},
+		#{messageTitle,jdbcType=VARCHAR}, #{messageStatus,jdbcType=INTEGER},
+		#{messageContent,jdbcType=VARCHAR},
+		#{messageSendDatetime,jdbcType=TIMESTAMP},
+		#{messageSendIp,jdbcType=VARCHAR}, #{noticeTypeId,jdbcType=INTEGER},
+		#{messageAddress,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.MessageCenter">
+		insert into rb_message_center
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="sendUserId != null">
+				send_user_id,
+			</if>
+			<if test="receiveUserId != null">
+				receive_user_id,
+			</if>
+			<if test="messageTitle != null">
+				message_title,
+			</if>
+			<if test="messageStatus != null">
+				message_status,
+			</if>
+			<if test="messageContent != null">
+				message_content,
+			</if>
+			<if test="messageSendDatetime != null">
+				message_send_datetime,
+			</if>
+			<if test="messageSendIp != null">
+				message_send_ip,
+			</if>
+			<if test="noticeTypeId != null">
+				notice_type_id,
+			</if>
+			<if test="messageAddress!=null">
+				message_address,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="sendUserId != null">
+				#{sendUserId,jdbcType=INTEGER},
+			</if>
+			<if test="receiveUserId != null">
+				#{receiveUserId,jdbcType=INTEGER},
+			</if>
+			<if test="messageTitle != null">
+				#{messageTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="messageStatus != null">
+				#{messageStatus,jdbcType=INTEGER},
+			</if>
+			<if test="messageContent != null">
+				#{messageContent,jdbcType=VARCHAR},
+			</if>
+			<if test="messageSendDatetime != null">
+				#{messageSendDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="messageSendIp != null">
+				#{messageSendIp,jdbcType=VARCHAR},
+			</if>
+			<if test="noticeTypeId != null">
+				#{noticeTypeId,jdbcType=INTEGER},
+			</if>
+			<if test="messageAddress!=null">
+				#{messageAddress,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.MessageCenter">
+		update rb_message_center
+		<set>
+			<if test="sendUserId != null">
+				send_user_id = #{sendUserId,jdbcType=INTEGER},
+			</if>
+			<if test="receiveUserId != null">
+				receive_user_id = #{receiveUserId,jdbcType=INTEGER},
+			</if>
+			<if test="messageTitle != null">
+				message_title = #{messageTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="messageStatus != null">
+				message_status = #{messageStatus,jdbcType=INTEGER},
+			</if>
+			<if test="messageContent != null">
+				message_content = #{messageContent,jdbcType=VARCHAR},
+			</if>
+			<if test="messageSendDatetime != null">
+				message_send_datetime = #{messageSendDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="messageSendIp != null">
+				message_send_ip = #{messageSendIp,jdbcType=VARCHAR},
+			</if>
+			<if test="noticeTypeId != null">
+				notice_type_id = #{noticeTypeId,jdbcType=INTEGER},
+			</if>
+			<if test="messageAddress!=null">
+				message_address=#{messageAddress,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.MessageCenter">
+		update rb_message_center
+		set send_user_id = #{sendUserId,jdbcType=INTEGER},
+		receive_user_id = #{receiveUserId,jdbcType=INTEGER},
+		message_title = #{messageTitle,jdbcType=VARCHAR},
+		message_status = #{messageStatus,jdbcType=INTEGER},
+		message_content = #{messageContent,jdbcType=VARCHAR},
+		message_send_datetime = #{messageSendDatetime,jdbcType=TIMESTAMP},
+		message_send_ip = #{messageSendIp,jdbcType=VARCHAR},
+		notice_type_id = #{noticeTypeId,jdbcType=INTEGER},
+		message_address=#{messageAddress,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

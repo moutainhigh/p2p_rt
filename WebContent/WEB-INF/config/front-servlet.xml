@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd 
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.2.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-3.2.xsd 
+	http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+	<mvc:view-controller path="/" view-name="/index.do" />
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="mappingJacksonHttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter" />
+	<!--对模型视图名称的解析，即在模型视图名称添加前后缀 -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/front/" />
+		<property name="suffix" value=".jsp" />
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+	</bean>
+	<!--文件上传配置 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+		p:defaultEncoding="utf-8">
+		<property name="maxUploadSize">
+			<value>104857600</value>
+		</property>
+		<property name="maxInMemorySize">
+			<value>4096</value>
+		</property>
+	</bean>
+	<bean name="jsonView"
+		class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+		<property name="encoding">
+			<value type="org.codehaus.jackson.JsonEncoding">UTF8</value>
+		</property>
+		<property name="contentType" value="text/html;charset=UTF-8" />
+	</bean>
+	<!-- 使用注释的基础配置 -->
+	<context:component-scan base-package="com.rbao.east.controller">
+	</context:component-scan>
+	<!-- 国际化 -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource"
+		p:basename="message">
+		<property name="cacheSeconds" value="3000" />
+	</bean>
+
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/verify/**" />
+			<mvc:mapping path="/account/**" />
+			<mvc:mapping path="/invest/**" />
+			<mvc:mapping path="/basics/**" />
+			<mvc:mapping path="/iborrow/**" />
+			<mvc:mapping path="/borrowRedeem/**" />
+			<mvc:mapping path="/borrowRepayment/**" />
+			<mvc:mapping path="/borrowTender/**" />
+			<mvc:mapping path="/borrowTransfer/**" />
+			<mvc:mapping path="/borrow/showBorrow/**" />
+			<mvc:mapping path="/shop/**" />	
+			<mvc:mapping path="/member/**" />	
+			<mvc:mapping path="/usrOrder/**" />	
+			<mvc:exclude-mapping path="/borrow/showBorrow/{borrowEId}.do"/> 
+			<bean class="com.rbao.east.interceptor.FrontContextInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+</beans>

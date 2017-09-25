@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.ChannelMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.Channel">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="channel_parent_id" property="channelParentId"
+			jdbcType="INTEGER" />
+		<result column="channel_title" property="channelTitle"
+			jdbcType="VARCHAR" />
+		<result column="channel_code" property="channelCode" jdbcType="VARCHAR" />
+		<result column="channel_sequence" property="channelSequence"
+			jdbcType="INTEGER" />
+		<result column="channel_display" property="channelDisplay"
+			jdbcType="INTEGER" />
+		<result column="channel_is_url" property="channelIsUrl"
+			jdbcType="INTEGER" />
+		<result column="channel_url" property="channelUrl" jdbcType="VARCHAR" />
+		<result column="channel_describe" property="channelDescribe"
+			jdbcType="VARCHAR" />
+		<result column="channel_create_time" property="channelCreateTime"
+			jdbcType="TIMESTAMP" />
+		<result column="channel_update_time" property="channelUpdateTime"
+			jdbcType="TIMESTAMP" />
+		<result column="channel_keyword" property="keyword" jdbcType="VARCHAR" />
+		<association property="parentChannel" column="channel_parent_id"
+			javaType="com.rbao.east.entity.Channel" select="com.rbao.east.mapper.ChannelMapper.selectByPrimaryKey" />
+		<collection property="children" column="id"
+			javaType="com.rbao.east.entity.Channel" select="com.rbao.east.mapper.ChannelMapper.selectChildren" />
+	</resultMap>
+	<resultMap id="ResultMapWithBLOBs" type="com.rbao.east.entity.Channel"
+		extends="BaseResultMap">
+		<result column="channel_content" property="channelContent"
+			jdbcType="LONGVARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, channel_parent_id, channel_title, channel_code,
+		channel_sequence,
+		channel_display,
+		channel_is_url, channel_url,
+		channel_describe, channel_create_time,
+		channel_update_time,
+		channel_keyword
+	</sql>
+	<sql id="Blob_Column_List">
+		channel_content
+	</sql>
+	<select id="selectTotalCount" resultType="int" parameterType="Map">
+		select count(*) from rb_channel where 1=1
+		<if test="id !=null and id !=''">
+			and id not in (${id})
+		</if>
+		<if test="channelParentId !=null">
+			and channel_parent_id=#{channelParentId}
+		</if>
+		<if test="channelTitle !=null and channelTitle !='' ">
+			and channel_title like CONCAT('%', #{channelTitle}, '%')
+		</if>
+		<if test="channelCode !=null and channelCode !=''">
+			and channel_code=#{channelCode}
+		</if>
+		 <if test="channelSequence !=null and channelSequence !='' ">
+			and channel_sequence=#{channelSequence}
+		</if> 
+		<if test="channelDisplay !=null and channelDisplay !='' ">
+			and channel_display=#{channelDisplay}
+		</if>
+		<if test="channelIsUrl !=null and channelIsUrl !='' ">
+			and channel_is_url=#{channelIsUrl}
+		</if>
+		<if test="channelUrl !=null and channelUrl !='' ">
+			and channel_url=#{channelUrl}
+		</if>
+		<if test="channelDescribe !=null and channelDescribe !='' ">
+			and channel_describe=#{channelDescribe}
+		</if>
+		<if test="channelCreateTime !=null and channelCreateTime !='' ">
+			and channel_create_time=#{channelCreateTime}
+		</if>
+		<if test="channelUpdateTime !=null and channelUpdateTime!='' ">
+			and channel_update_time=#{channelUpdateTime}
+		</if>
+	</select>
+	<select id="selectByEntity" resultMap="BaseResultMap"
+		parameterType="Map">
+		select * from rb_channel where 1=1
+		<if test="channelParentId !=null">
+			and channel_parent_id=#{channelParentId}
+		</if>
+		<if test="channelTitle !=null and channelTitle !='' ">
+			and channel_title like CONCAT('%', #{channelTitle}, '%')
+		</if>
+		<if test="channelCode !=null and channelCode !=''">
+			and channel_code=#{channelCode}
+		</if>
+		 <if test="channelSequence !=null and channelSequence !='' ">
+			and channel_sequence=#{channelSequence}
+		</if> 
+		<if test="channelDisplay !=null and channelDisplay !='' ">
+			and channel_display=#{channelDisplay}
+		</if>
+		<if test="channelIsUrl !=null and channelIsUrl !='' ">
+			and channel_is_url=#{channelIsUrl}
+		</if>
+		<if test="channelUrl !=null and channelUrl !='' ">
+			and channel_url=#{channelUrl}
+		</if>
+		<if test="channelDescribe !=null and channelDescribe !='' ">
+			and channel_describe=#{channelDescribe}
+		</if>
+		<if test="channelCreateTime !=null and channelCreateTime !='' ">
+			and channel_create_time=#{channelCreateTime}
+		</if>
+		<if test="channelUpdateTime !=null and channelUpdateTime!='' ">
+			and channel_update_time=#{channelUpdateTime}
+		</if>
+		order by channel_sequence
+	</select>
+	<!-- 查询 栏目树 -->
+	<select id="selectAll" resultType="TreeModel" parameterType="com.rbao.east.entity.Channel">
+		select id,channel_title as title,channel_parent_id as pid from
+		rb_channel where 1=1
+	</select>
+	<select id="selectChildren" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from rb_channel
+		where channel_parent_id = #{id,jdbcType=INTEGER} order
+		by channel_sequence
+	</select>
+
+	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from rb_channel
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectByChannelId" resultMap="ResultMapWithBLOBs"
+		parameterType="com.rbao.east.entity.Channel">
+		select
+		*
+		from rb_channel
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectByDisplay" resultType="TreeModel"
+		parameterType="com.rbao.east.entity.Channel">
+		select id,channel_title as title,channel_parent_id as pid,if(channel_is_url=1,channel_url,'') url from
+		rb_channel where 1=1
+		<if test="channelDisplay !=null ">
+			and channel_display=#{channelDisplay}
+		</if>
+	</select>
+	<!-- 首页foot栏目 -->
+	<select id="selectByParentId" resultMap="ResultMapWithBLOBs" parameterType="map">
+		<!-- select * from rb_channel where 1=1 -->
+		SELECT *
+		FROM
+		rb_channel ch
+		<where>
+		<if test="channelParentId !=null ">
+			and ch.channel_parent_id=#{channelParentId}
+		</if>
+		<if test="channelDisplay !=null ">
+			and ch.channel_display=#{channelDisplay}
+		</if>
+		</where>
+		order by channel_sequence asc
+	</select>
+	<select id="selectHot" resultMap="BaseResultMap" parameterType="map">
+		select c.id,c.channel_title,c.channel_parent_id,c.channel_sequence,c.channel_display,c.channel_url,c.channel_is_url  from rb_channel c ,
+		(select channel_ids, sum(content_click) count_content_click from rb_content where channel_ids in 
+			(select id from rb_channel where channel_parent_id = #{channelParentId }) and content_status = 1 group by channel_ids order by count_content_click desc) cd where c.id = cd.channel_ids
+		limit 10
+	</select>
+
+	<select id="showChannelByPage" parameterType="map" resultType="java.util.HashMap">
+		SELECT * from rb_channel where id=#{id}
+	</select>
+	<select id="showChannelByPageTotalCount" parameterType="map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(*) from rb_channel where id=#{id}
+	</select>
+	<select id="getIdByChannelCode" parameterType="map"
+		resultMap="ResultMapWithBLOBs">
+		SELECT * from rb_channel where channel_code=#{channelCode}
+	</select>
+	
+	<select id="getContentByChannelCode" parameterType="map" resultType="map">
+		SELECT rc.id,rc.content_title,a.attach_path,rc.content_txt,cc.channel_id,rc.external_link_title,rc.content_add_datetime FROM rb_content rc 
+		INNER JOIN rb_content_channel cc ON rc.id=cc.content_id
+		INNER JOIN rb_channel c ON cc.channel_id = c.id
+		LEFT JOIN rb_attach a ON rc.id=a.attach_relate_id 
+		WHERE c.channel_code=#{channelCode} AND rc.content_status=1
+		GROUP BY rc.id
+		ORDER BY cc.content_sequence asc, rc.content_add_datetime DESC
+		<if test="limit!=null">
+			LIMIT #{limit}
+		</if>
+	</select>
+	
+	<select id="getContentByChannelCodes" parameterType="map" resultType="map">
+		SELECT rc.id,rc.content_title,a.attach_path,cc.channel_id,rc.external_link_title,rc.content_add_datetime FROM rb_content rc 
+		INNER JOIN rb_content_channel cc ON rc.id=cc.content_id
+		INNER JOIN rb_channel c ON cc.channel_id = c.id
+		LEFT JOIN rb_attach a ON rc.id=a.attach_relate_id 
+		WHERE 1 = 1 AND c.channel_code IN
+		<foreach collection="channelCodes" index="index" item="item" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		AND rc.content_status=1
+		GROUP BY rc.id
+		ORDER BY cc.content_sequence asc, rc.content_add_datetime DESC
+		<if test="limit!=null">
+			LIMIT #{limit}
+		</if>
+	</select>
+	
+	<select id="getContentPageByChannelId" parameterType="map" resultType="map">
+		SELECT rc.* ,a.attach_path FROM rb_content rc 
+		INNER JOIN rb_content_channel cc ON rc.id=cc.content_id
+		INNER JOIN rb_channel c ON cc.channel_id = c.id
+		LEFT JOIN rb_attach a ON rc.id=a.attach_relate_id 
+		WHERE c.id=#{channelId} AND rc.content_status=1 
+		<choose>
+			<when test="channelDisplay != null">
+				AND c.channel_display in ${channelDisplay }
+			</when>
+			<otherwise>
+				AND c.channel_display = 1
+			</otherwise>
+		</choose> 
+		GROUP BY rc.id
+		<choose>
+			<when test="orderBy != null">
+				ORDER BY cc.content_sequence ASC
+			</when>
+			<otherwise>
+				ORDER BY rc.content_add_datetime DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="getContentPageCountByChannelId" parameterType="map" resultType="int">
+		SELECT COUNT(distinct rc.id) FROM rb_content rc 
+		INNER JOIN rb_content_channel cc ON rc.id=cc.content_id
+		INNER JOIN rb_channel c ON cc.channel_id = c.id
+		LEFT JOIN rb_attach a ON rc.id=a.attach_relate_id 
+		WHERE c.id=#{channelId} AND rc.content_status=1 AND c.channel_display=1
+		ORDER BY cc.content_sequence ASC ,rc.content_add_datetime DESC
+	</select>
+	
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		rb_channel
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.Channel">
+		insert into rb_channel (id,
+		channel_parent_id, channel_title,
+		channel_code, channel_sequence,
+		channel_display,
+		channel_is_url, channel_url, channel_describe,
+		channel_create_time, channel_update_time,
+		channel_content)
+		values
+		(#{id,jdbcType=INTEGER}, #{channelParentId,jdbcType=INTEGER},
+		#{channelTitle,jdbcType=VARCHAR},
+		#{channelCode,jdbcType=VARCHAR},
+		#{channelSequence,jdbcType=INTEGER},
+		#{channelDisplay,jdbcType=INTEGER},
+		#{channelIsUrl,jdbcType=INTEGER},
+		#{channelUrl,jdbcType=VARCHAR}, #{channelDescribe,jdbcType=VARCHAR},
+		#{channelCreateTime,jdbcType=TIMESTAMP},
+		#{channelUpdateTime,jdbcType=TIMESTAMP},
+		#{channelContent,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.Channel">
+		insert into rb_channel
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="channelParentId != null">
+				channel_parent_id,
+			</if>
+			<if test="channelTitle != null">
+				channel_title,
+			</if>
+			<if test="channelCode != null">
+				channel_code,
+			</if>
+			<if test="channelSequence != null">
+				channel_sequence,
+			</if>
+			<if test="channelDisplay != null">
+				channel_display,
+			</if>
+			<if test="channelIsUrl != null">
+				channel_is_url,
+			</if>
+			<if test="channelUrl != null">
+				channel_url,
+			</if>
+			<if test="channelDescribe != null">
+				channel_describe,
+			</if>
+			<if test="channelCreateTime != null">
+				channel_create_time,
+			</if>
+			<if test="channelUpdateTime != null">
+				channel_update_time,
+			</if>
+			<if test="channelContent != null">
+				channel_content,
+			</if>
+			<if test="keyword != null">
+				channel_keyword,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="channelParentId != null">
+				#{channelParentId,jdbcType=INTEGER},
+			</if>
+			<if test="channelTitle != null">
+				#{channelTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="channelCode != null">
+				#{channelCode,jdbcType=VARCHAR},
+			</if>
+			<if test="channelSequence != null">
+				#{channelSequence,jdbcType=INTEGER},
+			</if>
+			<if test="channelDisplay != null">
+				#{channelDisplay,jdbcType=INTEGER},
+			</if>
+			<if test="channelIsUrl != null">
+				#{channelIsUrl,jdbcType=INTEGER},
+			</if>
+			<if test="channelUrl != null">
+				#{channelUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="channelDescribe != null">
+				#{channelDescribe,jdbcType=VARCHAR},
+			</if>
+			<if test="channelCreateTime != null">
+				#{channelCreateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="channelUpdateTime != null">
+				#{channelUpdateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="channelContent != null">
+				#{channelContent,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="keyword != null">
+				#{keyword,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.Channel">
+		update rb_channel
+		<set>
+			<if test="channelParentId != null">
+				channel_parent_id = #{channelParentId,jdbcType=INTEGER},
+			</if>
+			<if test="channelTitle != null">
+				channel_title = #{channelTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="channelCode != null">
+				channel_code = #{channelCode,jdbcType=VARCHAR},
+			</if>
+			<if test="channelSequence != null">
+				channel_sequence = #{channelSequence,jdbcType=INTEGER},
+			</if>
+			<if test="channelDisplay != null">
+				channel_display = #{channelDisplay,jdbcType=INTEGER},
+			</if>
+			<if test="channelIsUrl != null">
+				channel_is_url = #{channelIsUrl,jdbcType=INTEGER},
+			</if>
+			<if test="channelUrl != null">
+				channel_url = #{channelUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="channelDescribe != null">
+				channel_describe = #{channelDescribe,jdbcType=VARCHAR},
+			</if>
+			<if test="channelCreateTime != null">
+				channel_create_time =
+				#{channelCreateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="channelUpdateTime != null">
+				channel_update_time =
+				#{channelUpdateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="channelContent != null">
+				channel_content = #{channelContent,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="keyword != null">
+				channel_keyword = #{keyword,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.rbao.east.entity.Channel">
+		update
+		rb_channel
+		set channel_parent_id = #{channelParentId,jdbcType=INTEGER},
+		channel_title = #{channelTitle,jdbcType=VARCHAR},
+		channel_code =
+		#{channelCode,jdbcType=VARCHAR},
+		channel_sequence =
+		#{channelSequence,jdbcType=INTEGER},
+		channel_display =
+		#{channelDisplay,jdbcType=INTEGER},
+		channel_is_url =
+		#{channelIsUrl,jdbcType=INTEGER},
+		channel_url =
+		#{channelUrl,jdbcType=VARCHAR},
+		channel_describe =
+		#{channelDescribe,jdbcType=VARCHAR},
+		channel_create_time =
+		#{channelCreateTime,jdbcType=TIMESTAMP},
+		channel_update_time =
+		#{channelUpdateTime,jdbcType=TIMESTAMP},
+		channel_content =
+		#{channelContent,jdbcType=LONGVARCHAR},
+		channel_keyword = #{keyword,jdbcType=VARCHAR}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.Channel">
+		update rb_channel
+		set channel_parent_id = #{channelParentId,jdbcType=INTEGER},
+		channel_title = #{channelTitle,jdbcType=VARCHAR},
+		channel_code =
+		#{channelCode,jdbcType=VARCHAR},
+		channel_sequence =
+		#{channelSequence,jdbcType=INTEGER},
+		channel_display =
+		#{channelDisplay,jdbcType=INTEGER},
+		channel_is_url =
+		#{channelIsUrl,jdbcType=INTEGER},
+		channel_url =
+		#{channelUrl,jdbcType=VARCHAR},
+		channel_describe =
+		#{channelDescribe,jdbcType=VARCHAR},
+		channel_create_time =
+		#{channelCreateTime,jdbcType=TIMESTAMP},
+		channel_update_time =
+		#{channelUpdateTime,jdbcType=TIMESTAMP},
+		channel_keyword = #{keyword,jdbcType=VARCHAR}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="selectChannelByCode" parameterType="String" resultMap="ResultMapWithBLOBs">
+		SELECT* from rb_channel where channel_code=#{channelCode}
+	
+	</select>
+</mapper>

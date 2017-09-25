@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.RecommendRewardMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.RecommendReward" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="recommend_user_id" property="recommendUserId" jdbcType="INTEGER" />
+    <result column="recommend_user_reward" property="recommendUserReward" jdbcType="DECIMAL" />
+    <result column="level_user_id" property="levelUserId" jdbcType="INTEGER" />
+    <result column="level_user_reward" property="levelUserReward" jdbcType="DECIMAL" />
+    <result column="tender_money" property="tenderMoney" jdbcType="DECIMAL" />
+    <result column="recommond_level" property="recommondLevel" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="add_ip" property="addIp" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <association property="recommendUser" column="recommend_user_id"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+		<association property="levelUser" column="level_user_id"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, recommend_user_id, recommend_user_reward, level_user_id, level_user_reward, tender_money, 
+    recommond_level, status, add_time, add_ip, remark
+  </sql>
+  
+   <select id="selectByEntity" resultType="Map" parameterType="Map">
+   		SELECT 
+		  rr.id id,
+		  rr.recommend_user_id recommendUserId,
+		  rr.recommend_user_reward recommendUserReward,
+		  rr.level_user_id levelUserId,
+		  rr.level_user_reward levelUserReward,
+		  rr.tender_money tenderMoney,
+		  rr.recommond_level recommendLevel,
+		  rr.add_time addTimes,
+		  rr.add_ip addIp,
+		  r.user_account rUserAccount,
+		  r.user_realname rUserRealname,
+		   rb.user_phone lUserPhone,
+		  rb.user_account lUserAccount,
+		  rb.user_realname lUserRealname 
+		FROM
+		  rb_recommend_reward rr 
+		  INNER JOIN rb_user r 
+		    ON r.id = rr.recommend_user_id
+		  INNER JOIN rb_user rb 
+		    ON rr.level_user_id = rb.id 
+		    WHERE 1=1
+		    <if test="recommendUserId != null and recommendUserId!=''">
+		    	AND rr.recommend_user_id =#{recommendUserId}
+		    </if>
+		    <if test="levelUserId != null and levelUserId !=''">
+		    	 AND rr.level_user_id=#{levelUserId}
+		    </if>
+		    <if test="rUserAccount != null and rUserAccount !=''">
+		    	AND r.user_account like CONCAT('%', #{rUserAccount}, '%')
+		    </if>
+		    <if test="rUserRealname != null and  rUserRealname !=''">
+		    	AND r.user_realname like CONCAT('%', #{rUserRealname}, '%')
+		    </if>
+		    <if test="lUserAccount != null and lUserAccount !=''">
+		    	AND rb.user_account like CONCAT('%', #{lUserAccount}, '%')
+		    </if>
+		    <if test="lUserPhone != null and lUserPhone !=''">
+		    	AND rb.user_phone like CONCAT('%', #{lUserPhone}, '%')
+		    </if>
+		    <if test="lUserRealname != null and lUserRealname !=''">
+		    	AND rb.user_realname like CONCAT('%', #{lUserRealname}, '%')
+		    </if>
+		    <if test="beginTime !=null and beginTime !=''">
+		    	<![CDATA[and DATE_FORMAT(rr.add_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+		    	<![CDATA[and DATE_FORMAT(rr.add_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+   </select>
+   <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	select 
+    <include refid="Base_Column_List" />
+    from rb_recommend_reward
+    where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_recommend_reward
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_recommend_reward
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.RecommendReward" >
+    insert into rb_recommend_reward (id, recommend_user_id, recommend_user_reward, 
+      level_user_id, level_user_reward, tender_money, 
+      recommond_level, status, add_time, 
+      add_ip, remark)
+    values (#{id,jdbcType=INTEGER}, #{recommendUserId,jdbcType=INTEGER}, #{recommendUserReward,jdbcType=DECIMAL}, 
+      #{levelUserId,jdbcType=INTEGER}, #{levelUserReward,jdbcType=DECIMAL}, #{tenderMoney,jdbcType=DECIMAL}, 
+      #{recommondLevel,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{addIp,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.RecommendReward" >
+    insert into rb_recommend_reward
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="recommendUserId != null" >
+        recommend_user_id,
+      </if>
+      <if test="recommendUserReward != null" >
+        recommend_user_reward,
+      </if>
+      <if test="levelUserId != null" >
+        level_user_id,
+      </if>
+      <if test="levelUserReward != null" >
+        level_user_reward,
+      </if>
+      <if test="tenderMoney != null" >
+        tender_money,
+      </if>
+      <if test="recommondLevel != null" >
+        recommond_level,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="addIp != null" >
+        add_ip,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="recommendUserId != null" >
+        #{recommendUserId,jdbcType=INTEGER},
+      </if>
+      <if test="recommendUserReward != null" >
+        #{recommendUserReward,jdbcType=DECIMAL},
+      </if>
+      <if test="levelUserId != null" >
+        #{levelUserId,jdbcType=INTEGER},
+      </if>
+      <if test="levelUserReward != null" >
+        #{levelUserReward,jdbcType=DECIMAL},
+      </if>
+      <if test="tenderMoney != null" >
+        #{tenderMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="recommondLevel != null" >
+        #{recommondLevel,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.RecommendReward" >
+    update rb_recommend_reward
+    <set >
+      <if test="recommendUserId != null" >
+        recommend_user_id = #{recommendUserId,jdbcType=INTEGER},
+      </if>
+      <if test="recommendUserReward != null" >
+        recommend_user_reward = #{recommendUserReward,jdbcType=DECIMAL},
+      </if>
+      <if test="levelUserId != null" >
+        level_user_id = #{levelUserId,jdbcType=INTEGER},
+      </if>
+      <if test="levelUserReward != null" >
+        level_user_reward = #{levelUserReward,jdbcType=DECIMAL},
+      </if>
+      <if test="tenderMoney != null" >
+        tender_money = #{tenderMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="recommondLevel != null" >
+        recommond_level = #{recommondLevel,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        add_ip = #{addIp,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.RecommendReward" >
+    update rb_recommend_reward
+    set recommend_user_id = #{recommendUserId,jdbcType=INTEGER},
+      recommend_user_reward = #{recommendUserReward,jdbcType=DECIMAL},
+      level_user_id = #{levelUserId,jdbcType=INTEGER},
+      level_user_reward = #{levelUserReward,jdbcType=DECIMAL},
+      tender_money = #{tenderMoney,jdbcType=DECIMAL},
+      recommond_level = #{recommondLevel,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      add_time = #{addTime,jdbcType=TIMESTAMP},
+      add_ip = #{addIp,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <!--汇总好友提成 -->
+	<select id="selectReward" resultType="Map" parameterType="Map">
+		select t.r recommendMoney ,t.u userAccount,t.l r ,t.time time,t.typename typename,t.sta sta from(SELECT rrr.recommond_level l,rrr.level_user_id i,rrr.`status` sta,u.user_account u, rrr.add_time time,rut.`name` typename,
+		SUM(rrr.recommend_user_reward) r,rrr.recommend_user_id rid from
+		rb_user u INNER JOIN rb_recommend_reward rrr ON u.id=rrr.level_user_id INNER JOIN rb_user_type rut ON u.type_id=rut.id where u.id=rrr.level_user_id  GROUP
+		BY rrr.id  ) t where t.rid=#{recommendUserid};
+	</select>
+	<select id="selectRewardCount" resultType="int" parameterType="Map">
+  		SELECT  count(t.i)
+		FROM (SELECT rrr.recommond_level le,rrr.level_user_id i,u.user_account u,
+		SUM(rrr.recommend_user_reward) r,rrr.recommend_user_id rid from
+		rb_user u ,rb_recommend_reward rrr where u.id=rrr.level_user_id GROUP
+		BY rrr.id ) t WHERE t.rid=#{recommendUserid};
+  </select>
+</mapper>

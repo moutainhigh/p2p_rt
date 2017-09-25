@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.PersonalMessageMapper" >
+ 	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.PersonalMessage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="marital" property="marital" jdbcType="INTEGER" />
+    <result column="children" property="children" jdbcType="INTEGER" />
+    <result column="income" property="income" jdbcType="INTEGER" />
+    <result column="social" property="social" jdbcType="INTEGER" />
+    <result column="social_id" property="socialId" jdbcType="VARCHAR" />
+    <result column="housing" property="housing" jdbcType="INTEGER" />
+    <result column="car" property="car" jdbcType="INTEGER" />
+    <result column="overdue" property="overdue" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, marital, children, income, social, social_id, housing, car, overdue
+  </sql>
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_personal_message
+    where user_id = #{userId}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_personal_message
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_personal_message
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.PersonalMessage" >
+    insert into rb_personal_message (id, user_id, marital, 
+      children, income, social, 
+      social_id, housing, car, 
+      overdue)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{marital,jdbcType=INTEGER}, 
+      #{children,jdbcType=INTEGER}, #{income,jdbcType=INTEGER}, #{social,jdbcType=INTEGER}, 
+      #{socialId,jdbcType=VARCHAR}, #{housing,jdbcType=INTEGER}, #{car,jdbcType=INTEGER}, 
+      #{overdue,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.PersonalMessage" >
+    insert into rb_personal_message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="marital != null" >
+        marital,
+      </if>
+      <if test="children != null" >
+        children,
+      </if>
+      <if test="income != null" >
+        income,
+      </if>
+      <if test="social != null" >
+        social,
+      </if>
+      <if test="socialId != null" >
+        social_id,
+      </if>
+      <if test="housing != null" >
+        housing,
+      </if>
+      <if test="car != null" >
+        car,
+      </if>
+      <if test="overdue != null" >
+        overdue,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="marital != null" >
+        #{marital,jdbcType=INTEGER},
+      </if>
+      <if test="children != null" >
+        #{children,jdbcType=INTEGER},
+      </if>
+      <if test="income != null" >
+        #{income,jdbcType=INTEGER},
+      </if>
+      <if test="social != null" >
+        #{social,jdbcType=INTEGER},
+      </if>
+      <if test="socialId != null" >
+        #{socialId,jdbcType=VARCHAR},
+      </if>
+      <if test="housing != null" >
+        #{housing,jdbcType=INTEGER},
+      </if>
+      <if test="car != null" >
+        #{car,jdbcType=INTEGER},
+      </if>
+      <if test="overdue != null" >
+        #{overdue,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.PersonalMessage" >
+    update rb_personal_message
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="marital != null" >
+        marital = #{marital,jdbcType=INTEGER},
+      </if>
+      <if test="children != null" >
+        children = #{children,jdbcType=INTEGER},
+      </if>
+      <if test="income != null" >
+        income = #{income,jdbcType=INTEGER},
+      </if>
+      <if test="social != null" >
+        social = #{social,jdbcType=INTEGER},
+      </if>
+      <if test="socialId != null" >
+        social_id = #{socialId,jdbcType=VARCHAR},
+      </if>
+      <if test="housing != null" >
+        housing = #{housing,jdbcType=INTEGER},
+      </if>
+      <if test="car != null" >
+        car = #{car,jdbcType=INTEGER},
+      </if>
+      <if test="overdue != null" >
+        overdue = #{overdue,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.PersonalMessage" >
+    update rb_personal_message
+    set user_id = #{userId,jdbcType=INTEGER},
+      marital = #{marital,jdbcType=INTEGER},
+      children = #{children,jdbcType=INTEGER},
+      income = #{income,jdbcType=INTEGER},
+      social = #{social,jdbcType=INTEGER},
+      social_id = #{socialId,jdbcType=VARCHAR},
+      housing = #{housing,jdbcType=INTEGER},
+      car = #{car,jdbcType=INTEGER},
+      overdue = #{overdue,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.PaymentConfigMapper" >
+ 	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.PaymentConfig" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="payment_name" property="paymentName" jdbcType="VARCHAR" />
+    <result column="payment_code" property="paymentCode" jdbcType="VARCHAR" />
+    <result column="payment_status" property="paymentStatus" jdbcType="SMALLINT" />
+    <result column="payment_type" property="paymentType" jdbcType="INTEGER" />
+    <result column="payment_config" property="paymentConfig" jdbcType="VARCHAR" />
+    <result column="payment_fee_type" property="paymentFeeType" jdbcType="INTEGER" />
+    <result column="payment_max_money" property="paymentMaxMoney" jdbcType="REAL" />
+    <result column="payment_max_fee" property="paymentMaxFee" jdbcType="REAL" />
+    <result column="payment_description" property="paymentDescription" jdbcType="VARCHAR" />
+    <result column="payment_sequence" property="paymentSequence" jdbcType="SMALLINT" />
+    <result column="payment_ico" property="paymentIco" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select 
+    *
+    from rb_payment_config
+  </select>
+  <select id="selectTotalCount" resultType="int" parameterType="com.rbao.east.entity.PaymentConfig">
+    select 
+    count(*)
+    from rb_payment_config where 1=1
+    <if test="paymentName != null and paymentName != ''">
+    	and payment_name=#{paymentName}
+    </if>
+    <if test="paymentCode != null and paymentCode != ''">
+    	and payment_code=#{paymentCode}
+    </if>
+    <if test="paymentStatus != null">
+    	and payment_status=#{paymentStatus}
+    </if>
+    <if test="paymentType != null">
+    	and payment_type=#{paymentType}
+    </if>
+    <if test="paymentConfig != null and paymentConfig != ''">
+    	and payment_config=#{paymentConfig}
+    </if>
+    <if test="paymentFeeType != null">
+    	and payment_fee_type=#{paymentFeeType}
+    </if>
+    <if test="paymentMaxMoney != null">
+    	and payment_max_money=#{paymentMaxMoney}
+    </if>
+    <if test="paymentMaxFee != null">
+    	and payment_max_fee=#{paymentMaxFee}
+    </if>
+    <if test="paymentDescription != null and paymentDescription != ''">
+    	and payment_description=#{paymentDescription}
+    </if>
+    <if test="paymentSequence != null">
+    	and payment_sequence=#{paymentSequence}
+    </if>
+  </select>
+  
+  <select id="selectByEntity" resultMap="BaseResultMap" parameterType="com.rbao.east.entity.PaymentConfig">
+    select 
+    *
+    from rb_payment_config where 1=1 
+    <if test="paymentName != null and paymentName != ''">
+    	and payment_name=#{paymentName}
+    </if>
+    <if test="paymentCodePreffix != null ">
+        and payment_code like CONCAT(#{paymentCodePreffix}, '%')
+    </if>
+    <if test="paymentCode != null and paymentCode != ''">
+    	and payment_code=#{paymentCode}
+    </if>
+    <if test="paymentStatus != null">
+    	and payment_status=#{paymentStatus}
+    </if>
+    <if test="paymentType != null">
+    	and payment_type=#{paymentType}
+    </if>
+    <if test="paymentConfig != null and paymentConfig != ''">
+    	and payment_config=#{paymentConfig}
+    </if>
+    <if test="paymentFeeType != null">
+    	and payment_fee_type=#{paymentFeeType}
+    </if>
+    <if test="paymentMaxMoney != null">
+    	and payment_max_money=#{paymentMaxMoney}
+    </if>
+    <if test="paymentMaxFee != null">
+    	and payment_max_fee=#{paymentMaxFee}
+    </if>
+    <if test="paymentDescription != null and paymentDescription != ''">
+    	and payment_description=#{paymentDescription}
+    </if>
+    <if test="paymentSequence != null">
+    	and payment_sequence=#{paymentSequence}
+    </if>
+    order by payment_sequence
+  </select>
+  
+  <sql id="Base_Column_List" >
+    id, payment_name, payment_code, payment_status, payment_type, payment_config, payment_fee_type, 
+    payment_max_money, payment_max_fee, payment_description, payment_sequence, payment_ico
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_payment_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_payment_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.PaymentConfig" >
+    insert into rb_payment_config (id, payment_name, payment_code, 
+      payment_status, payment_type, payment_config, 
+      payment_fee_type, payment_max_money, payment_max_fee, 
+      payment_description, payment_sequence)
+    values (#{id,jdbcType=INTEGER}, #{paymentName,jdbcType=VARCHAR}, #{paymentCode,jdbcType=VARCHAR}, 
+      #{paymentStatus,jdbcType=SMALLINT}, #{paymentType,jdbcType=INTEGER}, #{paymentConfig,jdbcType=VARCHAR}, 
+      #{paymentFeeType,jdbcType=INTEGER}, #{paymentMaxMoney,jdbcType=REAL}, #{paymentMaxFee,jdbcType=REAL}, 
+      #{paymentDescription,jdbcType=VARCHAR}, #{paymentSequence,jdbcType=SMALLINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.PaymentConfig" >
+    insert into rb_payment_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="paymentName != null" >
+        payment_name,
+      </if>
+      <if test="paymentCode != null" >
+        payment_code,
+      </if>
+      <if test="paymentStatus != null" >
+        payment_status,
+      </if>
+      <if test="paymentType != null" >
+        payment_type,
+      </if>
+      <if test="paymentConfig != null" >
+        payment_config,
+      </if>
+      <if test="paymentFeeType != null" >
+        payment_fee_type,
+      </if>
+      <if test="paymentMaxMoney != null" >
+        payment_max_money,
+      </if>
+      <if test="paymentMaxFee != null" >
+        payment_max_fee,
+      </if>
+      <if test="paymentDescription != null" >
+        payment_description,
+      </if>
+      <if test="paymentSequence != null" >
+        payment_sequence,
+      </if>
+      <if test="paymentIco != null" >
+        payment_ico,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="paymentName != null" >
+        #{paymentName,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentCode != null" >
+        #{paymentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentStatus != null" >
+        #{paymentStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="paymentType != null" >
+        #{paymentType,jdbcType=INTEGER},
+      </if>
+      <if test="paymentConfig != null" >
+        #{paymentConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentFeeType != null" >
+        #{paymentFeeType,jdbcType=INTEGER},
+      </if>
+      <if test="paymentMaxMoney != null" >
+        #{paymentMaxMoney,jdbcType=REAL},
+      </if>
+      <if test="paymentMaxFee != null" >
+        #{paymentMaxFee,jdbcType=REAL},
+      </if>
+      <if test="paymentDescription != null" >
+        #{paymentDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentSequence != null" >
+        #{paymentSequence,jdbcType=SMALLINT},
+      </if>
+      <if test="paymentIco != null" >
+        #{paymentIco,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.PaymentConfig" >
+    update rb_payment_config
+    <set >
+      <if test="paymentName != null" >
+        payment_name = #{paymentName,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentCode != null" >
+        payment_code = #{paymentCode,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentStatus != null" >
+        payment_status = #{paymentStatus,jdbcType=SMALLINT},
+      </if>
+      <if test="paymentType != null" >
+        payment_type = #{paymentType,jdbcType=INTEGER},
+      </if>
+      <if test="paymentConfig != null" >
+        payment_config = #{paymentConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentFeeType != null" >
+        payment_fee_type = #{paymentFeeType,jdbcType=INTEGER},
+      </if>
+      <if test="paymentMaxMoney != null" >
+        payment_max_money = #{paymentMaxMoney,jdbcType=REAL},
+      </if>
+      <if test="paymentMaxFee != null" >
+        payment_max_fee = #{paymentMaxFee,jdbcType=REAL},
+      </if>
+      <if test="paymentDescription != null" >
+        payment_description = #{paymentDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="paymentSequence != null" >
+        payment_sequence = #{paymentSequence,jdbcType=SMALLINT},
+      </if>
+      <if test="paymentIco != null" >
+        payment_ico = #{paymentIco,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.PaymentConfig" >
+    update rb_payment_config
+    set payment_name = #{paymentName,jdbcType=VARCHAR},
+      payment_code = #{paymentCode,jdbcType=VARCHAR},
+      payment_status = #{paymentStatus,jdbcType=SMALLINT},
+      payment_type = #{paymentType,jdbcType=INTEGER},
+      payment_config = #{paymentConfig,jdbcType=VARCHAR},
+      payment_fee_type = #{paymentFeeType,jdbcType=INTEGER},
+      payment_max_money = #{paymentMaxMoney,jdbcType=REAL},
+      payment_max_fee = #{paymentMaxFee,jdbcType=REAL},
+      payment_description = #{paymentDescription,jdbcType=VARCHAR},
+      payment_sequence = #{paymentSequence,jdbcType=SMALLINT}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

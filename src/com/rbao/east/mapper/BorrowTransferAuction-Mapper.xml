@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.BorrowTransferAuctionMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.BorrowTransferAuction">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="transfer_id" property="transferId" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="auction_money" property="auctionMoney"
+			jdbcType="DECIMAL" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="cur_interest_rate" property="curInterestRate"
+			jdbcType="DECIMAL" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, transfer_id, user_id, status, auction_money,
+		create_time,
+		cur_interest_rate
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_borrow_transfer_auction
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectBorrowTransferAuctionListByTransferIds" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		SELECT * FROM rb_borrow_transfer_auction
+		WHERE transfer_id=#{transferId}
+		ORDER BY auction_money DESC
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		rb_borrow_transfer_auction
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.BorrowTransferAuction">
+		insert into
+		rb_borrow_transfer_auction (id, transfer_id, user_id,
+		status,
+		auction_money, create_time,
+		cur_interest_rate)
+		values
+		(#{id,jdbcType=INTEGER}, #{transferId,jdbcType=INTEGER},
+		#{userId,jdbcType=INTEGER},
+		#{status,jdbcType=INTEGER},
+		#{auctionMoney,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP},
+		#{curInterestRate,jdbcType=DECIMAL})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.BorrowTransferAuction">
+		insert into rb_borrow_transfer_auction
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="transferId != null">
+				transfer_id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="auctionMoney != null">
+				auction_money,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="curInterestRate != null">
+				cur_interest_rate,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="transferId != null">
+				#{transferId,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="auctionMoney != null">
+				#{auctionMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="curInterestRate != null">
+				#{curInterestRate,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.BorrowTransferAuction">
+		update rb_borrow_transfer_auction
+		<set>
+			<if test="transferId != null">
+				transfer_id = #{transferId,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="auctionMoney != null">
+				auction_money = #{auctionMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="curInterestRate != null">
+				cur_interest_rate = #{curInterestRate,jdbcType=DECIMAL},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.BorrowTransferAuction">
+		update
+		rb_borrow_transfer_auction
+		set transfer_id =
+		#{transferId,jdbcType=INTEGER},
+		user_id = #{userId,jdbcType=INTEGER},
+		status = #{status,jdbcType=INTEGER},
+		auction_money =
+		#{auctionMoney,jdbcType=DECIMAL},
+		create_time =
+		#{createTime,jdbcType=TIMESTAMP},
+		cur_interest_rate =
+		#{curInterestRate,jdbcType=DECIMAL}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

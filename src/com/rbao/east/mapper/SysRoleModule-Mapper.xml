@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.SysRoleModuleMapper">
+		<!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache" />-->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.SysRoleModule">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="sys_module_id" property="sysModuleId" jdbcType="INTEGER" />
+		<result column="sys_role_id" property="sysRoleId" jdbcType="INTEGER" />
+	</resultMap>
+
+
+	<insert id="insertSysRoleModule" parameterType="map">
+		insert into sys_role_module(sys_module_id,sys_role_id)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			( #{moduleId}, #{item.id})
+		</foreach>
+	</insert>
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from sys_role_module
+		where sys_module_id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insertModuleRole" parameterType="map">
+		insert into sys_role_module (sys_module_id, sys_role_id)
+		VALUES
+		<foreach collection="moduleIds" item="item" index="index"
+			separator=",">
+			( #{item}, #{role_id})
+		</foreach>
+	</insert>
+
+</mapper>

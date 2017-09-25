@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.ExtValueMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.ExtValue" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="tb_related_id" property="tbRelatedId" jdbcType="INTEGER" />
+    <result column="fld_id" property="fldId" jdbcType="INTEGER" />
+    <result column="f_value" property="fValue" jdbcType="VARCHAR" />
+    <result column="upt_time" property="uptTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.rbao.east.entity.ExtValue" extends="BaseResultMap" >
+    <result column="f_valuew" property="fValuew" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, tb_related_id, fld_id, f_value, upt_time
+  </sql>
+  <sql id="Blob_Column_List" >
+    f_valuew
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from rb_ext_value
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_ext_value
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <!-- 根据borrowId进行 -->
+  <delete id="deleteByBorrowId" parameterType="map" >
+    delete from rb_ext_value 
+    WHERE fld_id in (select id from rb_ext_field where fld_in_table = #{fldTable,jdbcType=VARCHAR}) 
+    and tb_related_id = #{borrowId,jdbcType=INTEGER} 
+  </delete>
+  
+  <insert id="insert" parameterType="com.rbao.east.entity.ExtValue" >
+    insert into rb_ext_value (id, tb_related_id, fld_id, 
+      f_value, upt_time, f_valuew
+      )
+    values (#{id,jdbcType=INTEGER}, #{tbRelatedId,jdbcType=INTEGER}, #{fldId,jdbcType=INTEGER}, 
+      #{fValue,jdbcType=VARCHAR}, #{uptTime,jdbcType=TIMESTAMP}, #{fValuew,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.ExtValue" >
+    insert into rb_ext_value
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tbRelatedId != null" >
+        tb_related_id,
+      </if>
+      <if test="fldId != null" >
+        fld_id,
+      </if>
+      <if test="fValue != null" >
+        f_value,
+      </if>
+      <if test="uptTime != null" >
+        upt_time,
+      </if>
+      <if test="fValuew != null" >
+        f_valuew,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="tbRelatedId != null" >
+        #{tbRelatedId,jdbcType=INTEGER},
+      </if>
+      <if test="fldId != null" >
+        #{fldId,jdbcType=INTEGER},
+      </if>
+      <if test="fValue != null" >
+        #{fValue,jdbcType=VARCHAR},
+      </if>
+      <if test="uptTime != null" >
+        #{uptTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fValuew != null" >
+        #{fValuew,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.ExtValue" >
+    update rb_ext_value
+    <set >
+      <if test="tbRelatedId != null" >
+        tb_related_id = #{tbRelatedId,jdbcType=INTEGER},
+      </if>
+      <if test="fldId != null" >
+        fld_id = #{fldId,jdbcType=INTEGER},
+      </if>
+      <if test="fValue != null" >
+        f_value = #{fValue,jdbcType=VARCHAR},
+      </if>
+      <if test="uptTime != null" >
+        upt_time = #{uptTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="fValuew != null" >
+        f_valuew = #{fValuew,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.rbao.east.entity.ExtValue" >
+    update rb_ext_value
+    set tb_related_id = #{tbRelatedId,jdbcType=INTEGER},
+      fld_id = #{fldId,jdbcType=INTEGER},
+      f_value = #{fValue,jdbcType=VARCHAR},
+      upt_time = #{uptTime,jdbcType=TIMESTAMP},
+      f_valuew = #{fValuew,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.ExtValue" >
+    update rb_ext_value
+    set tb_related_id = #{tbRelatedId,jdbcType=INTEGER},
+      fld_id = #{fldId,jdbcType=INTEGER},
+      f_value = #{fValue,jdbcType=VARCHAR},
+      upt_time = #{uptTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

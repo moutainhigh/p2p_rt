@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.NationMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.Nation">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="nation_name" property="nationName" jdbcType="VARCHAR" />
+		<result column="nation_code" property="nationCode" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, nation_name, nation_code
+	</sql>
+
+	<select id="getNationList" resultMap="BaseResultMap"  parameterType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_nation
+		<where>
+			<if test="nationName != null">
+				and nation_name like CONCAT('%', #{nationName}, '%')
+			</if>
+			<if test="nationCode != null">
+				and nation_code like CONCAT('%', #{nationCode}, '%')
+			</if>
+		</where>
+	</select>
+	
+	<select id="checkExist"  parameterType="Map" resultType="java.lang.Integer">
+		select count(*)
+		from rb_nation
+		<where>
+			<if test="nationName != null">
+				and nation_name =  #{nationName}
+			</if>
+			<if test="nationCode != null">
+				and nation_code = #{nationCode}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getCount"  parameterType="Map" resultType="java.lang.Integer">
+		select count(*)
+		from rb_nation
+		<where>
+			<if test="nationName != null">
+				and nation_name like CONCAT('%', #{nationName}, '%')
+			</if>
+			<if test="nationCode != null">
+				and nation_code like CONCAT('%', #{nationCode}, '%')
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_nation
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	
+	
+	<delete id="deleteByPrimaryKey" >
+		delete from
+		rb_nation
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	
+	<insert id="insert" parameterType="com.rbao.east.entity.Nation">
+		insert into rb_nation (id,
+		nation_name, nation_code
+		)
+		values (#{id,jdbcType=INTEGER},
+		#{nationName,jdbcType=VARCHAR},
+		#{nationCode,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.Nation">
+		insert into rb_nation
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="nationName != null">
+				nation_name,
+			</if>
+			<if test="nationCode != null">
+				nation_code,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="nationName != null">
+				#{nationName,jdbcType=VARCHAR},
+			</if>
+			<if test="nationCode != null">
+				#{nationCode,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.Nation">
+		update rb_nation
+		<set>
+			<if test="nationName != null">
+				nation_name = #{nationName,jdbcType=VARCHAR},
+			</if>
+			<if test="nationCode != null">
+				nation_code = #{nationCode,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.Nation">
+		update rb_nation
+		set nation_name = #{nationName,jdbcType=VARCHAR},
+		nation_code =
+		#{nationCode,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

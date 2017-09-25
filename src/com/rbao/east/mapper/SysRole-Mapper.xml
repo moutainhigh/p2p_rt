@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.SysRoleMapper">
+	<!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache" />
+	<cache-ref namespace="com.rbao.east.mapper.SysRoleModuleMapper" />-->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.SysRole">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="role_name" property="roleName" jdbcType="VARCHAR" />
+		<result column="role_sequence" property="roleSequence"
+			jdbcType="VARCHAR" />
+		<result column="role_status" property="roleStatus" jdbcType="INTEGER" />
+		<result column="role_type" property="roleType" jdbcType="INTEGER" />
+		<result column="role_summary" property="roleSummary" jdbcType="VARCHAR" />
+		<result column="role_super" property="roleSuper" jdbcType="INTEGER" />
+		<result column="role_remark" property="roleRemark" jdbcType="VARCHAR" />
+		<result column="role_addtime" property="roleAddtime" jdbcType="TIMESTAMP" />
+		<result column="role_addip" property="roleAddip" jdbcType="VARCHAR" />
+		<result column="roleSuperName" property="roleSuperName"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="ResultMapWithBLOBs" type="com.rbao.east.entity.SysRole"
+		extends="BaseResultMap">
+		<result column="role_purview" property="rolePurview" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+
+	<select id="getSysRoleIdByUserId" parameterType="map" resultMap="BaseResultMap">
+		SELECT r.id FROM sys_role r LEFT JOIN sys_user_role ur
+		ON r.id=ur.sys_role_id LEFT JOIN rb_user u ON u.id=ur.sys_user_id
+		WHERE r.role_status=1 AND u.id= #{userId} or r.role_super=0
+		GROUP BY r.id
+	</select>
+
+	<select id="getSysRolePage" parameterType="map" resultMap="BaseResultMap">
+		SELECT distinct r.* FROM sys_role r LEFT JOIN sys_user_role ur
+		ON
+		r.id=ur.sys_role_id LEFT JOIN rb_user u ON u.id=ur.sys_user_id
+		WHERE
+		r.role_status=1 
+		<if test="userId != null">
+		AND u.id= #{userId} and r.id > 1
+		</if>		
+		<if test="role_name ==null">
+			AND (r.role_super=#{roleId} OR r.id=#{roleId})
+		</if>
+		<if test="role_name !=null">
+			and r.role_name like CONCAT('%', #{role_name}, '%')
+		</if>
+	</select>
+
+	<select id="getSysRolePageCount" parameterType="map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(distinct r.id) FROM sys_role r LEFT JOIN sys_user_role ur
+		ON r.id=ur.sys_role_id LEFT JOIN rb_user u ON u.id=ur.sys_user_id
+		WHERE r.role_status=1 
+		<if test="userId != null">
+			AND u.id= #{userId} and r.id > 1
+		</if>	
+		<if test="role_name ==null">
+			AND (r.role_super=#{roleId} OR r.id=#{roleId})
+		</if>
+		<if test="role_name !=null">
+			and r.role_name like CONCAT('%', #{role_name}, '%')
+		</if>
+	</select>
+
+
+	<select id="getAdminRoleIds" parameterType="map" resultType="java.lang.String">
+		SELECT id FROM sys_role WHERE role_super=0 AND role_status=1
+	</select>
+
+	<!-- 得到选中的父权限id -->
+	<select id="getModuleIdList" parameterType="map" resultType="java.lang.String">
+		SELECT id FROM sys_module WHERE module_view=1
+		<foreach collection="rightIds" close=")" item="right_id" open="AND ("
+			separator="OR">
+			FIND_IN_SET(id, getPerLstRight(#{right_id}))
+		</foreach>
+	</select>
+
+	<select id="getChildRoleIds" parameterType="map" resultType="java.lang.String">
+		SELECT id FROM sys_role WHERE role_status=1
+		<foreach collection="roles" close=")" item="role" open="AND ("
+			separator="OR">
+			FIND_IN_SET(id, getChildUserRole(#{role.id}))
+		</foreach>
+	</select>
+	
+	<select id="getChildRoleIdss" parameterType="map" resultType="java.lang.String">
+		SELECT id FROM sys_role WHERE role_status=1
+		<foreach collection="roles" close=")" item="item" open="AND ("
+			separator="OR">
+			FIND_IN_SET(id, getChildUserRole(#{item}))
+		</foreach>
+	</select>
+	
+	<select id="getUserIdsByRoleIds" parameterType="map" resultType="java.lang.String">
+		SELECT sys_user_id FROM sys_user_role where
+		<foreach collection="roleIds"  item="item" 
+			separator="OR">
+			sys_role_id=#{item}
+		</foreach>
+	</select>
+
+	<select id="showChildRoleListByRoleId" parameterType="map"
+		resultType="java.lang.String">
+		SELECT id FROM sys_role WHERE role_status=1
+		AND FIND_IN_SET(id, getChildUserRole(#{roleId}))
+	</select>
+	
+	<select id="showPerRoleListByRoleId" parameterType="map"
+		resultType="java.lang.String">
+		SELECT id FROM sys_role WHERE role_status=1
+		AND FIND_IN_SET(id, getPerUserRole(#{roleId}))
+	</select>
+	
+
+	<delete id="deleteRoleModule" parameterType="map">
+		delete from sys_role_module
+		where sys_role_id = #{role_id}
+	</delete>
+
+	<sql id="Base_Column_List">
+		id, role_name, role_sequence, role_status, role_type, role_summary,
+		role_super, role_remark,
+		role_addtime, role_addip
+	</sql>
+	<sql id="Blob_Column_List">
+		role_purview
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select *,(SELECT role_name FROM sys_role r WHERE r.id=s.role_super) AS
+		roleSuperName
+		from sys_role s
+		where s.id = #{id}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from sys_role
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insertUserRole" parameterType="map">
+		insert into sys_user_role (sys_role_id, sys_user_id)
+		values
+		<foreach collection="userIds" item="item" index="index"
+			separator=",">
+			( #{roleId}, #{item})
+		</foreach>
+	</insert>
+
+	<insert id="insert" parameterType="com.rbao.east.entity.SysRole">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into sys_role (role_name, role_sequence,
+		role_status, role_type, role_summary,
+		role_super, role_remark, role_addtime,
+		role_addip)
+		values (#{roleName,jdbcType=VARCHAR}, 0,
+		#{roleStatus,jdbcType=INTEGER},1, #{roleSummary,jdbcType=VARCHAR},
+		#{roleSuper,jdbcType=INTEGER}, #{roleRemark,jdbcType=VARCHAR},NOW(),
+		#{roleAddip,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.SysRole">
+		insert into sys_role
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="roleName != null">
+				role_name,
+			</if>
+			<if test="roleSequence != null">
+				role_sequence,
+			</if>
+			<if test="roleStatus != null">
+				role_status,
+			</if>
+			<if test="roleType != null">
+				role_type,
+			</if>
+			<if test="roleSummary != null">
+				role_summary,
+			</if>
+			<if test="roleSuper != null">
+				role_super,
+			</if>
+			<if test="roleRemark != null">
+				role_remark,
+			</if>
+			<if test="roleAddtime != null">
+				role_addtime,
+			</if>
+			<if test="roleAddip != null">
+				role_addip,
+			</if>
+			<if test="rolePurview != null">
+				role_purview,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="roleName != null">
+				#{roleName,jdbcType=VARCHAR},
+			</if>
+			<if test="roleSequence != null">
+				#{roleSequence,jdbcType=VARCHAR},
+			</if>
+			<if test="roleStatus != null">
+				#{roleStatus,jdbcType=INTEGER},
+			</if>
+			<if test="roleType != null">
+				#{roleType,jdbcType=INTEGER},
+			</if>
+			<if test="roleSummary != null">
+				#{roleSummary,jdbcType=VARCHAR},
+			</if>
+			<if test="roleSuper != null">
+				#{roleSuper,jdbcType=INTEGER},
+			</if>
+			<if test="roleRemark != null">
+				#{roleRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="roleAddtime != null">
+				#{roleAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="roleAddip != null">
+				#{roleAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="rolePurview != null">
+				#{rolePurview,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.SysRole">
+		update sys_role
+		<set>
+			<if test="roleName != null">
+				role_name = #{roleName,jdbcType=VARCHAR},
+			</if>
+			<if test="roleSequence != null">
+				role_sequence = #{roleSequence,jdbcType=VARCHAR},
+			</if>
+			<if test="roleStatus != null">
+				role_status = #{roleStatus,jdbcType=INTEGER},
+			</if>
+			<if test="roleType != null">
+				role_type = #{roleType,jdbcType=INTEGER},
+			</if>
+			<if test="roleSummary != null">
+				role_summary = #{roleSummary,jdbcType=VARCHAR},
+			</if>
+			<if test="roleSuper != null">
+				role_super = #{roleSuper,jdbcType=INTEGER},
+			</if>
+			<if test="roleRemark != null">
+				role_remark = #{roleRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="roleAddtime != null">
+				role_addtime = #{roleAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="roleAddip != null">
+				role_addip = #{roleAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="rolePurview != null">
+				role_purview = #{rolePurview,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.rbao.east.entity.SysRole">
+		update sys_role
+		set role_name = #{roleName,jdbcType=VARCHAR},
+		role_sequence = #{roleSequence,jdbcType=VARCHAR},
+		role_status = #{roleStatus,jdbcType=INTEGER},
+		role_type = #{roleType,jdbcType=INTEGER},
+		role_summary = #{roleSummary,jdbcType=VARCHAR},
+		role_super = #{roleSuper,jdbcType=INTEGER},
+		role_remark = #{roleRemark,jdbcType=VARCHAR},
+		role_addtime = #{roleAddtime,jdbcType=TIMESTAMP},
+		role_addip = #{roleAddip,jdbcType=VARCHAR},
+		role_purview = #{rolePurview,jdbcType=LONGVARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.SysRole">
+		update sys_role
+		set role_name = #{roleName,jdbcType=VARCHAR},
+		role_sequence = #{roleSequence,jdbcType=VARCHAR},
+		role_status = #{roleStatus,jdbcType=INTEGER},
+		role_type = #{roleType,jdbcType=INTEGER},
+		role_summary = #{roleSummary,jdbcType=VARCHAR},
+		role_super = #{roleSuper,jdbcType=INTEGER},
+		role_remark = #{roleRemark,jdbcType=VARCHAR},
+		role_addtime = #{roleAddtime,jdbcType=TIMESTAMP},
+		role_addip = #{roleAddip,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

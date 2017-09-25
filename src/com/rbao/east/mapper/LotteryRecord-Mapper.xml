@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.LotteryRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.LotteryRecord" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="usr_id" property="usrId" jdbcType="INTEGER" />
+    <result column="prize_id" property="prizeId" jdbcType="INTEGER" />
+    <result column="prize_disc" property="prizeDisc" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+ 
+  <select id="selectRecord" resultType="map" parameterType="map" >
+		   SELECT 
+		  r.id id,
+		  u.user_account usrname,
+		  u.user_realname realname,
+		  u.user_tel tel,
+		  r.prize_disc disc,
+		  r.remark remark,
+		  r.status stats,
+		  r.create_time createTime,
+		  lp.prize_type prizetype
+		FROM
+		  rb_lottery_record r,
+		  rb_user u,
+		  rb_lottery_prize lp
+		WHERE r.usr_id = u.id and r.prize_id=lp.id
+		  
+	<if test="usrName != null" >
+		and u.user_account like CONCAT('%', #{usrName}, '%') 
+	</if>
+	<if test="status != null" >
+		and r.status = #{status}
+	</if>
+	<if test="disc != null" >
+		and lp.id = #{disc}
+	</if>
+	<if test="beginTime != null">
+		<![CDATA[ 	and DATE_FORMAT(r.create_time,'%Y-%m-%d') >= #{beginTime} ]]>
+	</if>
+	<if test="endTime != null">
+		<![CDATA[ 	and DATE_FORMAT(r.create_time,'%Y-%m-%d') <= #{endTime} ]]>
+	</if>
+	<if test="userId != null">
+		and u.id=#{userId}
+	</if>
+		  ORDER BY r.id DESC;
+  </select>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <sql id="Base_Column_List" >
+    id, usr_id, prize_id, prize_disc, create_time, status, remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_lottery_record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_lottery_record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.LotteryRecord" >
+    insert into rb_lottery_record (id, usr_id, prize_id, 
+      prize_disc, create_time, status, 
+      remark)
+    values (#{id,jdbcType=INTEGER}, #{usrId,jdbcType=INTEGER}, #{prizeId,jdbcType=INTEGER}, 
+      #{prizeDisc,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.LotteryRecord" >
+    insert into rb_lottery_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="usrId != null" >
+        usr_id,
+      </if>
+      <if test="prizeId != null" >
+        prize_id,
+      </if>
+      <if test="prizeDisc != null" >
+        prize_disc,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="usrId != null" >
+        #{usrId,jdbcType=INTEGER},
+      </if>
+      <if test="prizeId != null" >
+        #{prizeId,jdbcType=INTEGER},
+      </if>
+      <if test="prizeDisc != null" >
+        #{prizeDisc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.LotteryRecord" >
+    update rb_lottery_record
+    <set >
+      <if test="usrId != null" >
+        usr_id = #{usrId,jdbcType=INTEGER},
+      </if>
+      <if test="prizeId != null" >
+        prize_id = #{prizeId,jdbcType=INTEGER},
+      </if>
+      <if test="prizeDisc != null" >
+        prize_disc = #{prizeDisc,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.LotteryRecord" >
+    update rb_lottery_record
+    set usr_id = #{usrId,jdbcType=INTEGER},
+      prize_id = #{prizeId,jdbcType=INTEGER},
+      prize_disc = #{prizeDisc,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

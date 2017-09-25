@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.AdviseMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.Advise">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="advise_connect_info" property="adviseConnectInfo"
+			jdbcType="VARCHAR" />
+		<result column="advise_content" property="adviseContent"
+			jdbcType="VARCHAR" />
+		<result column="advise_feedback" property="adviseFeedback"
+			jdbcType="VARCHAR" />
+		<result column="advise_addip" property="adviseAddip" jdbcType="VARCHAR" />
+		<result column="advise_addtime" property="adviseAddtime"
+			jdbcType="TIMESTAMP" />
+		<result column="advise_status" property="adviseStatus"
+			jdbcType="INTEGER" />
+		<result column="advise_deal_userid" property="adviseDealUserid"
+			jdbcType="INTEGER" />
+		<result column="advise_feedback_way" property="adviseFeedbackWay"
+			jdbcType="INTEGER" />
+		<result column="advise_feedback_datetime" property="adviseFeedbackDatetime"
+			jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, advise_connect_info, advise_content, advise_feedback, advise_addip,
+		advise_addtime,
+		advise_status, advise_deal_userid, advise_feedback_way, advise_feedback_datetime
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_advise
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_advise
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.Advise">
+		insert into rb_advise (id, advise_connect_info, advise_content,
+		advise_feedback, advise_addip, advise_addtime,
+		advise_status, advise_deal_userid, advise_feedback_way,
+		advise_feedback_datetime)
+		values (#{id,jdbcType=INTEGER}, #{adviseConnectInfo,jdbcType=VARCHAR},
+		#{adviseContent,jdbcType=VARCHAR},
+		#{adviseFeedback,jdbcType=VARCHAR}, #{adviseAddip,jdbcType=VARCHAR}, #{adviseAddtime,jdbcType=TIMESTAMP},
+		#{adviseStatus,jdbcType=INTEGER},
+		#{adviseDealUserid,jdbcType=INTEGER},
+		#{adviseFeedbackWay,jdbcType=INTEGER},
+		#{adviseFeedbackDatetime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.Advise">
+		insert into rb_advise
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="adviseConnectInfo != null">
+				advise_connect_info,
+			</if>
+			<if test="adviseContent != null">
+				advise_content,
+			</if>
+			<if test="adviseFeedback != null">
+				advise_feedback,
+			</if>
+			<if test="adviseAddip != null">
+				advise_addip,
+			</if>
+			<if test="adviseAddtime != null">
+				advise_addtime,
+			</if>
+			<if test="adviseStatus != null">
+				advise_status,
+			</if>
+			<if test="adviseDealUserid != null">
+				advise_deal_userid,
+			</if>
+			<if test="adviseFeedbackWay != null">
+				advise_feedback_way,
+			</if>
+			<if test="adviseFeedbackDatetime != null">
+				advise_feedback_datetime,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="adviseConnectInfo != null">
+				#{adviseConnectInfo,jdbcType=VARCHAR},
+			</if>
+			<if test="adviseContent != null">
+				#{adviseContent,jdbcType=VARCHAR},
+			</if>
+			<if test="adviseFeedback != null">
+				#{adviseFeedback,jdbcType=VARCHAR},
+			</if>
+			<if test="adviseAddip != null">
+				#{adviseAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="adviseAddtime != null">
+				#{adviseAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="adviseStatus != null">
+				#{adviseStatus,jdbcType=INTEGER},
+			</if>
+			<if test="adviseDealUserid != null">
+				#{adviseDealUserid,jdbcType=INTEGER},
+			</if>
+			<if test="adviseFeedbackWay != null">
+				#{adviseFeedbackWay,jdbcType=INTEGER},
+			</if>
+			<if test="adviseFeedbackDatetime != null">
+				#{adviseFeedbackDatetime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.Advise">
+		update rb_advise
+		<set>
+			<if test="adviseConnectInfo != null">
+				advise_connect_info = #{adviseConnectInfo,jdbcType=VARCHAR},
+			</if>
+			<if test="adviseContent != null">
+				advise_content = #{adviseContent,jdbcType=VARCHAR},
+			</if>
+			<if test="adviseFeedback != null">
+				advise_feedback = #{adviseFeedback,jdbcType=VARCHAR},
+			</if>
+			<if test="adviseAddip != null">
+				advise_addip = #{adviseAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="adviseAddtime != null">
+				advise_addtime = #{adviseAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="adviseStatus != null">
+				advise_status = #{adviseStatus,jdbcType=INTEGER},
+			</if>
+			<if test="adviseDealUserid != null">
+				advise_deal_userid = #{adviseDealUserid,jdbcType=INTEGER},
+			</if>
+			<if test="adviseFeedbackWay != null">
+				advise_feedback_way = #{adviseFeedbackWay,jdbcType=INTEGER},
+			</if>
+			<if test="adviseFeedbackDatetime != null">
+				advise_feedback_datetime =
+				#{adviseFeedbackDatetime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.Advise">
+		update rb_advise
+		set advise_connect_info = #{adviseConnectInfo,jdbcType=VARCHAR},
+		advise_content = #{adviseContent,jdbcType=VARCHAR},
+		advise_feedback = #{adviseFeedback,jdbcType=VARCHAR},
+		advise_addip = #{adviseAddip,jdbcType=VARCHAR},
+		advise_addtime = #{adviseAddtime,jdbcType=TIMESTAMP},
+		advise_status = #{adviseStatus,jdbcType=INTEGER},
+		advise_deal_userid = #{adviseDealUserid,jdbcType=INTEGER},
+		advise_feedback_way = #{adviseFeedbackWay,jdbcType=INTEGER},
+		advise_feedback_datetime = #{adviseFeedbackDatetime,jdbcType=TIMESTAMP}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

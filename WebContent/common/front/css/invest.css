@@ -1,0 +1,16 @@
+@CHARSET "UTF-8";
+.plan_con .title h1{
+	float: left;
+    line-height: 60px;
+    min-width: 150px;
+    text-align: center;
+    color: #fff;
+    font-size: 24px;
+    font-weight: bold;
+    max-width: 80%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 10px;
+}
+    

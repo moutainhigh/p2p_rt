@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.HouseMessageMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.HouseMessage">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="mianji" property="mianji" jdbcType="VARCHAR" />
+		<result column="year" property="year" jdbcType="TIMESTAMP" />
+		<result column="money" property="money" jdbcType="VARCHAR" />
+		<result column="ownership1" property="ownership1" jdbcType="VARCHAR" />
+		<result column="share1" property="share1" jdbcType="VARCHAR" />
+		<result column="ownership2" property="ownership2" jdbcType="VARCHAR" />
+		<result column="share2" property="share2" jdbcType="VARCHAR" />
+		<result column="loan_year" property="loanYear" jdbcType="VARCHAR" />
+		<result column="month_money" property="monthMoney" jdbcType="VARCHAR" />
+		<result column="debt_money" property="debtMoney" jdbcType="VARCHAR" />
+		<result column="bank" property="bank" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, address, mianji, year, money, ownership1, share1, ownership2,
+		share2,
+		loan_year, month_money, debt_money, bank
+	</sql>
+	<select id="selectByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_house_message
+		where user_id = #{userId}
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_house_message
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_house_message
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.HouseMessage">
+		insert into rb_house_message (id, user_id, address,
+		mianji, year, money,
+		ownership1, share1, ownership2,
+		share2, loan_year, month_money,
+		debt_money, bank)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{address,jdbcType=VARCHAR},
+		#{mianji,jdbcType=VARCHAR}, #{year,jdbcType=TIMESTAMP}, #{money,jdbcType=VARCHAR},
+		#{ownership1,jdbcType=VARCHAR}, #{share1,jdbcType=VARCHAR},
+		#{ownership2,jdbcType=VARCHAR},
+		#{share2,jdbcType=VARCHAR}, #{loanYear,jdbcType=VARCHAR}, #{monthMoney,jdbcType=VARCHAR},
+		#{debtMoney,jdbcType=VARCHAR}, #{bank,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.HouseMessage">
+		insert into rb_house_message
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="mianji != null">
+				mianji,
+			</if>
+			<if test="year != null">
+				year,
+			</if>
+			<if test="money != null">
+				money,
+			</if>
+			<if test="ownership1 != null">
+				ownership1,
+			</if>
+			<if test="share1 != null">
+				share1,
+			</if>
+			<if test="ownership2 != null">
+				ownership2,
+			</if>
+			<if test="share2 != null">
+				share2,
+			</if>
+			<if test="loanYear != null">
+				loan_year,
+			</if>
+			<if test="monthMoney != null">
+				month_money,
+			</if>
+			<if test="debtMoney != null">
+				debt_money,
+			</if>
+			<if test="bank != null">
+				bank,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="address != null">
+				#{address,jdbcType=VARCHAR},
+			</if>
+			<if test="mianji != null">
+				#{mianji,jdbcType=VARCHAR},
+			</if>
+			<if test="year != null">
+				#{year,jdbcType=TIMESTAMP},
+			</if>
+			<if test="money != null">
+				#{money,jdbcType=VARCHAR},
+			</if>
+			<if test="ownership1 != null">
+				#{ownership1,jdbcType=VARCHAR},
+			</if>
+			<if test="share1 != null">
+				#{share1,jdbcType=VARCHAR},
+			</if>
+			<if test="ownership2 != null">
+				#{ownership2,jdbcType=VARCHAR},
+			</if>
+			<if test="share2 != null">
+				#{share2,jdbcType=VARCHAR},
+			</if>
+			<if test="loanYear != null">
+				#{loanYear,jdbcType=VARCHAR},
+			</if>
+			<if test="monthMoney != null">
+				#{monthMoney,jdbcType=VARCHAR},
+			</if>
+			<if test="debtMoney != null">
+				#{debtMoney,jdbcType=VARCHAR},
+			</if>
+			<if test="bank != null">
+				#{bank,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.HouseMessage">
+		update rb_house_message
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="address != null">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="mianji != null">
+				mianji = #{mianji,jdbcType=VARCHAR},
+			</if>
+			<if test="year != null">
+				year = #{year,jdbcType=TIMESTAMP},
+			</if>
+			<if test="money != null">
+				money = #{money,jdbcType=VARCHAR},
+			</if>
+			<if test="ownership1 != null">
+				ownership1 = #{ownership1,jdbcType=VARCHAR},
+			</if>
+			<if test="share1 != null">
+				share1 = #{share1,jdbcType=VARCHAR},
+			</if>
+			<if test="ownership2 != null">
+				ownership2 = #{ownership2,jdbcType=VARCHAR},
+			</if>
+			<if test="share2 != null">
+				share2 = #{share2,jdbcType=VARCHAR},
+			</if>
+			<if test="loanYear != null">
+				loan_year = #{loanYear,jdbcType=VARCHAR},
+			</if>
+			<if test="monthMoney != null">
+				month_money = #{monthMoney,jdbcType=VARCHAR},
+			</if>
+			<if test="debtMoney != null">
+				debt_money = #{debtMoney,jdbcType=VARCHAR},
+			</if>
+			<if test="bank != null">
+				bank = #{bank,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.HouseMessage">
+		update rb_house_message
+		set user_id = #{userId,jdbcType=INTEGER},
+		address = #{address,jdbcType=VARCHAR},
+		mianji = #{mianji,jdbcType=VARCHAR},
+		year = #{year,jdbcType=TIMESTAMP},
+		money = #{money,jdbcType=VARCHAR},
+		ownership1 = #{ownership1,jdbcType=VARCHAR},
+		share1 = #{share1,jdbcType=VARCHAR},
+		ownership2 = #{ownership2,jdbcType=VARCHAR},
+		share2 = #{share2,jdbcType=VARCHAR},
+		loan_year = #{loanYear,jdbcType=VARCHAR},
+		month_money = #{monthMoney,jdbcType=VARCHAR},
+		debt_money = #{debtMoney,jdbcType=VARCHAR},
+		bank = #{bank,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

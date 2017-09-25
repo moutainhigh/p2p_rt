@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.RecommendMapper" >
+ 	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.Recommend" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="recommend_status" property="recommendStatus" jdbcType="INTEGER" />
+    <result column="recommend_sequence" property="recommendSequence" jdbcType="INTEGER" />
+    <result column="recommend_money" property="recommendMoney" jdbcType="DECIMAL" />
+    <result column="recommend_userid" property="recommendUserid" jdbcType="INTEGER" />
+    <result column="recommend_addtime" property="recommendAddtime" jdbcType="TIMESTAMP" />
+    <result column="verify_userid" property="verifyUserid" jdbcType="INTEGER" />
+    <result column="verify_remark" property="verifyRemark" jdbcType="VARCHAR" />
+    <result column="verify_addtime" property="verifyAddtime" jdbcType="TIMESTAMP" />
+    <result column="verify_addip" property="verifyAddip" jdbcType="VARCHAR" />
+    <association property="user" column="user_id" javaType="com.rbao.east.entity.User" 
+  		select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  	<association property="recommendUser" column="recommend_userid" javaType="com.rbao.east.entity.User" 
+  		select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  	<association property="verifyUser" column="verify_userid" javaType="com.rbao.east.entity.User" 
+  		select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, recommend_status, recommend_sequence, recommend_money, recommend_userid, 
+    recommend_addtime, verify_userid, verify_remark, verify_addtime, verify_addip
+  </sql>
+  
+  
+  <!-- 查询当前用户的推广上级用户 -->
+  <select id="getRbRecommendUser" parameterType="map"  resultMap="BaseResultMap">
+	SELECT * FROM rb_recommend WHERE 
+	<if test="userId!=null and level!=null and userId!='' and level!=''">
+		FIND_IN_SET(user_id, getRbRecommenda(#{userId},#{level}))
+	</if>
+  </select> 
+  
+   <!-- 查询用户id查询推广上线用户-->
+  <select id="getRbRecommendbyUserId" parameterType="map"  resultMap="BaseResultMap">
+  	SELECT * FROM rb_recommend WHERE 
+  	<if test="userId!=null and level!=null and userId!='' and level!=''">
+  	 FIND_IN_SET(user_id, getRbRecommend(#{userId},#{level}))
+  	</if>
+  	<if test="userIds!=null">
+  		and user_id=#{userIds}
+  	</if>
+  	<if test="recommendUserIds!=null">
+  		and recommend_userid=#{recommendUserIds}
+  	</if>
+  </select>
+  
+  <!-- 查询所有推广下级 -->
+  <select id="getRbRecommend" parameterType="map"  resultMap="BaseResultMap">
+  	SELECT * FROM rb_recommend WHERE 
+  	<if test="recommendUserId!=null and level!=null and recommendUserId!='' and level!=''">
+  	 FIND_IN_SET(recommend_userid, getRbRecommend(#{recommendUserId},#{level}));
+  	</if>
+  </select>
+  
+  
+   <select id="getRbRecommendtest" parameterType="map"  resultMap="BaseResultMap">
+  		
+  		SELECT * FROM rb_recommend WHERE 
+  	<if test="recommendUserId!=null and level!=null and recommendUserId!='' and level!=''">
+  	 	FIND_IN_SET(recommend_userid, getRbRecommendLevl(#{recommendUserId},#{level}));
+  	</if>
+  </select>
+  
+ <!--  直接取id -->
+  <select id="getRbRecommendtest1" parameterType="map" resultType="java.lang.String">
+		SELECT user_id FROM rb_recommend WHERE
+		
+			FIND_IN_SET(recommend_userid, getRbRecommendLevl(#{recommendUserId},#{level}));
+		
+	</select>
+  
+  <!-- 根据推广人查看邀请人 -->
+  <select id="selectByRecommendUserId" resultType="Map" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_recommend
+    where recommend_userid = #{recommendUserId,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 统计推广信息， -->
+  <select id="selectCountRecommend" resultType="Map" parameterType="Map">
+  		SELECT 
+		  ru.id id,
+		  ru.user_account userAccount,
+		  ru.user_realname userRealname,
+		  ru.user_phone userPhone,
+		  ru.user_email userEmail,
+		  ru.rt_user_flag rtUserFlag,
+		  rra.rewards
+		FROM
+		  rb_recommend rr,
+		  rb_user ru,
+		  rb_recommend_account rra 
+		WHERE rr.recommend_userid = ru.id 
+		  AND ru.id = rra.user_id 
+		  <if test="id">
+		  and	ru.id =#{id}
+		  </if>
+		  <if test="userAccount != null and userAccount !=''">
+		    	AND ru.user_account like CONCAT('%', #{userAccount}, '%')
+		    </if>
+		    <if test="userRealname != null and userRealname !=''">
+		    	AND ru.user_realname like CONCAT('%', #{userRealname}, '%')
+		    </if>
+		    <if test="rtUserFlag != null and rtUserFlag !=''">
+		    	AND ru.rt_user_flag like CONCAT('%', #{rtUserFlag}, '%')
+		    </if>
+		 
+		GROUP BY rr.recommend_userId 
+		ORDER BY rr.recommend_addtime DESC 
+  </select>
+  
+  <select id="getRecommendLevl" resultType="Map" parameterType="Map">
+  
+  	SELECT 
+			rb.user_account userAccount,
+		  rb.user_realname userRealname,
+		  rb.user_phone userPhone,
+		  rb.user_email userEmail,
+		  rb.rt_user_flag rtUserFlag,
+		  rr.recommend_addtime recommendAddtime,
+		  rr.user_id userId,
+		  rr.recommend_userid id
+		FROM
+		  
+		  rb_user rb 
+		  LEFT JOIN rb_recommend rr 
+		    ON rr.user_id = rb.id 
+		WHERE rr.user_id=#{userId} AND rr.recommend_userid=#{recommendUserId};
+  
+  </select>
+  
+  
+  <select id="selectByParams" resultType="Map" parameterType="Map">
+		  	SELECT 
+		  rr.id id,
+		  rr.recommend_userid recommendUserId,
+		  rr.user_id levelUserId,
+		  rr.recommend_addtime addTimes,
+		  r.user_account rUserAccount,
+		  r.user_realname rUserRealname,
+		  r.user_email rUserEmail,
+		  r.user_phone rUserPhone,
+		  rb.user_account lUserAccount,
+		  rb.user_realname lUserRealname ,
+		   rb.user_email lUserEmail,
+		  rb.user_phone lUserPhone
+		FROM
+		  rb_recommend rr 
+		  LEFT JOIN rb_user r 
+		    ON r.id = rr.recommend_userid 
+		  LEFT JOIN rb_user rb 
+		    ON rr.user_id = rb.id 
+		WHERE 1 = 1 
+		
+		<if test="recommendUserId != null and recommendUserId!=''">
+		    	AND rr.recommend_userid =#{recommendUserId}
+		    </if>
+		    <if test="levelUserId != null and levelUserId !=''">
+		    	 AND rr.user_id=#{levelUserId}
+		    </if>
+		    <if test="rUserAccount != null and rUserAccount !=''">
+		    	AND r.user_account like CONCAT('%', #{rUserAccount}, '%')
+		    </if>
+		    <if test="rUserRealname != null and  rUserRealname !=''">
+		    	AND r.user_realname like CONCAT('%', #{rUserRealname}, '%')
+		    </if>
+		    <if test="lUserAccount != null and lUserAccount !=''">
+		    	AND rb.user_account like CONCAT('%', #{lUserAccount}, '%')
+		    </if>
+		    <if test="lUserRealname != null and lUserRealname !=''">
+		    	AND rb.user_realname like CONCAT('%', #{lUserRealname}, '%')
+		    </if>
+		    <if test="beginTime !=null and beginTime !=''">
+		    	<![CDATA[and DATE_FORMAT(rr.add_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+		    	<![CDATA[and DATE_FORMAT(rr.add_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+  
+  </select>
+  
+  <!-- 查询该用户的推荐人是否有推荐人 -->
+  <select id="selectIsRecommend" resultMap="BaseResultMap" parameterType="int">
+  	 SELECT * FROM rb_recommend WHERE user_id = (SELECT recommend_userid FROM rb_recommend WHERE user_id=#{userId})
+  </select>
+  
+  <select id="selectTotalCount" resultType="int" parameterType="com.rbao.east.entity.AccountLog">
+    select 
+    count(*)
+   from rb_recommend r inner join rb_user u on r.user_id = u.id
+			inner join rb_user ru on r.recommend_userid = ru.id
+			left join rb_user rvu on r.verify_userid = rvu.id
+    <where>
+    	<if test="userAccount !=null and userAccount !=''">
+	    	u.user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="recommendUser !=null and recommendUser !=''">
+	    	and ru.user_account like CONCAT('%', #{recommendUser}, '%')
+		</if>
+    	<if test="recommendStatus !=null and recommendStatus !=''">
+	    	and r.recommend_status = #{recommendStatus}
+		</if>
+		<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(r.recommend_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+		</if>
+		    <if test="endTime !=null and endTime !=''">
+		    	<![CDATA[	and DATE_FORMAT(r.recommend_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+		    </if>
+    </where>
+  </select>
+  
+  <select id="selectByEntity" resultType="Map" parameterType="com.rbao.east.entity.AccountLog">
+    select 
+	    u.user_account userAccount,
+	    u.user_realname userRealname,
+	    u.user_phone userPhone,
+	    ru.user_account recommendUser, 
+	    ru.user_phone recommendUserPhone,
+	    ru.user_realname recommendUserRealname,
+	    rvu.user_account verifyUser,
+	    r.id id,
+	    r.user_id userId,
+	    r.recommend_status recommendStatus,
+	    r.recommend_sequence recommendSequence,
+	    r.recommend_money recommendMoney,
+	    r.recommend_userid recommendUserid,
+	    r.recommend_addtime recommendAddtime,
+	    r.verify_userid verifyUserid,
+	    r.verify_remark verifyRemark,
+	    r.verify_addtime verifyAddtime,
+	    r.verify_addip verifyAddip
+    from rb_recommend r inner join rb_user u on r.user_id = u.id
+			inner join rb_user ru on r.recommend_userid = ru.id
+			left join rb_user rvu on r.verify_userid = rvu.id
+    <where>
+    	<if test="userAccount !=null and userAccount !=''">
+	    	u.user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="recommendUser !=null and recommendUser !=''">
+	    	and ru.user_account like CONCAT('%', #{recommendUser}, '%')
+		</if>
+    	<if test="recommendStatus !=null and recommendStatus !=''">
+	    	and r.recommend_status = #{recommendStatus}
+		</if>
+		<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(r.recommend_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+		</if>
+		    <if test="endTime !=null and endTime !=''">
+		    	<![CDATA[	and DATE_FORMAT(r.recommend_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+		    </if>
+    </where>
+    order by r.recommend_sequence asc
+  </select>
+  
+  <!-- 根据用户Id查询推广邀请 -->
+  <select id="selectRecommendByUserId" resultType="Map" parameterType="Map">
+    select 
+	    u.user_account userAccount,
+	    ru.user_account recommendUser,
+	    rvu.user_account verifyUser,
+	    r.id id,
+	    r.user_id userId,
+	    r.recommend_status recommendStatus,
+	    r.recommend_sequence recommendSequence,
+	    r.recommend_money recommendMoney,
+	    r.recommend_userid recommendUserid,
+	    r.recommend_addtime recommendAddtime,
+	    r.verify_userid verifyUserid,
+	    r.verify_remark verifyRemark,
+	    r.verify_addtime verifyAddtime,
+	    r.verify_addip verifyAddip
+    from rb_recommend r inner join rb_user u on r.user_id = u.id
+			inner join rb_user ru on r.recommend_userid = ru.id
+			inner join rb_user rvu on r.verify_userid = rvu.id
+    <where>
+    	<if test="userId !=null and userId !=''">
+	    	r.user_id = #{userId}
+		</if>
+    </where>
+    order by r.recommend_sequence desc
+  </select>
+  
+  <!-- 好友提成查看 -->
+  <select id="selectByRecommendUser" resultType="Map" parameterType="Map">
+  	SELECT  u.user_account userAccount,
+			r.recommend_money recommendMoney,
+			r.recommend_userid recommendUserid,
+			r.recommend_status recommendStatus,
+			r.recommend_addtime recommendAddtime
+	FROM rb_recommend r LEFT JOIN rb_user u ON r.user_id = u.id WHERE 1=1 
+	<if test="recommendUserid != null and recommendUserid != ''">
+		AND r.recommend_userid = #{recommendUserid} AND r.recommend_status = 2
+	</if>
+	order by recommendAddtime desc
+  </select>
+  
+  <select id="selectByRecommendUserCount" resultType="int" parameterType="Map">
+  		SELECT  count(*)
+		FROM rb_recommend r LEFT JOIN rb_user u ON r.user_id = u.id WHERE 1=1 
+		<if test="recommendUserid != null and recommendUserid != ''">
+			AND r.recommend_userid = #{recommendUserid} AND r.recommend_status = 2
+		</if>
+  </select>
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_recommend
+    where user_id = #{user_id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_recommend
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_recommend
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.Recommend" >
+    insert into rb_recommend (id, user_id, recommend_status, 
+      recommend_sequence, recommend_money, recommend_userid, 
+      recommend_addtime, verify_userid, verify_remark, 
+      verify_addtime, verify_addip)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{recommendStatus,jdbcType=INTEGER}, 
+      #{recommendSequence,jdbcType=INTEGER}, #{recommendMoney,jdbcType=DECIMAL}, #{recommendUserid,jdbcType=INTEGER}, 
+      #{recommendAddtime,jdbcType=TIMESTAMP}, #{verifyUserid,jdbcType=INTEGER}, #{verifyRemark,jdbcType=VARCHAR}, 
+      #{verifyAddtime,jdbcType=TIMESTAMP}, #{verifyAddip,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.Recommend" >
+    insert into rb_recommend
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="recommendStatus != null" >
+        recommend_status,
+      </if>
+      <if test="recommendSequence != null" >
+        recommend_sequence,
+      </if>
+      <if test="recommendMoney != null" >
+        recommend_money,
+      </if>
+      <if test="recommendUserid != null" >
+        recommend_userid,
+      </if>
+      <if test="recommendAddtime != null" >
+        recommend_addtime,
+      </if>
+      <if test="verifyUserid != null" >
+        verify_userid,
+      </if>
+      <if test="verifyRemark != null" >
+        verify_remark,
+      </if>
+      <if test="verifyAddtime != null" >
+        verify_addtime,
+      </if>
+      <if test="verifyAddip != null" >
+        verify_addip,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="recommendStatus != null" >
+        #{recommendStatus,jdbcType=INTEGER},
+      </if>
+      <if test="recommendSequence != null" >
+        #{recommendSequence,jdbcType=INTEGER},
+      </if>
+      <if test="recommendMoney != null" >
+        #{recommendMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="recommendUserid != null" >
+        #{recommendUserid,jdbcType=INTEGER},
+      </if>
+      <if test="recommendAddtime != null" >
+        #{recommendAddtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyUserid != null" >
+        #{verifyUserid,jdbcType=INTEGER},
+      </if>
+      <if test="verifyRemark != null" >
+        #{verifyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyAddtime != null" >
+        #{verifyAddtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyAddip != null" >
+        #{verifyAddip,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.Recommend" >
+    update rb_recommend
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="recommendStatus != null" >
+        recommend_status = #{recommendStatus,jdbcType=INTEGER},
+      </if>
+      <if test="recommendSequence != null" >
+        recommend_sequence = #{recommendSequence,jdbcType=INTEGER},
+      </if>
+      <if test="recommendMoney != null" >
+        recommend_money = #{recommendMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="recommendUserid != null" >
+        recommend_userid = #{recommendUserid,jdbcType=INTEGER},
+      </if>
+      <if test="recommendAddtime != null" >
+        recommend_addtime = #{recommendAddtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyUserid != null" >
+        verify_userid = #{verifyUserid,jdbcType=INTEGER},
+      </if>
+      <if test="verifyRemark != null" >
+        verify_remark = #{verifyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="verifyAddtime != null" >
+        verify_addtime = #{verifyAddtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="verifyAddip != null" >
+        verify_addip = #{verifyAddip,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.Recommend" >
+    update rb_recommend
+    set user_id = #{userId,jdbcType=INTEGER},
+      recommend_status = #{recommendStatus,jdbcType=INTEGER},
+      recommend_sequence = #{recommendSequence,jdbcType=INTEGER},
+      recommend_money = #{recommendMoney,jdbcType=DECIMAL},
+      recommend_userid = #{recommendUserid,jdbcType=INTEGER},
+      recommend_addtime = #{recommendAddtime,jdbcType=TIMESTAMP},
+      verify_userid = #{verifyUserid,jdbcType=INTEGER},
+      verify_remark = #{verifyRemark,jdbcType=VARCHAR},
+      verify_addtime = #{verifyAddtime,jdbcType=TIMESTAMP},
+      verify_addip = #{verifyAddip,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.DiscussionConfigMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.DiscussionConfig">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="dis_key" property="disKey" jdbcType="VARCHAR" />
+		<result column="dis_value" property="disValue" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, description, dis_key, dis_value
+	</sql>
+	
+	<select id="getValue" resultMap="BaseResultMap" parameterType="string">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM rb_dis_config
+		WHERE dis_key = #{disKey}
+	</select>
+	
+	<select id="getConfigsCount" resultType="java.lang.Integer"
+		parameterType="Map">
+		select count(1)
+		from rb_dis_config
+		<where>
+			<if test="description != null">
+				and description like CONCAT('%', #{description}, '%')
+			</if>
+			<if test="disKey != null">
+				and dis_key like CONCAT('%', #{disKey}, '%')
+			</if>
+		</where>
+	</select>
+
+	<select id="getConfigs" resultMap="BaseResultMap" parameterType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_dis_config
+		<where>
+			<if test="description != null">
+				and description like CONCAT('%', #{description}, '%')
+			</if>
+			<if test="disKey != null">
+				and dis_key like CONCAT('%', #{disKey}, '%')
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_dis_config
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_dis_config
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.DiscussionConfig">
+		insert into rb_dis_config (id, description, dis_key,
+		dis_value)
+		values (#{id,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR},
+		#{disKey,jdbcType=VARCHAR},
+		#{disValue,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.DiscussionConfig">
+		insert into rb_dis_config
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+			<if test="disKey != null">
+				dis_key,
+			</if>
+			<if test="disValue != null">
+				dis_value,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR},
+			</if>
+			<if test="disKey != null">
+				#{disKey,jdbcType=VARCHAR},
+			</if>
+			<if test="disValue != null">
+				#{disValue,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.DiscussionConfig">
+		update rb_dis_config
+		<set>
+			<if test="description != null">
+				description = #{description,jdbcType=VARCHAR},
+			</if>
+			<if test="disKey != null">
+				dis_key = #{disKey,jdbcType=VARCHAR},
+			</if>
+			<if test="disValue != null">
+				dis_value = #{disValue,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.DiscussionConfig">
+		update rb_dis_config
+		set description = #{description,jdbcType=VARCHAR},
+		dis_key = #{disKey,jdbcType=VARCHAR},
+		dis_value = #{disValue,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

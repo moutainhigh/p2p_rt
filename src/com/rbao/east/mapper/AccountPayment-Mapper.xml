@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.AccountPaymentMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.AccountPayment">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="pay_title" property="payTitle" jdbcType="VARCHAR" />
+		<result column="pay_status" property="payStatus" jdbcType="INTEGER" />
+		<result column="pay_fee" property="payFee" jdbcType="DECIMAL" />
+		<result column="pay_type" property="payType" jdbcType="INTEGER" />
+		<result column="max_money" property="maxMoney" jdbcType="DECIMAL" />
+		<result column="max_fee" property="maxFee" jdbcType="DECIMAL" />
+	</resultMap>
+	<resultMap id="ResultMapWithBLOBs" type="com.rbao.east.entity.AccountPayment"
+		extends="BaseResultMap">
+		<result column="pay_description" property="payDescription"
+			jdbcType="LONGVARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, pay_title, pay_status, pay_fee, pay_type, max_money, max_fee
+	</sql>
+	<sql id="Blob_Column_List">
+		pay_description
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from rb_account_payment
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_account_payment
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.AccountPayment">
+		insert into rb_account_payment (id, pay_title, pay_status,
+		pay_fee, pay_type, max_money,
+		max_fee, pay_description)
+		values (#{id,jdbcType=INTEGER}, #{payTitle,jdbcType=VARCHAR},
+		#{payStatus,jdbcType=INTEGER},
+		#{payFee,jdbcType=DECIMAL}, #{payType,jdbcType=INTEGER}, #{maxMoney,jdbcType=DECIMAL},
+		#{maxFee,jdbcType=DECIMAL}, #{payDescription,jdbcType=LONGVARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.AccountPayment">
+		insert into rb_account_payment
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="payTitle != null">
+				pay_title,
+			</if>
+			<if test="payStatus != null">
+				pay_status,
+			</if>
+			<if test="payFee != null">
+				pay_fee,
+			</if>
+			<if test="payType != null">
+				pay_type,
+			</if>
+			<if test="maxMoney != null">
+				max_money,
+			</if>
+			<if test="maxFee != null">
+				max_fee,
+			</if>
+			<if test="payDescription != null">
+				pay_description,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="payTitle != null">
+				#{payTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="payStatus != null">
+				#{payStatus,jdbcType=INTEGER},
+			</if>
+			<if test="payFee != null">
+				#{payFee,jdbcType=DECIMAL},
+			</if>
+			<if test="payType != null">
+				#{payType,jdbcType=INTEGER},
+			</if>
+			<if test="maxMoney != null">
+				#{maxMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="maxFee != null">
+				#{maxFee,jdbcType=DECIMAL},
+			</if>
+			<if test="payDescription != null">
+				#{payDescription,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.AccountPayment">
+		update rb_account_payment
+		<set>
+			<if test="payTitle != null">
+				pay_title = #{payTitle,jdbcType=VARCHAR},
+			</if>
+			<if test="payStatus != null">
+				pay_status = #{payStatus,jdbcType=INTEGER},
+			</if>
+			<if test="payFee != null">
+				pay_fee = #{payFee,jdbcType=DECIMAL},
+			</if>
+			<if test="payType != null">
+				pay_type = #{payType,jdbcType=INTEGER},
+			</if>
+			<if test="maxMoney != null">
+				max_money = #{maxMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="maxFee != null">
+				max_fee = #{maxFee,jdbcType=DECIMAL},
+			</if>
+			<if test="payDescription != null">
+				pay_description = #{payDescription,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.rbao.east.entity.AccountPayment">
+		update rb_account_payment
+		set pay_title = #{payTitle,jdbcType=VARCHAR},
+		pay_status = #{payStatus,jdbcType=INTEGER},
+		pay_fee = #{payFee,jdbcType=DECIMAL},
+		pay_type = #{payType,jdbcType=INTEGER},
+		max_money = #{maxMoney,jdbcType=DECIMAL},
+		max_fee = #{maxFee,jdbcType=DECIMAL},
+		pay_description = #{payDescription,jdbcType=LONGVARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.AccountPayment">
+		update rb_account_payment
+		set pay_title = #{payTitle,jdbcType=VARCHAR},
+		pay_status = #{payStatus,jdbcType=INTEGER},
+		pay_fee = #{payFee,jdbcType=DECIMAL},
+		pay_type = #{payType,jdbcType=INTEGER},
+		max_money = #{maxMoney,jdbcType=DECIMAL},
+		max_fee = #{maxFee,jdbcType=DECIMAL}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,1004 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.BorrowTenderMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.BorrowTender">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="tender_status" property="tenderStatus"
+			jdbcType="INTEGER" />
+		<result column="borrow_id" property="borrowId" jdbcType="INTEGER" />
+		<result column="tender_amount" property="tenderAmount"
+			jdbcType="DECIMAL" />
+		<result column="effective_amount" property="effectiveAmount"
+			jdbcType="DECIMAL" />
+		<result column="repayment_amount" property="repaymentAmount"
+			jdbcType="DECIMAL" />
+		<result column="interest_amount" property="interestAmount"
+			jdbcType="DECIMAL" />
+		<result column="paid_amount" property="paidAmount" jdbcType="DECIMAL" />
+		<result column="staying_amount" property="stayingAmount"
+			jdbcType="DECIMAL" />
+		<result column="staying_interest" property="stayingInterest"
+			jdbcType="DECIMAL" />
+		<result column="interest_paid" property="interestPaid"
+			jdbcType="DECIMAL" />
+		<result column="tender_addtime" property="tenderAddtime"
+			jdbcType="TIMESTAMP" />
+		<result column="agreement_time" property="agreementTime"
+			jdbcType="TIMESTAMP" />
+		<result column="tender_addip" property="tenderAddip" jdbcType="VARCHAR" />
+		<result column="agreement_path" property="agreementPath" jdbcType="VARCHAR" />
+		<result column="tender_from" property="tenderFrom" jdbcType="VARCHAR" />
+		<result column="cal_interest_type" property="calInterestType" jdbcType="INTEGER" />
+		<result column="transfer_count" property="transferCount" jdbcType="INTEGER" />
+		<result column="tender_type" property="tenderType" jdbcType="INTEGER" />
+		<result column="deduction_money" property="deductionMoney" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		id, user_id, tender_status, borrow_id, tender_amount, effective_amount,
+		repayment_amount,
+		interest_amount, paid_amount, staying_amount, staying_interest, interest_paid,
+		tender_addtime,
+		tender_addip,
+		agreement_path,deduction_money
+	</sql>
+	
+	<!-- 投资统计 -->
+	<select id="investSummary" parameterType="Map" resultType="Map">
+		SELECT
+		    rb.id 'borrow_id', ru.user_account, rb.borrow_title, rb.borrow_sum, rus.user_account 'user_accounts',rus.user_realname,rus.user_phone, rbt.tender_amount, rbt.interest_amount, rbt.staying_amount, rbt.staying_interest, rbt.tender_type, rbt.tender_addtime, rt.name, rbt.tender_status,rb.annual_interest_rate
+		FROM
+		    rb_user ru, rb_borrow_tender rbt, rb_borrow rb, rb_user rus, rb_borrow_type rt
+		WHERE
+		    rus.id = rbt.user_id
+		    AND rbt.borrow_id = rb.id
+		    AND rb.user_id = ru.id
+		    AND rt.id = rb.bid_kind			
+		    <if test="borrow_id != null and borrow_id != ''">
+				and rb.id = ${borrow_id}
+			</if>
+		   <if test="bid_kind != null">
+		   		AND rb.bid_kind = #{bid_kind}
+		   </if>
+		   <if test="borrow_title != null">
+		   		AND rb.borrow_title LIKE CONCAT('%', #{borrow_title}, '%')
+		   </if>
+		   <if test="user_account != null">
+		   		AND ru.user_account LIKE CONCAT('%', #{user_account}, '%')
+		   </if>
+		   <if test="user_phone != null">
+		   		AND rus.user_phone LIKE CONCAT('%', #{user_phone}, '%')
+		   </if>
+		   <if test="user_realname != null">
+		   		AND rus.user_realname LIKE CONCAT('%', #{user_realname}, '%')
+		   </if>
+		   <if test="tender_addtime_begin != null">
+		   		<![CDATA[	AND DATE_FORMAT(rbt.tender_addtime,'%Y-%m-%d') >= #{tender_addtime_begin}	]]>
+		   </if>
+		   <if test="tender_addtime_end != null">
+		   		<![CDATA[	AND DATE_FORMAT(rbt.tender_addtime, '%Y-%m-%d') <= #{tender_addtime_end}	]]>
+		   </if>
+		   <if test="tender_amount_begin != null">
+		   		<![CDATA[	AND rbt.tender_amount >= #{tender_amount_begin}    ]]>
+		   </if>
+		   <if test="tender_amount_end != null">
+		   		<![CDATA[	AND rbt.tender_amount <= #{tender_amount_end}	]]>
+		   </if>
+		   <if test="user_accounts != null and user_accounts !='' ">
+		   		AND rus.user_account=#{user_accounts}
+		   </if>
+	</select>
+	
+	<!-- 查询该用户是否是首次购买,规则：投资明细表中非失败状态的记录数+活期购买表中非体验金购买的记录 -->
+	<select id="selectFirstBuy" parameterType="Map" resultType="java.lang.Integer">
+		<![CDATA[	 
+		SELECT 
+			(SELECT COUNT(*) FROM rb_borrow_tender WHERE user_id=#{userId} and tender_status!=2)
+			
+			as total
+		]]>
+	</select>
+	
+	
+	
+	<select id="selectEffectiveTenderCount" parameterType="Map" resultType="java.lang.Integer">
+		<![CDATA[	 
+		SELECT 
+			(SELECT COUNT(*) FROM rb_borrow_tender WHERE user_id=#{userId} and tender_status!=2 and tender_status!=1)
+			
+			as total
+		]]>
+	</select>
+	
+	<!-- 投资统计 -->
+	<select id="getInvestTotalCount" parameterType="Map" resultType="Integer">
+		SELECT
+		    COUNT(*)
+		FROM
+			rb_user ru, rb_borrow_tender rbt, rb_borrow rb, rb_user rus, rb_borrow_type rt
+		WHERE
+		   rus.id = rbt.user_id
+		   AND rbt.borrow_id = rb.id
+		   AND rb.user_id = ru.id
+		   AND rt.id = rb.bid_kind
+		   <if test="bid_kind != null">
+		   		AND rb.bid_kind = #{bid_kind}
+		   </if>
+		   <if test="borrow_title != null">
+		   		AND rb.borrow_title LIKE CONCAT('%', #{borrow_title}, '%')
+		   </if>
+		   <if test="user_account != null">
+		   		AND ru.user_account LIKE CONCAT('%', #{user_account}, '%')
+		   </if>
+		   <if test="user_phone != null">
+		   		AND rus.user_phone LIKE CONCAT('%', #{user_phone}, '%')
+		   </if>
+		   <if test="user_realname != null">
+		   		AND rus.user_realname LIKE CONCAT('%', #{user_realname}, '%')
+		   </if>
+		   <if test="tender_addtime_begin != null">
+		   		<![CDATA[	AND DATE_FORMAT(rbt.tender_addtime, '%y-%m-%d') >= #{tender_addtime_begin}	]]>
+		   </if>
+		   <if test="tender_addtime_end != null">
+		   		<![CDATA[	AND DATE_FORMAT(rbt.tender_addtime, '%y-%m-%d') <= #{tender_addtime_end}	]]>
+		   </if>
+		   <if test="tender_amount_begin != null">
+		   		<![CDATA[	AND rbt.tender_amount >= #{tender_amount_begin}    ]]>
+		   </if>
+		   <if test="tender_amount_end != null">
+		   		<![CDATA[	AND rbt.tender_amount <= #{tender_amount_end}	]]>
+		   </if>
+	</select>
+	
+	<!-- 成交数据统计 -->
+	<select id="bargainSummary" parameterType="String" resultType="Map">
+		SELECT
+		    d.dic_name 'month',
+		    IFNULL(SUM(r.repayment_amount), 0.00) 'money',
+		    SUM(IF(r.repayment_amount, 1, 0)) 'count'
+		FROM
+		    rb_dictionary d INNER JOIN rb_dictionary dp ON dp.id = d.parent_id AND dp.dic_code = 'months' LEFT JOIN rb_borrow_tender r ON d.dic_code = QUARTER(r.tender_addtime) AND YEAR(r.tender_addtime) = YEAR(#{date})
+		GROUP BY
+		    month
+		ORDER BY
+		    d.dic_code
+	</select>
+	
+	<!--  统计一段时间内投标总额 -->
+	<select id="queryTenderMoney" resultType="BIGDECIMAL" parameterType="Map">
+		SELECT 
+	 	 IFNULL(SUM(effective_amount),0) tenderMoney
+		FROM
+	  	rb_borrow_tender 
+		WHERE 1=1
+	<if test="userId!=null">
+	 and user_id=#{userId}
+	</if>
+	<if test="tenderAddtime">
+	 	AND DATE_FORMAT(tender_addtime, '%Y%m%d') >= DATE_FORMAT(#{tenderAddtime}, '%Y%m%d')
+	</if>
+	<if test="tenderStatus!=null">
+	  AND tender_status IN 
+	  	<foreach item="item" index="index" collection="tenderStatus" open="(" separator="," close=")">  
+						  #{item}  
+		</foreach>
+	</if>
+	</select>
+	
+	<!--  统计一段时间内投标总额，时间，状态，标种 -->
+	<select id="queryTenderMoneyByKind" resultType="BIGDECIMAL" parameterType="Map">
+		SELECT 
+	 	 IFNULL(SUM(r.effective_amount),0) tenderMoney
+		FROM
+	  	rb_borrow_tender r LEFT JOIN rb_borrow b on r.borrow_id = b.id
+		WHERE 1=1
+	<if test="userId!=null">
+	 and r.user_id=#{userId}
+	</if>
+	<if test="tenderAddtime != null">
+	 	AND DATE_FORMAT(r.tender_addtime, '%Y%m%d') >= DATE_FORMAT(#{tenderAddtime}, '%Y%m%d')
+	</if>
+	<if test="tenderStatus != null">
+	  AND r.tender_status IN 
+	  	<foreach item="item" index="index" collection="tenderStatus" open="(" separator="," close=")">  
+						  #{item}  
+		</foreach>
+	</if>
+	<if test="borrowKinds !=null ">
+	  AND b.bid_kind IN 
+	  	<foreach item="item" index="index" collection="borrowKinds" open="(" separator="," close=")">  
+						  #{item}  
+		</foreach>
+	</if>
+	
+	</select>
+	
+	<!-- 统计投资金额 -->
+	<select id="sumTenderMoney" resultType="BIGDECIMAL" parameterType="Map">
+		SELECT 
+		  SUM(t.effective_amount) tenderMoney 
+		FROM
+		  rb_borrow_tender t,
+		  rb_borrow b 
+		WHERE t.borrow_id = b.id 
+		<if test="userId!=null">
+		 and t.user_id=#{userId}
+		</if>
+		<if test="isDay!=null">
+		 AND b.is_day=#{isDay}
+		</if>
+		<if test="tenderStatus!=null">
+		  	AND t.tender_status IN 
+		  	<foreach item="item" index="index" collection="tenderStatus" open="(" separator="," close=")">  
+							  #{item}  
+			</foreach>
+		</if>
+	</select>
+	<!-- 统计投资人数 -->
+	<select id="selectTenders" resultType="int">
+		SELECT COUNT(DISTINCT(user_id)) FROM rb_borrow_tender
+	</select>
+	<!-- 统计投资人数 -->
+	<select id="selectTenderUsers" resultType="java.lang.Integer" parameterType="int">
+	SELECT COUNT(1) FROM rb_borrow_tender
+	where borrow_id=#{borrowId}
+	</select>
+	
+	
+	<!-- 根据标id和用户id取协议路径 -->
+	<select id="getAgreementPathByBorrowIdAndUserId" resultType="java.lang.String" parameterType="map">
+		SELECT agreement_path FROM rb_borrow_tender
+		WHERE user_id=#{userId} AND borrow_id=#{borrowId}
+		ORDER BY id DESC
+		LIMIT 1
+	</select>
+	
+	<!-- 我是投资者正在收款的项目 -->
+	<select id="selectRepaying" resultType="Map" parameterType="Map">
+	SELECT  
+			b.id id,
+			bt.tender_status tenderStatus,
+			bt.borrow_id borrowId,
+			bt.tender_amount tenderAmount,
+			bt.effective_amount effectiveAmount,
+			bt.repayment_amount repaymentAmount,
+			bt.interest_amount interestAmount,
+			bt.paid_amount paidAmount,
+			bt.staying_amount stayingAmount,
+			bt.staying_interest stayingInterest,
+			bt.interest_paid interestPaid,
+			bt.tender_addtime tenderAddtime,
+			bt.agreement_path agreementPath,
+			b.borrow_title borrowTitle,
+			b.borrow_sum borrowSum,
+			b.paid_interest paidInterest,
+			u.user_account userAccount
+	FROM rb_borrow_tender bt INNER JOIN rb_borrow b ON bt.borrow_id = b.id INNER JOIN rb_user u ON b.user_id = u.id
+	WHERE 1=1 
+	<if test="tenderStatus != null and tenderStatus != ''">
+	AND bt.tender_status = #{tenderStatus}
+	</if>
+	<if test="userId != null and userId != ''">
+	AND bt.user_id = #{userId}
+	</if>
+	<if test="beginTime !=null and beginTime !=''">
+    <![CDATA[	and DATE_FORMAT(bt.tender_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+	</if>
+	<if test="endTime !=null and endTime !=''">
+    <![CDATA[	and DATE_FORMAT(bt.tender_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+	</if>
+	ORDER BY bt.tender_addtime DESC
+	</select>
+	
+	<select id="countRepaying" resultType="int" parameterType="Map">
+	SELECT  count(*)
+	FROM rb_borrow_tender bt INNER JOIN rb_borrow b ON bt.borrow_id = b.id INNER JOIN rb_user u ON b.user_id = u.id
+	WHERE 1=1 
+	<if test="tenderStatus != null and tenderStatus != ''">
+	AND bt.tender_status = #{tenderStatus}
+	</if>
+	<if test="userId != null and userId != ''">
+	AND bt.user_id = #{userId}
+	</if>
+	<if test="beginTime !=null and beginTime !=''">
+    <![CDATA[	and DATE_FORMAT(bt.tender_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+	</if>
+	<if test="endTime !=null and endTime !=''">
+    <![CDATA[	and DATE_FORMAT(bt.tender_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+	</if>
+	</select>
+	
+	<!-- 每个人每一天effective_amount总和 -->
+	<select id="getEffectiveAmountByDay" parameterType="map"
+		resultType="string">
+		SELECT sum(effective_amount) FROM rb_borrow_tender
+		WHERE 
+	<![CDATA[	DATE_FORMAT(tender_addtime,'%Y-%m-%d') =  #{countDate }  ]]>
+		AND user_id=#{userId}
+	</select>
+	
+	<!-- 一天内投标人id集合 -->
+	<select id="getTenderUserIds" parameterType="map" resultType="java.lang.Integer">
+		SELECT distinct  user_id FROM rb_borrow_tender
+		WHERE
+		<![CDATA[	DATE_FORMAT(tender_addtime,'%Y-%m-%d') =  #{countDate }  ]]>
+	</select>
+	
+	<select id="getEffectiveAmount"  parameterType="map"  resultType="map">
+		select user_id as userId ,sum(effective_amount) as amount from rb_borrow_tender
+		WHERE
+		<![CDATA[	DATE_FORMAT(tender_addtime,'%Y-%m-%d') =  #{countDate }  ]]>
+		group by user_id
+	</select>
+	
+	<select id="selectByBorrowId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		*
+		from rb_borrow_tender
+		where borrow_id = #{borrowId,jdbcType=INTEGER}
+	</select>
+	<select id="selectByBorrowIdAndUserId" resultMap="BaseResultMap"
+		 parameterType="map">
+		select
+		*
+		from rb_borrow_tender
+		where borrow_id = #{borrowId,jdbcType=INTEGER} and user_id = #{userId,jdbcType=INTEGER}
+	</select>
+	<select id="getBorrowDetailByUserId" resultMap="BaseResultMap"
+		 parameterType="map">
+		select
+		*
+		from rb_borrow_tender
+		where user_id=#{userId,jdbcType=INTEGER}
+	</select>
+	<select id="getTenderAllMoneyAndTenderNum" resultType="map" parameterType="java.lang.Integer">
+		 SELECT SUM(bt.effective_amount) effectiveAmount ,COUNT(bt.effective_amount) tenderNum,ua.wait_repossessed_capital waitRepossessedCapital,ua.wait_repossessed_interest waitRepossessedInterest 
+		FROM rb_borrow_tender bt LEFT JOIN rb_user_account ua ON bt.user_id=ua.user_id
+		WHERE bt.user_id=#{userId,jdbcType=INTEGER}
+	</select>
+	
+	<select id="shwoBorrowTenderInfoByPage" parameterType="map"
+		resultType="java.util.HashMap">
+		SELECT *,(SELECT u.user_account FROM rb_user u WHERE
+		bt.user_id=u.id) AS investorAccount,
+		(SELECT ru.user_account FROM
+		rb_user ru WHERE ru.id=(SELECT user_id FROM rb_borrow b WHERE
+		b.id=bt.borrow_id)) AS borrowAccount,
+		(SELECT b.borrow_title FROM rb_borrow b WHERE
+		b.id=bt.borrow_id) AS borrowTitle
+		FROM rb_borrow_tender bt
+		WHERE
+		borrow_id=#{borrowId}
+	</select>
+
+	<select id="shwoBorrowTenderInfoCountByPage" parameterType="map"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM rb_borrow_tender
+		WHERE borrow_id=#{borrowId}
+	</select>
+
+	<!-- 查询以投资金额 -->
+	<select id="selectEff" parameterType="Map"
+		resultType="Map">
+		SELECT SUM(t.effective_amount) effectiveAmount FROM rb_borrow_tender t ,rb_borrow b
+		WHERE b.id = t.borrow_id 
+	<if test="userId != null and userId !=''" >
+       and t.user_id = #{userId}
+    </if>
+    <if test="bidKideEff != null and bidKideEff !=''" >
+       and b.bid_kind = #{bidKideEff}
+    </if>
+    <if test="tenderStatus2 != null and tenderStatus2 !=''" >
+       and t.tender_status != #{tenderStatus2}
+    </if>
+    <if test="tenderStatus6 != null and tenderStatus6 !=''" >
+       and t.tender_status != #{tenderStatus6}
+    </if>
+	</select>
+	<!-- 定活通  投资赎回查询-->
+	<select id="selectInvestRedeem" resultType="Map" parameterType="Map">
+		SELECT s.* FROM (
+		SELECT sub.*   FROM (
+		SELECT 
+	
+		  t.id tenderId,
+		  t.borrow_id borrowId,
+		  t.user_id userId,
+		  t.tender_status tenderStatus,
+		  t.tender_amount tenderAmount,
+		  t.effective_amount effectiveAmount,
+		  t.interest_paid interestPaid,
+		  b.borrow_title borrowTitle,
+		  b.annual_interest_rate annualInterestRate,
+		  b.`bid_kind`,
+		  re.id redeemId,
+		  re.redeem_status redeemStatus,
+		  re.redeem_backMoney redeemBackMoney,
+		  re.redeem_fee redeemFee,
+		  re.redeem_money redeemMoney 
+		FROM
+		  
+		  rb_borrow_tender t
+		  INNER JOIN rb_borrow b 
+		    ON t.borrow_id = b.id 
+		    INNER JOIN rb_borrow_type bType ON bType.ID=b.bid_kind
+		  LEFT JOIN rb_borrow_redeem re 
+		    ON t.id = re.tender_id 
+		    WHERE
+		    <if test="BidCode!=null and BidCode!=''">
+		     	bType.CODE =#{BidCode}
+		    </if>
+		ORDER BY  re.`id` DESC ) sub 
+		GROUP BY sub.tenderId ) s where 1=1
+		<if test="userId!=null and userId!=''">
+    		AND s.userId=${userId}
+    	</if>
+    	<if test="tenderStatus != null" >
+	    and s.tenderStatus in 
+			<foreach item="item" index="index" collection="tenderStatus" open="(" separator="," close=")">  
+					  #{item}  
+			</foreach>  
+	    </if>
+	    <if test="redeemStatus != null">
+	   and s.redeemStatus = #{redeemStatus }
+	    </if>
+	</select>
+	
+	
+	<select id="selectInvestRedeemCount" resultType="Integer" parameterType="Map">
+		SELECT count(*) FROM (
+		SELECT sub.*   FROM (
+		SELECT 
+		  b.id bId,
+		  t.id tenderId,
+		  t.borrow_id borrowId,
+		  t.user_id userId,
+		  t.tender_status tenderStatus,
+		  t.tender_amount tenderAmount,
+		  t.effective_amount effectiveAmount,
+		  t.interest_paid interestPaid,
+		  b.borrow_title borrowTitle,
+		  b.annual_interest_rate annualInterestRate,
+		  b.`bid_kind`,
+		  re.id redeemId,
+		  re.redeem_status redeemStatus,
+		  re.redeem_backMoney redeemBackMoney,
+		  re.redeem_fee redeemFee,
+		  re.redeem_money redeemMoney 
+		FROM
+		
+		  rb_borrow_tender t
+		  INNER JOIN rb_borrow b 
+		    ON t.borrow_id = b.id 
+		    INNER JOIN rb_borrow_type bType ON bType.ID=b.bid_kind
+		  LEFT JOIN rb_borrow_redeem re 
+		    ON t.id = re.tender_id 
+		    WHERE
+		    <if test="BidCode!=null and BidCode!=''">
+		     	bType.CODE =#{BidCode}
+		    </if>
+		ORDER BY  re.`id` DESC ) sub 
+		GROUP BY sub.tenderId ) s where 1=1
+		<if test="userId!=null and userId!=''">
+    		AND s.userId=${userId}
+    	</if>
+    	<if test="tenderStatus != null" >
+	    and s.tenderStatus in 
+			<foreach item="item" index="index" collection="tenderStatus" open="(" separator="," close=")">  
+					  #{item}  
+			</foreach>  
+	    </if>
+	    <if test="tmpRedeemStatus != null">
+	   and s.redeemStatus = #{tmpRedeemStatus }
+	    </if>
+	</select>
+	<select id="selectSumByMap" resultType="BigDecimal" parameterType="Map">
+	SELECT  IFNULL(SUM(effective_amount),0) sumMoney FROM rb_borrow_tender 
+	WHERE tender_status not in (1,2,6)
+	
+	<if test="userId != null">
+	AND user_id = #{userId}
+	</if>
+	<if test="beginTimeStr !=null">
+    <![CDATA[	and DATE_FORMAT(tender_addtime,'%Y-%m-%d %H:%i:%S') >=  #{beginTimeStr }  ]]>
+	</if>
+	
+	</select>
+	
+	
+	<select id="selectCountByMap" resultType="int" parameterType="Map">
+	SELECT  count(1) sumMoney FROM rb_borrow_tender 
+	WHERE tender_status not in (2,6)
+	
+	<if test="userId != null">
+	AND user_id = #{userId}
+	</if>
+	<if test="beginTimeStr !=null">
+    <![CDATA[	and DATE_FORMAT(tender_addtime,'%Y-%m-%d %H:%i:%S') >=  #{beginTimeStr }  ]]>
+	</if>
+	
+	</select>
+	
+	<select id="selectSumByMapWithout1Month" resultType="BigDecimal" parameterType="Map">
+		select  IFNULL(SUM(t.effective_amount),0) sumMoney 
+		from rb_borrow_tender t 
+		left join rb_borrow b on t.borrow_id = b.id
+		WHERE t.tender_status not in (2,6,8)
+		and ((b.borrow_time_limit>1 and is_day = 2) or (b.borrow_time_limit>30 and is_day = 1))
+	<if test="userId != null">
+		and t.user_id = #{userId}
+	</if>
+	<if test="beginTimeStr !=null">
+    	<![CDATA[	and DATE_FORMAT(t.tender_addtime,'%Y-%m-%d %H:%i:%S') >=  #{beginTimeStr }  ]]>
+	</if>
+	</select>
+	<!--直投区  投资转让查询-->
+	<select id="queryInvestRedeem" resultType="Map" parameterType="Map">
+		SELECT s.* FROM (
+		SELECT sub.*   FROM (
+		SELECT 
+		  b.id bId,
+		  t.id tenderId,
+		  t.borrow_id borrowId,
+		  t.user_id userId,
+		  t.tender_status tenderStatus,
+		  t.tender_amount tenderAmount,
+		  t.effective_amount effectiveAmount,
+		  t.interest_paid interestPaid,
+		  b.borrow_time_limit borrowTimeLimit,
+		  t.staying_amount stayingAmount,
+		  b.borrow_title borrowTitle,
+		  b.annual_interest_rate annualInterestRate,
+		  b.`bid_kind`,
+		  bf.id transferId,
+		  bf.transfer_status transferStatus,
+		  bf.repossessed_capital repossessedCapital,
+		  bf.transfer_money transferMoney,
+		  bf.last_auction_money lastAuctionMoney,
+		  bf.transfer_interest_rate tranferInterestRate,
+		  bf.transfer_fee transferFee
+		FROM
+		  rb_borrow_tender t 
+		  INNER JOIN rb_borrow b 
+		    ON t.borrow_id = b.id 
+		  LEFT JOIN rb_borrow_transfer bf 
+		    ON t.id = bf.tender_id 
+		    INNER JOIN rb_borrow_type bType ON bType.ID!=b.bid_kind
+		    WHERE 1 = 1
+		    <if test="BidCode!=null and BidCode!=''">
+		    	and bType.CODE =#{BidCode}
+		    </if>
+		   <if test="borrowLimit6 != null and borrowLimit6 != ''">
+		    	and b.is_day = 2 and b.borrow_time_limit >= #{borrowLimit6}
+		    </if> 
+		    
+		ORDER BY  bf.id DESC ) sub 
+		GROUP BY sub.tenderId ) s 
+		WHERE 1=1 
+	    <if test="userId!=null and userId!=''">
+   		AND s.userId=${userId}
+    	</if>
+    	
+    	
+    	<if test="tenderStatus != null" >
+	    and s.tenderStatus in 
+			<foreach item="item" index="index" collection="tenderStatus" open="(" separator="," close=")">  
+					  #{item}  
+			</foreach>  
+	    </if>
+	    <if test="tmpTransferStatus != null">
+	   and s.transferStatus = #{tmpTransferStatus }
+	    </if>
+    
+	</select>
+	<select id="queryInvestRedeemCount" resultType="Integer" parameterType="Map">
+		SELECT count(*) FROM (
+		SELECT sub.*   FROM (
+		SELECT 
+		  t.id tenderId,
+		  t.borrow_id borrowId,
+		  t.user_id userId,
+		  t.tender_status tenderStatus,
+		  t.tender_amount tenderAmount,
+		  t.effective_amount effectiveAmount,
+		  t.interest_paid interestPaid,
+		  b.borrow_time_limit borrowTimeLimit,
+		  t.staying_amount stayingAmount,
+		  b.borrow_title borrowTitle,
+		  b.annual_interest_rate annualInterestRate,
+		  b.bid_kind,
+		  bf.id transferId,
+		  bf.transfer_status transferStatus,
+		  bf.repossessed_capital repossessedCapital,
+		  bf.transfer_money transferMoney,
+		  bf.last_auction_money lastAuctionMoney,
+		  bf.transfer_interest_rate tranferInterestRate,
+		  bf.transfer_fee transferFee
+		FROM
+		  rb_borrow_tender t 
+		  INNER JOIN rb_borrow b 
+		    ON t.borrow_id = b.id 
+		  LEFT JOIN rb_borrow_transfer bf 
+		    ON t.id = bf.tender_id 
+		    INNER JOIN rb_borrow_type bType ON bType.ID!=b.bid_kind
+		    WHERE
+		    <if test="BidCode!=null and BidCode!=''">
+		    	bType.CODE =#{BidCode}
+		    </if>
+		ORDER BY  bf.id DESC ) sub 
+		GROUP BY sub.tenderId ) s 
+		WHERE 1=1 
+	    <if test="userId!=null and userId!=''">
+   			AND s.userId=${userId}
+    	</if>
+    	<if test="tenderStatus != null" >
+	    and s.tenderStatus in 
+			<foreach item="item" index="index" collection="tenderStatus" open="(" separator="," close=")">  
+					  #{item}  
+			</foreach>  
+	    </if>
+	    <if test="tmpTransferStatus != null">
+	   and s.transferStatus = #{tmpTransferStatus }
+	    </if>
+	</select>
+	
+	<!-- 借款协议 -->
+	<select id="selectAgreePdfList" parameterType="Map" resultType="Map">
+		SELECT 
+		  u.user_account usrName,
+		  t.effective_amount effeAmount,
+		  t.tender_addtime tenderTime,
+		  t.staying_amount amount,
+		  t.staying_interest interest,
+		  t.user_id userId
+		FROM
+		  rb_borrow_tender t,
+		  rb_user u 
+		WHERE t.user_id = u.id 
+		 
+		<if test="borrowId != null" >
+       		and t.borrow_id = #{borrowId}
+    	</if>
+    	<if test="userId != null" >
+       		and t.user_id = #{userId}
+    	</if>
+    	
+    	<if test="inStatus != null" >
+    and	t.tender_status in 
+		<foreach item="item" index="index" collection="inStatus" open="(" separator="," close=")">  
+				  #{item}  
+		</foreach>  
+    </if>
+	</select>
+	<!-- 借款协议（流转标、定活通） -->
+	<select id="selectAgreePdfListOfZhuan" parameterType="Map" resultType="Map">
+		SELECT 
+		  u.user_account usrName,
+		  t.effective_amount amount,
+		  r.repossessed_addtime beginTime,
+		  r.prepare_datetime endTime,
+		  r.prepare_amount totalAmount,
+		   t.user_id userId
+		FROM
+		  rb_borrow_repossessed r,
+		  rb_borrow_tender t,
+		  rb_user u 
+		WHERE r.user_id = u.id 
+		  AND r.tender_id = t.id 
+		<if test="borrowId != null" >
+       		and t.borrow_id = #{borrowId}
+    	</if>
+    	<if test="inStatus != null" >
+    and	t.tender_status in 
+		<foreach item="item" index="index" collection="inStatus" open="(" separator="," close=")">  
+				  #{item}  
+		</foreach>  
+    </if>
+    order by r.prepare_datetime asc
+	</select>
+	
+	<select id="getUserTenderRank" resultType="map">
+		SELECT SUM(bt.effective_amount) amount,us.id userId, left(us.user_account,3) lphone ,right(us.user_account,2) rphone,us.user_email email
+		FROM rb_borrow_tender bt JOIN rb_user us ON us.id = bt.user_id 
+		<if test="startDate != null and startDate != ''">
+			<![CDATA[	AND bt.tender_addtime >= #{startDate} ]]>
+		</if>
+		<if test="endDate != null and endDate != ''">
+			<![CDATA[	AND bt.tender_addtime <= #{endDate} ]]>
+		</if>
+		GROUP BY userId ORDER BY amount DESC LIMIT 6
+	</select>
+	
+	<select id="queryCountByUserStatus" resultType="Integer" parameterType="Map">
+		SELECT count(*) FROM rb_borrow_tender t WHERE t.user_id = #{userId} 
+		<if test="status != null">
+		AND t.tender_status = #{status}
+		</if>
+		
+		
+	</select>
+	<!-- 投资记录 -->
+	<select id="selectInvestByUserId" parameterType="Map"
+		resultType="Map">
+		SELECT c.coun coun, c.sumEff sumEff, b.borrow_title borrowTitle, b.annual_interest_rate annualInterestRate 
+		FROM rb_borrow b,
+		(SELECT COUNT(*) coun,SUM(effective_amount) sumEff ,t.borrow_id borrowId 
+		FROM rb_borrow_tender t WHERE t.user_id = #{userId} GROUP BY t.borrow_id) c 
+		WHERE b.id = c.borrowId 
+		<if test="bidKind != null and bidKind !=''" >
+       		and b.bid_kind = #{bidKind}
+    	</if>
+    	<if test="bidKindNo != null and bidKindNo !=''" >
+       		and b.bid_kind != #{bidKindNo}
+    	</if>
+	</select>
+	<select id="selectInvestByUserIdCount" parameterType="Map"
+		resultType="java.lang.Integer">
+		SELECT count(*) 
+		FROM rb_borrow b,
+		(SELECT COUNT(*) coun,SUM(effective_amount) sumEff ,t.borrow_id borrowId 
+		FROM rb_borrow_tender t WHERE t.user_id = #{userId} GROUP BY t.borrow_id) c 
+		WHERE b.id = c.borrowId 
+		<if test="bidKind != null and bidKind !=''" >
+       		and b.bid_kind = #{bidKind}
+    	</if>
+    	<if test="bidKindNo != null and bidKindNo !=''" >
+       		and b.bid_kind != #{bidKindNo}
+    	</if>
+	</select>
+
+	<select id="selectByInStatusAndBorrow" resultMap="BaseResultMap"
+		parameterType="map">
+		select
+		*
+		from rb_borrow_tender
+		<where>
+			<if test="inStatus != null">
+			and	tender_status in
+				<foreach item="item" index="index" collection="inStatus"
+					open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="borrowId != null">
+			and	borrow_id = ${borrowId }
+			</if>
+		</where>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		*
+		from rb_borrow_tender
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_borrow_tender
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.BorrowTender">
+		insert into rb_borrow_tender (id, user_id, tender_status,
+		borrow_id, tender_amount, effective_amount,
+		repayment_amount, interest_amount, paid_amount,
+		staying_amount, staying_interest, interest_paid,
+		tender_addtime, tender_addip,deduction_money)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{tenderStatus,jdbcType=INTEGER},
+		#{borrowId,jdbcType=INTEGER}, #{tenderAmount,jdbcType=DECIMAL},
+		#{effectiveAmount,jdbcType=DECIMAL},
+		#{repaymentAmount,jdbcType=DECIMAL},
+		#{interestAmount,jdbcType=DECIMAL}, #{paidAmount,jdbcType=DECIMAL},
+		#{stayingAmount,jdbcType=DECIMAL},
+		#{stayingInterest,jdbcType=DECIMAL}, #{interestPaid,jdbcType=DECIMAL},
+		#{tenderAddtime,jdbcType=TIMESTAMP}, #{tenderAddip,jdbcType=VARCHAR},
+		#{agreementPath,jdbcType=VARCHAR},#{deductionMoney,jdbcType=DECIMAL})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.BorrowTender"
+	useGeneratedKeys="true" keyProperty="id"
+	>
+		insert into rb_borrow_tender
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="tenderStatus != null">
+				tender_status,
+			</if>
+			<if test="borrowId != null">
+				borrow_id,
+			</if>
+			<if test="tenderAmount != null">
+				tender_amount,
+			</if>
+			<if test="effectiveAmount != null">
+				effective_amount,
+			</if>
+			<if test="repaymentAmount != null">
+				repayment_amount,
+			</if>
+			<if test="interestAmount != null">
+				interest_amount,
+			</if>
+			<if test="paidAmount != null">
+				paid_amount,
+			</if>
+			<if test="stayingAmount != null">
+				staying_amount,
+			</if>
+			<if test="stayingInterest != null">
+				staying_interest,
+			</if>
+			<if test="interestPaid != null">
+				interest_paid,
+			</if>
+			<if test="tenderAddtime != null">		
+				tender_addtime,
+			</if>
+			<if test="tenderAddip != null">
+				tender_addip,
+			</if>
+			<if test="tenderFrom != null">
+				tender_from,
+			</if>
+			<if test="calInterestType != null">
+				cal_interest_type,
+			</if>
+			
+			<if test="transferCount != null">
+				transfer_count,
+			</if>
+			<if test="tenderType != null">
+				tender_type,
+			</if>
+			<if test="agreementPath != null">
+				agreement_path,
+			</if>
+			<if test="deductionMoney != null">
+				deduction_money,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="tenderStatus != null">
+				#{tenderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="borrowId != null">
+				#{borrowId,jdbcType=INTEGER},
+			</if>
+			<if test="tenderAmount != null">
+				#{tenderAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="effectiveAmount != null">
+				#{effectiveAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="repaymentAmount != null">
+				#{repaymentAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="interestAmount != null">
+				#{interestAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="paidAmount != null">
+				#{paidAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="stayingAmount != null">
+				#{stayingAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="stayingInterest != null">
+				#{stayingInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="interestPaid != null">
+				#{interestPaid,jdbcType=DECIMAL},
+			</if>
+			<if test="tenderAddtime != null">
+				#{tenderAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="tenderAddip != null">
+				#{tenderAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="tenderFrom != null">
+				#{tenderFrom,jdbcType=VARCHAR},
+			</if>
+			<if test="calInterestType != null">
+				#{calInterestType,jdbcType=INTEGER},
+			</if>
+			<if test="tenderType != null">
+				#{tenderType,jdbcType=INTEGER},
+			</if>
+			<if test="transferCount != null">
+				#{transferCount,jdbcType=INTEGER},
+			</if>
+			<if test="agreementPath != null">
+				#{agreementPath,jdbcType=VARCHAR},
+			</if>
+			<if test="deductionMoney != null">
+				#{deductionMoney,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.BorrowTender">
+		update rb_borrow_tender
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="tenderStatus != null">
+				tender_status = #{tenderStatus,jdbcType=INTEGER},
+			</if>
+			<if test="borrowId != null">
+				borrow_id = #{borrowId,jdbcType=INTEGER},
+			</if>
+			<if test="tenderAmount != null">
+				tender_amount = #{tenderAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="effectiveAmount != null">
+				effective_amount = #{effectiveAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="repaymentAmount != null">
+				repayment_amount = #{repaymentAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="interestAmount != null">
+				interest_amount = #{interestAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="paidAmount != null">
+				paid_amount = #{paidAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="stayingAmount != null">
+				staying_amount = #{stayingAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="stayingInterest != null">
+				staying_interest = #{stayingInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="interestPaid != null">
+				interest_paid = #{interestPaid,jdbcType=DECIMAL},
+			</if>
+			<if test="tenderAddtime != null">
+				tender_addtime = #{tenderAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="tenderAddip != null">
+				tender_addip = #{tenderAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="transferCount != null">
+				transfer_count = #{transferCount,jdbcType=INTEGER},
+			</if>
+			<if test="agreementPath != null">
+				agreement_path = #{agreementPath,jdbcType=VARCHAR},
+			</if>
+			<if test="agreementTime != null">
+				agreement_time = #{agreementTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="deductionMoney != null">
+				deduction_money = #{deductionMoney,jdbcType=DECIMAL},
+			</if>
+			
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.BorrowTender">
+		update rb_borrow_tender
+		set user_id = #{userId,jdbcType=INTEGER},
+		tender_status = #{tenderStatus,jdbcType=INTEGER},
+		borrow_id = #{borrowId,jdbcType=INTEGER},
+		tender_amount = #{tenderAmount,jdbcType=DECIMAL},
+		effective_amount = #{effectiveAmount,jdbcType=DECIMAL},
+		repayment_amount = #{repaymentAmount,jdbcType=DECIMAL},
+		interest_amount = #{interestAmount,jdbcType=DECIMAL},
+		paid_amount = #{paidAmount,jdbcType=DECIMAL},
+		staying_amount = #{stayingAmount,jdbcType=DECIMAL},
+		staying_interest = #{stayingInterest,jdbcType=DECIMAL},
+		interest_paid = #{interestPaid,jdbcType=DECIMAL},
+		tender_addtime = #{tenderAddtime,jdbcType=TIMESTAMP},
+		tender_addip = #{tenderAddip,jdbcType=VARCHAR},
+		deduction_money = #{deductionMoney,jdbcType=DECIMAL},
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

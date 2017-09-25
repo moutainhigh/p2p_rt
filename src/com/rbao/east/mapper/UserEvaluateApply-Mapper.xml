@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.UserEvaluateApplyMapper">
+	<!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache" />-->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.UserEvaluateApply">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="evaluateapply_type" property="evaluateapplyType"
+			jdbcType="VARCHAR" />
+		<result column="amount" property="amount" jdbcType="DECIMAL" />
+		<result column="amount_apply" property="amountApply" jdbcType="DECIMAL" />
+		<result column="amount_before" property="amountBefore"
+			jdbcType="DECIMAL" />
+		<result column="evaluateapply_status" property="evaluateapplyStatus"
+			jdbcType="INTEGER" />
+		<result column="evaluateapply_addtime" property="evaluateapplyAddtime"
+			jdbcType="TIMESTAMP" />
+		<result column="evaluateapply_content" property="evaluateapplyContent"
+			jdbcType="VARCHAR" />
+		<result column="evaluateapply_remark" property="evaluateapplyRemark"
+			jdbcType="VARCHAR" />
+		<result column="verify_remark" property="verifyRemark"
+			jdbcType="VARCHAR" />
+		<result column="verify_datetime" property="verifyDatetime"
+			jdbcType="TIMESTAMP" />
+		<result column="verify_user" property="verifyUser" jdbcType="INTEGER" />
+		<result column="evaluateapply_addip" property="evaluateapplyAddip"
+			jdbcType="VARCHAR" />
+		<association property="user" column="user_id"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+		<association property="verifyUserAccount" column="verify_user"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+	</resultMap>
+	
+	<!-- 用户额度申请列表 -->
+	<select id="selectApplyByUserId" resultMap="BaseResultMap" parameterType="Map">
+	SELECT * FROM rb_user_evaluateapply WHERE 1=1 
+	<if test="userId != null and userId != ''">
+	AND user_id = #{userId}
+	</if>
+	 AND evaluateapply_type =1 ORDER BY evaluateapply_addtime DESC
+	</select>
+	<select id="countApplyByUserId" resultType="int" parameterType="Map">
+	SELECT count(*) FROM rb_user_evaluateapply WHERE 1=1 
+	<if test="userId != null and userId != ''">
+	AND user_id = #{userId}
+	</if>
+	 AND evaluateapply_type =1 ORDER BY evaluateapply_addtime DESC
+	</select>
+
+	<select id="selectByEntity" resultType="Map" parameterType="Map">
+		select a.id id,
+		u.user_account userAccount,
+		a.user_id userId,
+		a.evaluateapply_type evaluateapplyType,
+		a.amount_before amountBefore,
+		a.amount_apply amountApply,
+		a.amount amount,
+		a.evaluateapply_addtime evaluateapplyAddTime,
+		a.evaluateapply_content evaluateapplyContent,
+		a.evaluateapply_status evaluateapplyStatus,
+		a.evaluateapply_remark evaluateapplyRemark
+		from rb_user_evaluateapply a inner join rb_user u on a.user_id=u.id
+		<where>
+			<if test="evaluateapplyStatus != null and evaluateapplyStatus != ''">
+				a.evaluateapply_status = #{evaluateapplyStatus}
+			</if>
+			<if test="userAccount != null and userAccount != ''">
+				and u.user_account like CONCAT('%', #{userAccount}, '%')
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(a.evaluateapply_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+		    	<![CDATA[	and DATE_FORMAT(a.evaluateapply_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+		</where>
+		order by a.evaluateapply_status,a.evaluateapply_addtime desc
+	</select>
+	
+	<select  id="selectByUserId" resultMap="BaseResultMap" parameterType="Integer">
+		select * from rb_user_evaluateapply where user_id = #{userId，jdbcType=INTEGER} and evaluateapply_status in (1,2)
+		ORDER BY evaluateapply_addtime DESC
+	</select>
+
+	<select id="selectTotalCount" resultType="int" parameterType="Map">
+		select
+		count(*)
+		from rb_user_evaluateapply a inner join rb_user u on a.user_id=u.id
+		<where>
+			<if test="evaluateApplyStatus != null and evaluateApplyStatus != ''">
+				a.evaluateapply_status = #{evaluateApplyStatus}
+			</if>
+			<if test="userAccount != null and userAccount != ''">
+				and u.user_account like CONCAT('%', #{userAccount}, '%')
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    	<![CDATA[	and DATE_FORMAT(a.evaluateapply_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+		    <![CDATA[	and DATE_FORMAT(a.evaluateapply_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+		</where>
+	</select>
+
+	<sql id="Base_Column_List">
+		id, user_id, evaluateapply_type, amount, amount_apply, amount_before,
+		evaluateapply_status,
+		evaluateapply_addtime, evaluateapply_content, evaluateapply_remark, verify_remark,
+		verify_datetime, verify_user, evaluateapply_addip
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user_evaluateapply
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_user_evaluateapply
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByUserId" parameterType="java.lang.Integer">
+		delete from rb_user_evaluateapply
+		where user_id = #{userId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.UserEvaluateApply">
+		insert into rb_user_evaluateapply (id, user_id, evaluateapply_type,
+		amount, amount_apply, amount_before,
+		evaluateapply_status, evaluateapply_addtime,
+		evaluateapply_content, evaluateapply_remark,
+		verify_remark, verify_datetime, verify_user,
+		evaluateapply_addip)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{evaluateapplyType,jdbcType=VARCHAR},
+		#{amount,jdbcType=DECIMAL}, #{amountApply,jdbcType=DECIMAL}, #{amountBefore,jdbcType=DECIMAL},
+		#{evaluateapplyStatus,jdbcType=INTEGER},
+		#{evaluateapplyAddtime,jdbcType=TIMESTAMP},
+		#{evaluateapplyContent,jdbcType=VARCHAR},
+		#{evaluateapplyRemark,jdbcType=VARCHAR},
+		#{verifyRemark,jdbcType=VARCHAR},
+		#{verifyDatetime,jdbcType=TIMESTAMP}, #{verifyUser,jdbcType=INTEGER},
+		#{evaluateapplyAddip,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.UserEvaluateApply">
+		insert into rb_user_evaluateapply
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="evaluateapplyType != null">
+				evaluateapply_type,
+			</if>
+			<if test="amount != null">
+				amount,
+			</if>
+			<if test="amountApply != null">
+				amount_apply,
+			</if>
+			<if test="amountBefore != null">
+				amount_before,
+			</if>
+			<if test="evaluateapplyStatus != null">
+				evaluateapply_status,
+			</if>
+			<if test="evaluateapplyAddtime != null">
+				evaluateapply_addtime,
+			</if>
+			<if test="evaluateapplyContent != null">
+				evaluateapply_content,
+			</if>
+			<if test="evaluateapplyRemark != null">
+				evaluateapply_remark,
+			</if>
+			<if test="verifyRemark != null">
+				verify_remark,
+			</if>
+			<if test="verifyDatetime != null">
+				verify_datetime,
+			</if>
+			<if test="verifyUser != null">
+				verify_user,
+			</if>
+			<if test="evaluateapplyAddip != null">
+				evaluateapply_addip,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="evaluateapplyType != null">
+				#{evaluateapplyType,jdbcType=VARCHAR},
+			</if>
+			<if test="amount != null">
+				#{amount,jdbcType=DECIMAL},
+			</if>
+			<if test="amountApply != null">
+				#{amountApply,jdbcType=DECIMAL},
+			</if>
+			<if test="amountBefore != null">
+				#{amountBefore,jdbcType=DECIMAL},
+			</if>
+			<if test="evaluateapplyStatus != null">
+				#{evaluateapplyStatus,jdbcType=INTEGER},
+			</if>
+			<if test="evaluateapplyAddtime != null">
+				#{evaluateapplyAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="evaluateapplyContent != null">
+				#{evaluateapplyContent,jdbcType=VARCHAR},
+			</if>
+			<if test="evaluateapplyRemark != null">
+				#{evaluateapplyRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="verifyRemark != null">
+				#{verifyRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="verifyDatetime != null">
+				#{verifyDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="verifyUser != null">
+				#{verifyUser,jdbcType=INTEGER},
+			</if>
+			<if test="evaluateapplyAddip != null">
+				#{evaluateapplyAddip,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.UserEvaluateApply">
+		update rb_user_evaluateapply
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="evaluateapplyType != null">
+				evaluateapply_type = #{evaluateapplyType,jdbcType=VARCHAR},
+			</if>
+			<if test="amount != null">
+				amount = #{amount,jdbcType=DECIMAL},
+			</if>
+			<if test="amountApply != null">
+				amount_apply = #{amountApply,jdbcType=DECIMAL},
+			</if>
+			<if test="amountBefore != null">
+				amount_before = #{amountBefore,jdbcType=DECIMAL},
+			</if>
+			<if test="evaluateapplyStatus != null">
+				evaluateapply_status = #{evaluateapplyStatus,jdbcType=INTEGER},
+			</if>
+			<if test="evaluateapplyAddtime != null">
+				evaluateapply_addtime = #{evaluateapplyAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="evaluateapplyContent != null">
+				evaluateapply_content = #{evaluateapplyContent,jdbcType=VARCHAR},
+			</if>
+			<if test="evaluateapplyRemark != null">
+				evaluateapply_remark = #{evaluateapplyRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="verifyRemark != null">
+				verify_remark = #{verifyRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="verifyDatetime != null">
+				verify_datetime = #{verifyDatetime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="verifyUser != null">
+				verify_user = #{verifyUser,jdbcType=INTEGER},
+			</if>
+			<if test="evaluateapplyAddip != null">
+				evaluateapply_addip = #{evaluateapplyAddip,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.UserEvaluateApply">
+		update rb_user_evaluateapply
+		set user_id = #{userId,jdbcType=INTEGER},
+		evaluateapply_type = #{evaluateapplyType,jdbcType=VARCHAR},
+		amount = #{amount,jdbcType=DECIMAL},
+		amount_apply = #{amountApply,jdbcType=DECIMAL},
+		amount_before = #{amountBefore,jdbcType=DECIMAL},
+		evaluateapply_status = #{evaluateapplyStatus,jdbcType=INTEGER},
+		evaluateapply_addtime = #{evaluateapplyAddtime,jdbcType=TIMESTAMP},
+		evaluateapply_content = #{evaluateapplyContent,jdbcType=VARCHAR},
+		evaluateapply_remark = #{evaluateapplyRemark,jdbcType=VARCHAR},
+		verify_remark = #{verifyRemark,jdbcType=VARCHAR},
+		verify_datetime = #{verifyDatetime,jdbcType=TIMESTAMP},
+		verify_user = #{verifyUser,jdbcType=INTEGER},
+		evaluateapply_addip = #{evaluateapplyAddip,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

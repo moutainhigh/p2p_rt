@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.APPAutologinLogMapper">
+
+	<!--  自建sql开始 -->
+	<select id="selectByParams" resultMap="BaseResultMap"
+		parameterType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_app_autologin_log
+		where 1=1
+		<if test="userId != null and userId != ''">
+			AND user_id = #{userId}
+		</if>
+		<if test="userAccount != null and userAccount != ''">
+			AND user_account = #{userAccount}
+		</if>
+		<if test="token != null and token != ''">
+			AND token = #{token}
+		</if>
+	</select>
+	<!-- 根据用户 -->
+	<delete id="deleteByEntity" parameterType="com.rbao.east.entity.APPAutologinLog">
+		delete from rb_app_autologin_log
+		where user_id = #{userId,jdbcType=INTEGER}
+	</delete>
+	<!-- 根据token -->
+	<delete id="deleteByEntityByToken" parameterType="com.rbao.east.entity.APPAutologinLog">
+		delete from rb_app_autologin_log
+		where token = #{token,jdbcType=VARCHAR}
+	</delete>
+	<!--  自建sql结束 -->
+
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.APPAutologinLog">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="user_account" property="userAccount" jdbcType="VARCHAR" />
+		<result column="user_password" property="userPassword"
+			jdbcType="VARCHAR" />
+		<result column="login_time" property="loginTime" jdbcType="TIMESTAMP" />
+		<result column="eff_time" property="effTime" jdbcType="TIMESTAMP" />
+		<result column="token" property="token" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, user_account, user_password, login_time, eff_time, token
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_app_autologin_log
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_app_autologin_log
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.APPAutologinLog">
+		insert into rb_app_autologin_log (id, user_id, user_account,
+		user_password, login_time, eff_time,
+		token)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{userAccount,jdbcType=VARCHAR},
+		#{userPassword,jdbcType=VARCHAR}, #{loginTime,jdbcType=TIMESTAMP}, #{effTime,jdbcType=TIMESTAMP},
+		#{token,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.APPAutologinLog">
+		insert into rb_app_autologin_log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="userAccount != null">
+				user_account,
+			</if>
+			<if test="userPassword != null">
+				user_password,
+			</if>
+			<if test="loginTime != null">
+				login_time,
+			</if>
+			<if test="effTime != null">
+				eff_time,
+			</if>
+			<if test="token != null">
+				token,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="userAccount != null">
+				#{userAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="userPassword != null">
+				#{userPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="loginTime != null">
+				#{loginTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="effTime != null">
+				#{effTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="token != null">
+				#{token,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.APPAutologinLog">
+		update rb_app_autologin_log
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="userAccount != null">
+				user_account = #{userAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="userPassword != null">
+				user_password = #{userPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="loginTime != null">
+				login_time = #{loginTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="effTime != null">
+				eff_time = #{effTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="token != null">
+				token = #{token,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.APPAutologinLog">
+		update rb_app_autologin_log
+		set user_id = #{userId,jdbcType=INTEGER},
+		user_account = #{userAccount,jdbcType=VARCHAR},
+		user_password = #{userPassword,jdbcType=VARCHAR},
+		login_time = #{loginTime,jdbcType=TIMESTAMP},
+		eff_time = #{effTime,jdbcType=TIMESTAMP},
+		token = #{token,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<update id="updateByUserid" parameterType="com.rbao.east.entity.APPAutologinLog">
+		update rb_app_autologin_log
+		<set>
+			<if test="userAccount != null">
+				user_account = #{userAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="userPassword != null">
+				user_password = #{userPassword,jdbcType=VARCHAR},
+			</if>
+			<if test="loginTime != null">
+				login_time = #{loginTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="effTime != null">
+				eff_time = #{effTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="token != null">
+				token = #{token,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where user_id = #{userId,jdbcType=INTEGER}
+	</update>
+</mapper>

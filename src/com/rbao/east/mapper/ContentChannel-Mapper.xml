@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.ContentChannelMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.ContentChannel">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="content_id" property="contentId" jdbcType="INTEGER" />
+		<result column="channel_id" property="channelId" jdbcType="INTEGER" />
+		<result column="content_sequence" property="contentSequence"
+			jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, content_id, channel_id, content_sequence
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_content_channel
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectByContentChannel" resultMap="BaseResultMap"
+		parameterType="com.rbao.east.entity.ContentChannel">
+		select
+		*
+		from rb_content_channel
+		where 1=1
+		<if test="contentId != null">
+			and content_id = #{contentId,jdbcType=INTEGER}
+		</if>
+		<if test="channelId != null">
+			and channel_id = #{channelId,jdbcType=INTEGER}
+		</if>
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_content_channel
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByContentId" parameterType="com.rbao.east.entity.ContentChannel">
+		delete from rb_content_channel where 1=1
+		<if test="contentId != null">
+			and content_id = #{contentId,jdbcType=INTEGER}
+		</if>
+		<if test="channelId != null">
+			and channel_id = #{channelId,jdbcType=INTEGER}
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.ContentChannel">
+		insert into rb_content_channel (id, content_id, channel_id,
+		content_sequence)
+		values (#{id,jdbcType=INTEGER}, #{contentId,jdbcType=INTEGER},
+		#{channelId,jdbcType=INTEGER},
+		#{contentSequence,jdbcType=INTEGER})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.ContentChannel">
+		insert into rb_content_channel
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="contentId != null">
+				content_id,
+			</if>
+			<if test="channelId != null">
+				channel_id,
+			</if>
+			<if test="contentSequence != null">
+				content_sequence,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="contentId != null">
+				#{contentId,jdbcType=INTEGER},
+			</if>
+			<if test="channelId != null">
+				#{channelId,jdbcType=INTEGER},
+			</if>
+			<if test="contentSequence != null">
+				#{contentSequence,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.ContentChannel">
+		update rb_content_channel
+		<set>
+			<if test="contentId != null">
+				content_id = #{contentId,jdbcType=INTEGER},
+			</if>
+			<if test="channelId != null">
+				channel_id = #{channelId,jdbcType=INTEGER},
+			</if>
+			<if test="contentSequence != null">
+				content_sequence = #{contentSequence,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.ContentChannel">
+		update rb_content_channel
+		set content_id = #{contentId,jdbcType=INTEGER},
+		channel_id = #{channelId,jdbcType=INTEGER},
+		content_sequence = #{contentSequence,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByContentIdAndChannelId" parameterType="com.rbao.east.entity.ContentChannel">
+		update rb_content_channel
+		<set>
+			<if test="contentSequence != null">
+				content_sequence = #{contentSequence,jdbcType=INTEGER},
+			</if>
+		</set>
+		where content_id = #{contentId,jdbcType=INTEGER}
+		and channel_id = #{channelId,jdbcType=INTEGER}
+	</update>
+</mapper>

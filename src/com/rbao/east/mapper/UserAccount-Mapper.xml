@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.UserAccountMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.UserAccount">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="all_money" property="allMoney" jdbcType="DECIMAL" />
+		<result column="available_money" property="availableMoney"
+			jdbcType="DECIMAL" />
+		<result column="unavailable_money" property="unavailableMoney"
+			jdbcType="DECIMAL" />
+		<result column="wait_repossessed_capital" property="waitRepossessedCapital"
+			jdbcType="DECIMAL" />
+		<result column="wait_repay_capital" property="waitRepayCapital"
+			jdbcType="DECIMAL" />
+		<result column="wait_repossessed_interest" property="waitRepossessedInterest"
+			jdbcType="DECIMAL" />
+		<result column="wait_repay_interest" property="waitRepayInterest"
+			jdbcType="DECIMAL" />
+		<result column="pay_reward" property="payReward" jdbcType="DECIMAL" />
+		<result column="pay_interest" property="payInterest" jdbcType="DECIMAL" />
+		<result column="get_reward" property="getReward" jdbcType="DECIMAL" />
+		<result column="get_interest" property="getInterest" jdbcType="DECIMAL" />
+		<result column="get_interest" property="getInterest" jdbcType="DECIMAL" />
+		<result column="deduction_money" property="deductionMoney" jdbcType="DECIMAL" />
+		<result column="deduction_status" property="deductionStatus" jdbcType="INTEGER" />
+		<association property="user" column="user_id"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, all_money, available_money, unavailable_money,
+		wait_repossessed_capital,
+		wait_repay_capital, wait_repossessed_interest, wait_repay_interest, pay_reward,
+		pay_interest,
+		get_reward, get_interest,deduction_money,deduction_status
+	</sql>
+	
+	<select id="getUserAccountList" resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from rb_user_account
+	</select>
+	<!-- 统计总获得利息 -->
+	<select id="getAllInterestMoney" resultType="BigDecimal">
+		SELECT SUM(get_interest) FROM rb_user_account where id not in (1,20,30)
+	</select>
+	
+	<select id="selectTotalCount" resultType="int" parameterType="Map">
+		select count(*) FROM rb_user_account ua,rb_user u
+		WHERE ua.user_id=u.id
+		<if test="id !=null">
+			and id =#{id}
+		</if>
+		<if test="userAccount !=null">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+	</select>
+	<select id="selectByEntity" resultMap="BaseResultMap"
+		parameterType="Map">
+		SELECT ua.*,u.user_realname userRealname, u.user_account userAccount
+		FROM rb_user_account ua,rb_user u
+		WHERE ua.user_id=u.id
+		<if test="id !=null">
+			and id =#{id}
+		</if>
+		<if test="userAccount !=null">
+			and user_account like CONCAT('%', #{userAccount}, '%')
+		</if>
+	</select>
+	<update id="updateNoneAssetByPk" parameterType="com.rbao.east.entity.UserAccount">
+		update rb_user_account
+		<set>
+			<if test="waitRepossessedCapital != null">
+				wait_repossessed_capital =
+				#{waitRepossessedCapital,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepayCapital != null">
+				wait_repay_capital = #{waitRepayCapital,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepossessedInterest != null">
+				wait_repossessed_interest =
+				#{waitRepossessedInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepayInterest != null">
+				wait_repay_interest = #{waitRepayInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="payReward != null">
+				pay_reward = #{payReward,jdbcType=DECIMAL},
+			</if>
+			<if test="payInterest != null">
+				pay_interest = #{payInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="getReward != null">
+				get_reward = #{getReward,jdbcType=DECIMAL},
+			</if>
+			<if test="getInterest != null">
+				get_interest = #{getInterest,jdbcType=DECIMAL},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="deleteByUserId" parameterType="Integer">
+		DELETE FROM rb_user_account WHERE user_id= #{userId,jdbcType=INTEGER}
+	</select>
+	
+	<select id="getQQ" parameterType="map" resultType="java.util.HashMap">
+	SELECT u.id id,u.user_realname userRealname,u.user_qq userQq,u.user_phone userPhone,u.avatar_img avatarImg FROM rb_user u
+LEFT JOIN sys_user_role ur ON ur.sys_user_id=u.id
+LEFT JOIN sys_role r ON ur.sys_role_id=r.id
+WHERE  u.id>101 AND r.role_status=1 
+		<if test="roleName!=null and roleName!=''">
+			and r.role_name=#{roleName}
+		</if>
+	</select>
+	
+	<!-- 过滤掉administrator -->
+	<select id="selectUserAccount" resultType="Map" parameterType="Map">
+		SELECT u.id userId,u.user_account userAccount,u.user_realname userRealname,u.user_phone userPhone,ua.all_money
+		allMoney,ua.available_money availableMoney
+		FROM rb_user u inner join
+		rb_user_account ua
+		on u.id = ua.user_id
+		<where>
+			<![CDATA[ u.id >1 ]]>
+			<if test="userAccount != null and userAccount != ''">
+				and u.user_account like CONCAT('%', #{userAccount}, '%')
+			</if>
+			<if test="userRealname != null and userRealname != ''">
+				and u.user_realname like CONCAT('%', #{userRealname}, '%')
+			</if>
+			<if test="userPhone != null and userPhone != ''">
+				and u.user_phone like CONCAT('%', #{userPhone}, '%')
+			</if>
+		</where>
+	</select>
+	<!-- 过滤掉administrator -->
+	<select id="selectUserAccountCount" resultType="int"
+		parameterType="Map">
+		SELECT COUNT(*)
+		FROM rb_user u inner join rb_user_account ua
+		on u.id = ua.user_id
+		<where>
+			<![CDATA[ u.id >1 ]]>
+			<if test="userAccount != null and userAccount != ''">
+				and u.user_account like CONCAT('%', #{userAccount}, '%')
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user_account
+		where user_id = #{userId,jdbcType=INTEGER}
+	</select>
+	<select id="selectByUserIdForUpdate" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user_account
+		where user_id = #{userId,jdbcType=INTEGER} for update
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user_account
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_user_account
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.UserAccount">
+		insert into rb_user_account (id, user_id, all_money,
+		available_money, unavailable_money, wait_repossessed_capital,
+		wait_repay_capital, wait_repossessed_interest,
+		wait_repay_interest, pay_reward, pay_interest,
+		get_reward, get_interest,deduction_money,deduction_status)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{allMoney,jdbcType=DECIMAL},
+		#{availableMoney,jdbcType=DECIMAL}, #{unavailableMoney,jdbcType=DECIMAL},
+		#{waitRepossessedCapital,jdbcType=DECIMAL},
+		#{waitRepayCapital,jdbcType=DECIMAL},
+		#{waitRepossessedInterest,jdbcType=DECIMAL},
+		#{waitRepayInterest,jdbcType=DECIMAL}, #{payReward,jdbcType=DECIMAL},
+		#{payInterest,jdbcType=DECIMAL},
+		#{getReward,jdbcType=DECIMAL}, #{getInterest,jdbcType=DECIMAL},
+		#{deductionMoney,jdbcType=DECIMAL}, #{deductionStatus,jdbcType=INTEGER},
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.UserAccount">
+		insert into rb_user_account
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="allMoney != null">
+				all_money,
+			</if>
+			<if test="availableMoney != null">
+				available_money,
+			</if>
+			<if test="unavailableMoney != null">
+				unavailable_money,
+			</if>
+			<if test="waitRepossessedCapital != null">
+				wait_repossessed_capital,
+			</if>
+			<if test="waitRepayCapital != null">
+				wait_repay_capital,
+			</if>
+			<if test="waitRepossessedInterest != null">
+				wait_repossessed_interest,
+			</if>
+			<if test="waitRepayInterest != null">
+				wait_repay_interest,
+			</if>
+			<if test="payReward != null">
+				pay_reward,
+			</if>
+			<if test="payInterest != null">
+				pay_interest,
+			</if>
+			<if test="getReward != null">
+				get_reward,
+			</if>
+			<if test="getInterest != null">
+				get_interest,
+			</if>
+			<if test="deductionMoney != null">
+				deduction_money,
+			</if>
+			<if test="deductionStatus != null">
+				deduction_status,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="allMoney != null">
+				#{allMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="availableMoney != null">
+				#{availableMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="unavailableMoney != null">
+				#{unavailableMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepossessedCapital != null">
+				#{waitRepossessedCapital,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepayCapital != null">
+				#{waitRepayCapital,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepossessedInterest != null">
+				#{waitRepossessedInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepayInterest != null">
+				#{waitRepayInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="payReward != null">
+				#{payReward,jdbcType=DECIMAL},
+			</if>
+			<if test="payInterest != null">
+				#{payInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="getReward != null">
+				#{getReward,jdbcType=DECIMAL},
+			</if>
+			<if test="getInterest != null">
+				#{getInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="deductionMoney != null">
+				#{deductionMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="deductionStatus != null">
+				#{deductionStatus,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.UserAccount">
+		update rb_user_account
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="allMoney != null">
+				all_money = #{allMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="availableMoney != null">
+				available_money = #{availableMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="unavailableMoney != null">
+				unavailable_money = #{unavailableMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepossessedCapital != null">
+				wait_repossessed_capital =
+				#{waitRepossessedCapital,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepayCapital != null">
+				wait_repay_capital = #{waitRepayCapital,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepossessedInterest != null">
+				wait_repossessed_interest =
+				#{waitRepossessedInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="waitRepayInterest != null">
+				wait_repay_interest = #{waitRepayInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="payReward != null">
+				pay_reward = #{payReward,jdbcType=DECIMAL},
+			</if>
+			<if test="payInterest != null">
+				pay_interest = #{payInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="getReward != null">
+				get_reward = #{getReward,jdbcType=DECIMAL},
+			</if>
+			<if test="getInterest != null">
+				get_interest = #{getInterest,jdbcType=DECIMAL},
+			</if>
+			<if test="deductionMoney != null">
+				deduction_money = #{deductionMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="deductionStatus != null">
+				deduction_status = #{deductionStatus,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.UserAccount">
+		update rb_user_account
+		set user_id = #{userId,jdbcType=INTEGER},
+		all_money = #{allMoney,jdbcType=DECIMAL},
+		available_money = #{availableMoney,jdbcType=DECIMAL},
+		unavailable_money = #{unavailableMoney,jdbcType=DECIMAL},
+		wait_repossessed_capital = #{waitRepossessedCapital,jdbcType=DECIMAL},
+		wait_repay_capital = #{waitRepayCapital,jdbcType=DECIMAL},
+		wait_repossessed_interest = #{waitRepossessedInterest,jdbcType=DECIMAL},
+		wait_repay_interest = #{waitRepayInterest,jdbcType=DECIMAL},
+		pay_reward = #{payReward,jdbcType=DECIMAL},
+		pay_interest = #{payInterest,jdbcType=DECIMAL},
+		get_reward = #{getReward,jdbcType=DECIMAL},
+		get_interest = #{getInterest,jdbcType=DECIMAL},
+		deduction_money = #{deductionMoney,jdbcType=DECIMAL}, 
+		deduction_status = #{deductionStatus,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

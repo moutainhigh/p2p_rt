@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.QuickBorrowMapper">
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.QuickBorrow">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="user_tel" property="userTel" jdbcType="VARCHAR" />
+		<result column="borrow_amount" property="borrowAmount"
+			jdbcType="DECIMAL" />
+		<result column="borrow_period" property="borrowPeriod"
+			jdbcType="VARCHAR" />
+		<result column="borrow_use" property="borrowUse" jdbcType="VARCHAR" />
+		<result column="interestRate_min" property="interestrateMin"
+			jdbcType="DECIMAL" />
+		<result column="interestRate_max" property="interestrateMax"
+			jdbcType="DECIMAL" />
+		<result column="user_province" property="userProvince"
+			jdbcType="VARCHAR" />
+		<result column="user_city" property="userCity" jdbcType="VARCHAR" />
+		<result column="user_area" property="userArea" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="create_ip" property="createIp" jdbcType="VARCHAR" />
+		<result column="fist_audit_userid" property="fistAuditUserid"
+			jdbcType="INTEGER" />
+		<result column="fist_audit_time" property="fistAuditTime"
+			jdbcType="TIMESTAMP" />
+		<result column="first_audit_ip" property="firstAuditIp"
+			jdbcType="VARCHAR" />
+		<result column="first_audit_remark" property="firstAuditRemark"
+			jdbcType="VARCHAR" />
+		<result column="second_audit_userid" property="secondAuditUserid"
+			jdbcType="INTEGER" />
+		<result column="second_audit_time" property="secondAuditTime"
+			jdbcType="TIMESTAMP" />
+		<result column="second_audit_ip" property="secondAuditIp"
+			jdbcType="VARCHAR" />
+		<result column="second_audit_remark" property="secondAuditRemark"
+			jdbcType="VARCHAR" />
+		<result column="borrow_way" property="borrowWay"
+			jdbcType="VARCHAR" />
+		<result column="main_use" property="mainUse"
+			jdbcType="VARCHAR" />
+			<result column="interest_month" property="interestMonth"
+			jdbcType="DECIMAL" />
+			
+		<result column="user_realname" property="userRealname"
+			jdbcType="VARCHAR" />	
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, user_name, user_tel, borrow_amount, borrow_period,borrow_way,main_use,interest_month,
+		borrow_use, interestRate_min,
+		interestRate_max, user_province, user_city, user_area, status, create_time, create_ip,
+		fist_audit_userid, fist_audit_time, first_audit_ip,
+		first_audit_remark, second_audit_userid,
+		second_audit_time, second_audit_ip, second_audit_remark
+	</sql>
+	
+	<!-- 统计待处理的个人借款 -->
+	<select id="summaryDisposeCount" resultType="Integer" parameterType="Integer">
+		SELECT COUNT(*) FROM rb_quick_borrow WHERE status = #{status}
+	</select>
+
+	<select id="selectList" resultMap="BaseResultMap" parameterType="Map">
+		select
+		<include refid="Base_Column_List" />
+		from rb_quick_borrow
+		<where>
+
+			<if test="userName != null">
+				and user_name = #{userName,jdbcType=VARCHAR}
+			</if>
+			<if test="userTel != null">
+				and user_tel = #{userTel,jdbcType=VARCHAR}
+			</if>
+			<if test="borrowAmount != null">
+				and borrow_amount = #{borrowAmount,jdbcType=DECIMAL}
+			</if>
+			<if test="borrowPeriod != null">
+				and borrow_period = #{borrowPeriod,jdbcType=VARCHAR}
+			</if>
+			<if test="borrowUse != null">
+				and borrow_use = #{borrowUse,jdbcType=VARCHAR}
+			</if>
+			<if test="interestrateMin != null">
+				and interestRate_min = #{interestrateMin,jdbcType=DECIMAL}
+			</if>
+			<if test="interestrateMax != null">
+				and interestRate_max = #{interestrateMax,jdbcType=DECIMAL}
+			</if>
+			<if test="userProvince != null">
+				and user_province = #{userProvince,jdbcType=VARCHAR}
+			</if>
+			<if test="userCity != null">
+				and user_city = #{userCity,jdbcType=VARCHAR}
+			</if>
+			<if test="userArea != null">
+				and user_area = #{userArea,jdbcType=VARCHAR}
+			</if>
+			<if test="status != null">
+				and status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="createTime != null">
+				and create_time = #{createTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="createIp != null">
+				and create_ip = #{createIp,jdbcType=VARCHAR}
+			</if>
+			<if test="fistAuditUserid != null">
+				and fist_audit_userid = #{fistAuditUserid,jdbcType=INTEGER}
+			</if>
+			<if test="fistAuditTime != null">
+				and fist_audit_time = #{fistAuditTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="firstAuditIp != null">
+				and first_audit_ip = #{firstAuditIp,jdbcType=VARCHAR}
+			</if>
+			<if test="firstAuditRemark != null">
+				and first_audit_remark = #{firstAuditRemark,jdbcType=VARCHAR}
+			</if>
+			<if test="secondAuditUserid != null">
+				and second_audit_userid = #{secondAuditUserid,jdbcType=INTEGER}
+			</if>
+			<if test="secondAuditTime != null">
+				and second_audit_time = #{secondAuditTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="secondAuditIp != null">
+				and second_audit_ip = #{secondAuditIp,jdbcType=VARCHAR}
+			</if>
+			<if test="secondAuditRemark != null">
+				and second_audit_remark = #{secondAuditRemark,jdbcType=VARCHAR}
+			</if>
+		</where>
+		order by create_time desc;
+	</select>
+
+	<select id="selectPage" resultMap="BaseResultMap" parameterType="Map">
+		select
+		u.user_realname,
+		b.*
+		from rb_quick_borrow  b left join rb_user u on b.user_id=u.id
+		<where>
+			<if test="userName != null">
+				and b.user_name = #{userName,jdbcType=VARCHAR}
+			</if>
+			<if test="status != null">
+				and b.status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and b.DATE_FORMAT(create_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+		    	<![CDATA[	and b.DATE_FORMAT(create_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+		</where>
+		order by b.create_time desc;
+	</select>
+	<select id="selectPages" resultType="Map" parameterType="Map">
+		select u.user_realname realname,rqb.id id , rqb.user_id userId, rqb.user_name userName, rqb.user_tel userTel, rqb.borrow_amount borrowAmount, rqb.borrow_period borrowPeriod,rqb.borrow_way borrowWay,rqb.main_use mainUse,rqb.interest_month interestMonth,
+		rqb.borrow_use borrowUse, rqb.interestRate_min interestRateMin,
+		rqb.interestRate_max interestRateMax, rqb.user_province userProvince, rqb.user_city userCity, rqb.user_area userArea, rqb.status status, rqb.create_time createTime, rqb.create_ip createIp,
+		rqb.fist_audit_userid firstAuditUserId, rqb.fist_audit_time fistAuditTime, rqb.first_audit_ip firstAuditIp,
+		rqb.first_audit_remark firstAuditRemark, rqb.second_audit_userid secondAuditUserId,
+		rqb.second_audit_time secondAuditTime, rqb.second_audit_ip secondAuditIp, rqb.second_audit_remark secondAuditRemark
+		from rb_quick_borrow rqb left join rb_user u on rqb.user_id=u.id
+		<where>
+			<if test="userName != null">
+				and rqb.user_name = #{userName,jdbcType=VARCHAR}
+			</if>
+			<if test="status != null">
+				and rqb.status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(rqb.create_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+		    	<![CDATA[	and DATE_FORMAT(rqb.create_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+		</where>
+		order by rqb.create_time desc;
+	</select>
+
+	<select id="selectCount" resultType="int" parameterType="Map">
+		select
+		count(*)
+		from rb_quick_borrow
+		<where>
+
+			<if test="userName != null">
+				and user_name = #{userName,jdbcType=VARCHAR}
+			</if>
+			<if test="userTel != null">
+				and user_tel = #{userTel,jdbcType=VARCHAR}
+			</if>
+			<if test="borrowAmount != null">
+				and borrow_amount = #{borrowAmount,jdbcType=DECIMAL}
+			</if>
+			<if test="borrowPeriod != null">
+				and borrow_period = #{borrowPeriod,jdbcType=VARCHAR}
+			</if>
+			<if test="borrowUse != null">
+				and borrow_use = #{borrowUse,jdbcType=VARCHAR}
+			</if>
+			<if test="interestrateMin != null">
+				and interestRate_min = #{interestrateMin,jdbcType=DECIMAL}
+			</if>
+			<if test="interestrateMax != null">
+				and interestRate_max = #{interestrateMax,jdbcType=DECIMAL}
+			</if>
+			<if test="userProvince != null">
+				and user_province = #{userProvince,jdbcType=VARCHAR}
+			</if>
+			<if test="userCity != null">
+				and user_city = #{userCity,jdbcType=VARCHAR}
+			</if>
+			<if test="userArea != null">
+				and user_area = #{userArea,jdbcType=VARCHAR}
+			</if>
+			<if test="status != null">
+				and status = #{status,jdbcType=INTEGER}
+			</if>
+			<if test="beginTime != null">
+				and DATE_FORMAT(create_time, '%Y-%m-%d') >= #{beginTime}
+			</if>
+			<if test="endTime != null">
+      <![CDATA[  and   DATE_FORMAT(create_time, '%Y-%m-%d') <= #{endTime} ]]>
+			</if>
+			<if test="fistAuditUserid != null">
+				and fist_audit_userid = #{fistAuditUserid,jdbcType=INTEGER}
+			</if>
+			<if test="fistAuditTime != null">
+				and fist_audit_time = #{fistAuditTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="firstAuditIp != null">
+				and first_audit_ip = #{firstAuditIp,jdbcType=VARCHAR}
+			</if>
+			<if test="firstAuditRemark != null">
+				and first_audit_remark = #{firstAuditRemark,jdbcType=VARCHAR}
+			</if>
+			<if test="secondAuditUserid != null">
+				and second_audit_userid = #{secondAuditUserid,jdbcType=INTEGER}
+			</if>
+			<if test="secondAuditTime != null">
+				and second_audit_time = #{secondAuditTime,jdbcType=TIMESTAMP}
+			</if>
+			<if test="secondAuditIp != null">
+				and second_audit_ip = #{secondAuditIp,jdbcType=VARCHAR}
+			</if>
+			<if test="secondAuditRemark != null">
+				and second_audit_remark = #{secondAuditRemark,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_quick_borrow
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_quick_borrow
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.QuickBorrow">
+		insert into rb_quick_borrow (id, user_id, user_name,
+		user_tel, borrow_amount, borrow_period,
+		borrow_use, interestRate_min, interestRate_max,
+		user_province, user_city, user_area,
+		status, create_time, create_ip,
+		fist_audit_userid, fist_audit_time, first_audit_ip,
+		first_audit_remark, second_audit_userid, second_audit_time,
+		second_audit_ip, second_audit_remark)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{userName,jdbcType=VARCHAR},
+		#{userTel,jdbcType=VARCHAR}, #{borrowAmount,jdbcType=DECIMAL}, #{borrowPeriod,jdbcType=VARCHAR},
+		#{borrowUse,jdbcType=VARCHAR}, #{interestrateMin,jdbcType=DECIMAL},
+		#{interestrateMax,jdbcType=DECIMAL},
+		#{userProvince,jdbcType=VARCHAR}, #{userCity,jdbcType=VARCHAR}, #{userArea,jdbcType=VARCHAR},
+		#{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+		#{createIp,jdbcType=VARCHAR},
+		#{fistAuditUserid,jdbcType=INTEGER}, #{fistAuditTime,jdbcType=TIMESTAMP},
+		#{firstAuditIp,jdbcType=VARCHAR},
+		#{firstAuditRemark,jdbcType=VARCHAR},
+		#{secondAuditUserid,jdbcType=INTEGER},
+		#{secondAuditTime,jdbcType=TIMESTAMP},
+		#{secondAuditIp,jdbcType=VARCHAR},
+		#{secondAuditRemark,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.QuickBorrow">
+		insert into rb_quick_borrow
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="userName != null">
+				user_name,
+			</if>
+			<if test="userTel != null">
+				user_tel,
+			</if>
+			<if test="borrowAmount != null">
+				borrow_amount,
+			</if>
+			<if test="borrowPeriod != null">
+				borrow_period,
+			</if>
+			<if test="borrowUse != null">
+				borrow_use,
+			</if>
+			<if test="interestrateMin != null">
+				interestRate_min,
+			</if>
+			<if test="interestrateMax != null">
+				interestRate_max,
+			</if>
+			<if test="userProvince != null">
+				user_province,
+			</if>
+			<if test="userCity != null">
+				user_city,
+			</if>
+			<if test="userArea != null">
+				user_area,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="createIp != null">
+				create_ip,
+			</if>
+			<if test="fistAuditUserid != null">
+				fist_audit_userid,
+			</if>
+			<if test="fistAuditTime != null">
+				fist_audit_time,
+			</if>
+			<if test="firstAuditIp != null">
+				first_audit_ip,
+			</if>
+			<if test="firstAuditRemark != null">
+				first_audit_remark,
+			</if>
+			<if test="secondAuditUserid != null">
+				second_audit_userid,
+			</if>
+			<if test="secondAuditTime != null">
+				second_audit_time,
+			</if>
+			<if test="secondAuditIp != null">
+				second_audit_ip,
+			</if>
+			<if test="secondAuditRemark != null">
+				second_audit_remark,
+			</if>
+			<if test="borrowWay != null">
+				borrow_way,
+			</if>
+			<if test="mainUse != null">
+				main_use,
+			</if>
+			<if test="interestMonth != null">
+				interest_month,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="userName != null">
+				#{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="userTel != null">
+				#{userTel,jdbcType=VARCHAR},
+			</if>
+			<if test="borrowAmount != null">
+				#{borrowAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="borrowPeriod != null">
+				#{borrowPeriod,jdbcType=VARCHAR},
+			</if>
+			<if test="borrowUse != null">
+				#{borrowUse,jdbcType=VARCHAR},
+			</if>
+			<if test="interestrateMin != null">
+				#{interestrateMin,jdbcType=DECIMAL},
+			</if>
+			<if test="interestrateMax != null">
+				#{interestrateMax,jdbcType=DECIMAL},
+			</if>
+			<if test="userProvince != null">
+				#{userProvince,jdbcType=VARCHAR},
+			</if>
+			<if test="userCity != null">
+				#{userCity,jdbcType=VARCHAR},
+			</if>
+			<if test="userArea != null">
+				#{userArea,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createIp != null">
+				#{createIp,jdbcType=VARCHAR},
+			</if>
+			<if test="fistAuditUserid != null">
+				#{fistAuditUserid,jdbcType=INTEGER},
+			</if>
+			<if test="fistAuditTime != null">
+				#{fistAuditTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="firstAuditIp != null">
+				#{firstAuditIp,jdbcType=VARCHAR},
+			</if>
+			<if test="firstAuditRemark != null">
+				#{firstAuditRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="secondAuditUserid != null">
+				#{secondAuditUserid,jdbcType=INTEGER},
+			</if>
+			<if test="secondAuditTime != null">
+				#{secondAuditTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="secondAuditIp != null">
+				#{secondAuditIp,jdbcType=VARCHAR},
+			</if>
+			<if test="secondAuditRemark != null">
+				#{secondAuditRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="borrowWay != null">
+				 #{borrowWay,jdbcType=VARCHAR},
+			</if>
+			<if test="mainUse != null">
+				 #{mainUse,jdbcType=VARCHAR},
+			</if>
+			<if test="interestMonth != null">
+			 #{interestMonth,jdbcType=VARCHAR}
+			</if>
+			
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.QuickBorrow">
+		update rb_quick_borrow
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="userName != null">
+				user_name = #{userName,jdbcType=VARCHAR},
+			</if>
+			<if test="userTel != null">
+				user_tel = #{userTel,jdbcType=VARCHAR},
+			</if>
+			<if test="borrowAmount != null">
+				borrow_amount = #{borrowAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="borrowPeriod != null">
+				borrow_period = #{borrowPeriod,jdbcType=VARCHAR},
+			</if>
+			<if test="borrowUse != null">
+				borrow_use = #{borrowUse,jdbcType=VARCHAR},
+			</if>
+			<if test="interestrateMin != null">
+				interestRate_min = #{interestrateMin,jdbcType=DECIMAL},
+			</if>
+			<if test="interestrateMax != null">
+				interestRate_max = #{interestrateMax,jdbcType=DECIMAL},
+			</if>
+			<if test="userProvince != null">
+				user_province = #{userProvince,jdbcType=VARCHAR},
+			</if>
+			<if test="userCity != null">
+				user_city = #{userCity,jdbcType=VARCHAR},
+			</if>
+			<if test="userArea != null">
+				user_area = #{userArea,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createIp != null">
+				create_ip = #{createIp,jdbcType=VARCHAR},
+			</if>
+			<if test="fistAuditUserid != null">
+				fist_audit_userid = #{fistAuditUserid,jdbcType=INTEGER},
+			</if>
+			<if test="fistAuditTime != null">
+				fist_audit_time = #{fistAuditTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="firstAuditIp != null">
+				first_audit_ip = #{firstAuditIp,jdbcType=VARCHAR},
+			</if>
+			<if test="firstAuditRemark != null">
+				first_audit_remark = #{firstAuditRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="secondAuditUserid != null">
+				second_audit_userid = #{secondAuditUserid,jdbcType=INTEGER},
+			</if>
+			<if test="secondAuditTime != null">
+				second_audit_time = #{secondAuditTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="secondAuditIp != null">
+				second_audit_ip = #{secondAuditIp,jdbcType=VARCHAR},
+			</if>
+			<if test="secondAuditRemark != null">
+				second_audit_remark = #{secondAuditRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="borrowWay != null">
+				borrow_way = #{borrowWay,jdbcType=VARCHAR},
+			</if>
+			<if test="mainUse != null">
+				main_use = #{mainUse,jdbcType=VARCHAR},
+			</if>
+			<if test="interestMonth != null">
+				interest_month = #{interestMonth,jdbcType=VARCHAR},
+			</if>
+			
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.QuickBorrow">
+		update rb_quick_borrow
+		set user_id = #{userId,jdbcType=INTEGER},
+		user_name = #{userName,jdbcType=VARCHAR},
+		user_tel = #{userTel,jdbcType=VARCHAR},
+		borrow_amount = #{borrowAmount,jdbcType=DECIMAL},
+		borrow_period = #{borrowPeriod,jdbcType=VARCHAR},
+		borrow_use = #{borrowUse,jdbcType=VARCHAR},
+		interestRate_min = #{interestrateMin,jdbcType=DECIMAL},
+		interestRate_max = #{interestrateMax,jdbcType=DECIMAL},
+		user_province = #{userProvince,jdbcType=VARCHAR},
+		user_city = #{userCity,jdbcType=VARCHAR},
+		user_area = #{userArea,jdbcType=VARCHAR},
+		status = #{status,jdbcType=INTEGER},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		create_ip = #{createIp,jdbcType=VARCHAR},
+		fist_audit_userid = #{fistAuditUserid,jdbcType=INTEGER},
+		fist_audit_time = #{fistAuditTime,jdbcType=TIMESTAMP},
+		first_audit_ip = #{firstAuditIp,jdbcType=VARCHAR},
+		first_audit_remark = #{firstAuditRemark,jdbcType=VARCHAR},
+		second_audit_userid = #{secondAuditUserid,jdbcType=INTEGER},
+		second_audit_time = #{secondAuditTime,jdbcType=TIMESTAMP},
+		second_audit_ip = #{secondAuditIp,jdbcType=VARCHAR},
+		second_audit_remark = #{secondAuditRemark,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

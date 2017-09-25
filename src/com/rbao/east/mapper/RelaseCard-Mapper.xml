@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.RelaseCardMapper">
+		<!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache" />-->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.RelaseCard">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="card_Path" property="cardPath" jdbcType="VARCHAR" />
+		<result column="re_reason" property="reReason" jdbcType="VARCHAR" />
+		<result column="user_bank_id" property="userBankId" jdbcType="INTEGER" />
+		<result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+		<result column="bank_branch" property="bankBranch" jdbcType="VARCHAR" />
+		<result column="bank_city" property="bankCity" jdbcType="VARCHAR" />
+		<result column="bank_name" property="bankName" jdbcType="VARCHAR" />
+		<result column="bank_user_id" property="bankUserId" jdbcType="INTEGER" />
+		<result column="re_result" property="result" jdbcType="VARCHAR" />
+		<result column="re_time" property="relasetime" jdbcType="TIMESTAMP" />
+		<association property="operateUser" column="user_id" javaType="com.rbao.east.entity.User" 
+  			select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  		<association property="bankUser" column="bank_user_id" javaType="com.rbao.east.entity.User" 
+  			select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+	</resultMap>
+	
+	<sql id="Base_Column_List">
+		id, user_id, user_bank_id, card_Path, re_reason, bank_account, bank_branch, bank_city, bank_name, bank_user_id, re_result, re_time
+	</sql>
+	
+	<insert id="insert" parameterType="com.rbao.east.entity.RelaseCard">
+		insert into rb_release_bank_reason (id, user_id, user_bank_id, card_Path, re_reason, bank_account,
+			bank_branch, bank_city, bank_name, bank_user_id, re_result, re_time)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{userBankId,jdbcType=INTEGER},
+		#{cardPath,jdbcType=VARCHAR}, #{reReason,jdbcType=VARCHAR}, 
+		#{bankAccount,jdbcType=VARCHAR}, #{bankBranch,jdbcType=VARCHAR},
+		#{bankCity,jdbcType=VARCHAR}, #{bankName,jdbcType=VARCHAR},#{bankUserId,jdbcType=INTEGER},
+		#{result,jdbcType=VARCHAR},#{relasetime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<select id="selectRelaseBankList" resultMap="BaseResultMap" parameterType="Map">
+		select br.id, br.user_id, br.user_bank_id, br.card_Path, 
+			   br.re_reason, br.bank_account, br.bank_branch, 
+			   br.bank_city, br.bank_name, br.bank_user_id, 
+			   br.re_time,
+			CASE br.re_result
+			WHEN '1' THEN '未通过'
+			WHEN '2' THEN '通过'
+			WHEN '-1' THEN '申请中'
+			WHEN '-2' THEN '未申请'
+			ELSE '未申请' END as re_result 
+		from rb_release_bank_reason br, rb_user u  where 1=1 and br.bank_user_id = u.id 
+			<if test="userAccount !=null">
+				and u.user_realname like CONCAT('%', #{userAccount}, '%')
+			</if>
+			<if test="bankAccount !=null">
+				br.bank_account like CONCAT('%', #{bankAccount}, '%')
+			</if>
+			<if test="result !=null">
+				and br.re_result = #{result}
+			</if>
+			order by br.re_time desc
+	</select>
+	
+	<select id="selectTotalCount" resultType="int" parameterType="Map">
+		select count(br.id) 
+		from rb_release_bank_reason br, rb_user u  
+		where 1=1 and br.bank_user_id = u.id 
+		<if test="userAccount !=null">
+			and u.user_realname like CONCAT('%', #{userAccount}, '%')
+		</if>
+		<if test="bankAccount !=null">
+			br.bank_account like CONCAT('%', #{bankAccount}, '%')
+		</if>
+		<if test="result !=null">
+			and br.re_result = #{result}
+		</if>
+	</select>
+	
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.RelaseCard">
+		insert into rb_release_bank_reason
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="userBankId != null">
+				user_bank_id,
+			</if>
+			<if test="cardPath != null">
+				card_Path,
+			</if>
+			<if test="reReason != null">
+				re_reason,
+			</if>
+			<if test="bankAccount != null">
+				bank_account,
+			</if>
+			<if test="bankBranch != null">
+				bank_branch,
+			</if>
+			<if test="bankCity != null">
+				bank_city,
+			</if>
+			<if test="bankName != null">
+				bank_name,
+			</if>
+			<if test="bankUserId != null">
+				bank_user_id,
+			</if>
+			<if test="result != null">
+				re_result,
+			</if>
+			<if test="relasetime != null">
+				re_time,
+			</if>			
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="userBankId != null">
+				#{userBankId,jdbcType=INTEGER},
+			</if>
+			<if test="cardPath != null">
+				#{cardPath,jdbcType=VARCHAR},
+			</if>
+			<if test="reReason != null">
+				#{reReason,jdbcType=VARCHAR},
+			</if>
+			<if test="bankAccount != null">
+				#{bankAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="bankBranch != null">
+				#{bankBranch,jdbcType=VARCHAR},
+			</if>
+			<if test="bankCity != null">
+				#{bankCity,jdbcType=VARCHAR},
+			</if>
+			<if test="bankName != null">
+				#{bankName,jdbcType=VARCHAR},
+			</if>
+			<if test="bankUserId != null">
+				#{bankUserId,jdbcType=INTEGER},
+			</if>
+			<if test="result != null">
+				#{result,jdbcType=VARCHAR},
+			</if>
+			<if test="relasetime != null">
+				#{relasetime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.RelaseCard">
+		update rb_release_bank_reason
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="userBankId != null">
+				user_bank_id = #{userBankId,jdbcType=INTEGER},
+			</if>
+			<if test="cardPath != null">
+				card_Path = #{cardPath,jdbcType=VARCHAR},
+			</if>
+			<if test="reReason != null">
+				re_reason = #{reReason,jdbcType=VARCHAR},
+			</if>
+			<if test="bankAccount != null">
+				bank_account = #{bankAccount,jdbcType=VARCHAR},
+			</if>
+			<if test="bankBranch != null">
+				bank_branch = #{bankBranch,jdbcType=VARCHAR},
+			</if>
+			<if test="bankCity != null">
+				bank_city = #{bankCity,jdbcType=VARCHAR},
+			</if>
+			<if test="bankName != null">
+				bank_name = #{bankName,jdbcType=VARCHAR},
+			</if>
+			<if test="bankUserId != null">
+				bank_user_id = #{bankUserId,jdbcType=INTEGER},
+			</if>
+			<if test="result != null">
+				re_result = #{result,jdbcType=VARCHAR},
+			</if>
+			<if test="relasetime != null">
+				re_time = #{relasetime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List"/>
+		from rb_release_bank_reason
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	
+	<select id="selectByParam" resultMap="BaseResultMap" parameterType="Map">
+		select br.* from 
+		rb_release_bank_reason br
+		where 1=1
+		<if test="result != null">
+			and br.re_result in ${result}
+		</if>
+		<if test="bankAccount != null">
+			and br.bank_account = #{bankAccount,jdbcType=VARCHAR}
+		</if>
+	</select>
+</mapper>

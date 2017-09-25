@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.ShopCategoryMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.ShopCategory" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="category_name" property="categoryName" jdbcType="VARCHAR" />
+    <result column="category_code" property="categoryCode" jdbcType="VARCHAR" />
+    <result column="is_enable" property="isEnable" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="order_by" property="orderBy" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="flag1" property="flag1" jdbcType="INTEGER" />
+    <result column="flag2" property="flag2" jdbcType="INTEGER" />
+    <result column="misc1" property="misc1" jdbcType="VARCHAR" />
+    <result column="misc2" property="misc2" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, category_name, category_code, is_enable, remark, order_by, create_time, update_time, 
+    flag1, flag2, misc1, misc2
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_shop_category
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  
+  <select id="selectTotalCount" resultType="int" parameterType="Map">
+		select count(*) FROM rb_shop_category where 1=1
+		<if test="shopCategoryId !=null and shopCategoryId !=''">
+			and id not in (${shopCategoryId })
+		</if>
+		<if test="categoryName !=null">
+			and category_name like CONCAT('%', #{categoryName}, '%')
+		</if>
+		<if test="categoryCode !=null">
+			and category_code =#{categoryCode}
+		</if>
+		order by id
+	</select>
+	<select id="selectByEntity" resultMap="BaseResultMap"
+		parameterType="Map">
+		SELECT * from rb_shop_category where 1=1
+		<if test="categoryName !=null">
+			and category_name like  CONCAT('%', #{categoryName}, '%')
+		</if>
+		<if test="categoryCode !=null">
+			and category_code =#{categoryCode}
+		</if>
+		order by id
+	</select>
+  <select id="selectEnableList" resultMap="BaseResultMap" >
+		SELECT * from rb_shop_category where  is_enable = 1 order by order_by asc,id desc
+	</select>
+  
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_shop_category
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.ShopCategory" >
+    insert into rb_shop_category (id, category_name, category_code, 
+      is_enable, remark, order_by, 
+      create_time, update_time, flag1, 
+      flag2, misc1, misc2
+      )
+    values (#{id,jdbcType=INTEGER}, #{categoryName,jdbcType=VARCHAR}, #{categoryCode,jdbcType=VARCHAR}, 
+      #{isEnable,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{orderBy,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{flag1,jdbcType=INTEGER}, 
+      #{flag2,jdbcType=INTEGER}, #{misc1,jdbcType=VARCHAR}, #{misc2,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.ShopCategory" >
+    insert into rb_shop_category
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="categoryName != null" >
+        category_name,
+      </if>
+      <if test="categoryCode != null" >
+        category_code,
+      </if>
+      <if test="isEnable != null" >
+        is_enable,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="orderBy != null" >
+        order_by,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="flag1 != null" >
+        flag1,
+      </if>
+      <if test="flag2 != null" >
+        flag2,
+      </if>
+      <if test="misc1 != null" >
+        misc1,
+      </if>
+      <if test="misc2 != null" >
+        misc2,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="categoryName != null" >
+        #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryCode != null" >
+        #{categoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnable != null" >
+        #{isEnable,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="orderBy != null" >
+        #{orderBy,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="flag1 != null" >
+        #{flag1,jdbcType=INTEGER},
+      </if>
+      <if test="flag2 != null" >
+        #{flag2,jdbcType=INTEGER},
+      </if>
+      <if test="misc1 != null" >
+        #{misc1,jdbcType=VARCHAR},
+      </if>
+      <if test="misc2 != null" >
+        #{misc2,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.ShopCategory" >
+    update rb_shop_category
+    <set >
+      <if test="categoryName != null" >
+        category_name = #{categoryName,jdbcType=VARCHAR},
+      </if>
+      <if test="categoryCode != null" >
+        category_code = #{categoryCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnable != null" >
+        is_enable = #{isEnable,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="orderBy != null" >
+        order_by = #{orderBy,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="flag1 != null" >
+        flag1 = #{flag1,jdbcType=INTEGER},
+      </if>
+      <if test="flag2 != null" >
+        flag2 = #{flag2,jdbcType=INTEGER},
+      </if>
+      <if test="misc1 != null" >
+        misc1 = #{misc1,jdbcType=VARCHAR},
+      </if>
+      <if test="misc2 != null" >
+        misc2 = #{misc2,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.ShopCategory" >
+    update rb_shop_category
+    set category_name = #{categoryName,jdbcType=VARCHAR},
+      category_code = #{categoryCode,jdbcType=VARCHAR},
+      is_enable = #{isEnable,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      order_by = #{orderBy,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      flag1 = #{flag1,jdbcType=INTEGER},
+      flag2 = #{flag2,jdbcType=INTEGER},
+      misc1 = #{misc1,jdbcType=VARCHAR},
+      misc2 = #{misc2,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

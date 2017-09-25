@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.PrivateBusinessMessageMapper" >
+ 	<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.PrivateBusinessMessage" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="private_type" property="privateType" jdbcType="INTEGER" />
+    <result column="establish_time" property="establishTime" jdbcType="TIMESTAMP" />
+    <result column="run_site" property="runSite" jdbcType="VARCHAR" />
+    <result column="rent_money" property="rentMoney" jdbcType="VARCHAR" />
+    <result column="rent_date" property="rentDate" jdbcType="VARCHAR" />
+    <result column="tax_id" property="taxId" jdbcType="VARCHAR" />
+    <result column="register_id" property="registerId" jdbcType="VARCHAR" />
+    <result column="profit" property="profit" jdbcType="VARCHAR" />
+    <result column="hire_number" property="hireNumber" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, user_id, private_type, establish_time, run_site, rent_money, rent_date, tax_id, 
+    register_id, profit, hire_number
+  </sql>
+  <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_private_business_message
+    where user_id = #{userId}
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_private_business_message
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_private_business_message
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.PrivateBusinessMessage" >
+    insert into rb_private_business_message (id, user_id, private_type, 
+      establish_time, run_site, rent_money, 
+      rent_date, tax_id, register_id, 
+      profit, hire_number)
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{privateType,jdbcType=INTEGER}, 
+      #{establishTime,jdbcType=TIMESTAMP}, #{runSite,jdbcType=VARCHAR}, #{rentMoney,jdbcType=VARCHAR}, 
+      #{rentDate,jdbcType=VARCHAR}, #{taxId,jdbcType=VARCHAR}, #{registerId,jdbcType=VARCHAR}, 
+      #{profit,jdbcType=VARCHAR}, #{hireNumber,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.PrivateBusinessMessage" >
+    insert into rb_private_business_message
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="privateType != null" >
+        private_type,
+      </if>
+      <if test="establishTime != null" >
+        establish_time,
+      </if>
+      <if test="runSite != null" >
+        run_site,
+      </if>
+      <if test="rentMoney != null" >
+        rent_money,
+      </if>
+      <if test="rentDate != null" >
+        rent_date,
+      </if>
+      <if test="taxId != null" >
+        tax_id,
+      </if>
+      <if test="registerId != null" >
+        register_id,
+      </if>
+      <if test="profit != null" >
+        profit,
+      </if>
+      <if test="hireNumber != null" >
+        hire_number,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="privateType != null" >
+        #{privateType,jdbcType=INTEGER},
+      </if>
+      <if test="establishTime != null" >
+        #{establishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="runSite != null" >
+        #{runSite,jdbcType=VARCHAR},
+      </if>
+      <if test="rentMoney != null" >
+        #{rentMoney,jdbcType=VARCHAR},
+      </if>
+      <if test="rentDate != null" >
+        #{rentDate,jdbcType=VARCHAR},
+      </if>
+      <if test="taxId != null" >
+        #{taxId,jdbcType=VARCHAR},
+      </if>
+      <if test="registerId != null" >
+        #{registerId,jdbcType=VARCHAR},
+      </if>
+      <if test="profit != null" >
+        #{profit,jdbcType=VARCHAR},
+      </if>
+      <if test="hireNumber != null" >
+        #{hireNumber,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.PrivateBusinessMessage" >
+    update rb_private_business_message
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="privateType != null" >
+        private_type = #{privateType,jdbcType=INTEGER},
+      </if>
+      <if test="establishTime != null" >
+        establish_time = #{establishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="runSite != null" >
+        run_site = #{runSite,jdbcType=VARCHAR},
+      </if>
+      <if test="rentMoney != null" >
+        rent_money = #{rentMoney,jdbcType=VARCHAR},
+      </if>
+      <if test="rentDate != null" >
+        rent_date = #{rentDate,jdbcType=VARCHAR},
+      </if>
+      <if test="taxId != null" >
+        tax_id = #{taxId,jdbcType=VARCHAR},
+      </if>
+      <if test="registerId != null" >
+        register_id = #{registerId,jdbcType=VARCHAR},
+      </if>
+      <if test="profit != null" >
+        profit = #{profit,jdbcType=VARCHAR},
+      </if>
+      <if test="hireNumber != null" >
+        hire_number = #{hireNumber,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.PrivateBusinessMessage" >
+    update rb_private_business_message
+    set user_id = #{userId,jdbcType=INTEGER},
+      private_type = #{privateType,jdbcType=INTEGER},
+      establish_time = #{establishTime,jdbcType=TIMESTAMP},
+      run_site = #{runSite,jdbcType=VARCHAR},
+      rent_money = #{rentMoney,jdbcType=VARCHAR},
+      rent_date = #{rentDate,jdbcType=VARCHAR},
+      tax_id = #{taxId,jdbcType=VARCHAR},
+      register_id = #{registerId,jdbcType=VARCHAR},
+      profit = #{profit,jdbcType=VARCHAR},
+      hire_number = #{hireNumber,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

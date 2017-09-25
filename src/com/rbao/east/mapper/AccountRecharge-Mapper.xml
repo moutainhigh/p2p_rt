@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.AccountRechargeMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.AccountRecharge">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="recharge_trade_no" property="rechargeTradeNo"
+			jdbcType="VARCHAR" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="recharge_status" property="rechargeStatus"
+			jdbcType="INTEGER" />
+		<result column="recharge_money" property="rechargeMoney"
+			jdbcType="DECIMAL" />
+		<result column="recharge_payment" property="rechargePayment"
+			jdbcType="VARCHAR" />
+		<result column="recharge_type" property="rechargeType"
+			jdbcType="VARCHAR" />
+		<result column="recharge_remark" property="rechargeRemark"
+			jdbcType="VARCHAR" />
+		<result column="recharge_fee" property="rechargeFee" jdbcType="DECIMAL" />
+		<result column="verify_userid" property="verifyUserid"
+			jdbcType="INTEGER" />
+		<result column="verify_time" property="verifyTime" jdbcType="TIMESTAMP" />
+		<result column="verify_remark" property="verifyRemark"
+			jdbcType="VARCHAR" />
+		<result column="recharge_addtime" property="rechargeAddtime"
+			jdbcType="TIMESTAMP" />
+		<result column="recharge_addip" property="rechargeAddip"
+			jdbcType="VARCHAR" />
+		<association property="user" column="user_id"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+		<association property="verifyUser" column="verify_userid"
+			javaType="com.rbao.east.entity.User" select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+	</resultMap>
+	
+	<!-- 统计用户总充值 -->
+	<select id="summaryRecharge" resultType="BigDecimal" parameterType="java.lang.Integer">
+		SELECT IFNULL(SUM(recharge_money), 0) FROM rb_account_recharge WHERE recharge_status = #{status}
+		<![CDATA[	AND DATE_FORMAT(verify_time,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')]]>
+	</select>
+	
+	<!-- 统计待审线下充值 -->
+	<select id="summaryRechargeNoCheck" resultType="java.lang.Integer" parameterType="Map">
+		SELECT COUNT(recharge_money) FROM rb_account_recharge WHERE recharge_status = #{status}
+		AND recharge_type = #{type}
+	</select>
+
+	<!-- 统计一段时间内充值总额 -->
+	<select id="queryRechargeMoney" resultType="BIGDECIMAL" parameterType="Map">
+		SELECT 
+  		IFNULL(SUM(recharge_money),0) rechargeMoney
+		FROM
+ 		 rb_account_recharge 
+		WHERE recharge_status=2
+		<if test="userId!=null">
+		and user_id = #{userId}
+		</if>
+		<if test="verifyTime!=null">
+  		 <![CDATA[	AND DATE_FORMAT(verify_time,'%Y%m%d')>= DATE_FORMAT(#{verifyTime}, '%Y%m%d')]]>
+		</if>
+		<if test="rechargeType!=null">
+			AND recharge_type IN 
+			<foreach item="item" index="index" collection="rechargeType" open="(" separator="," close=")">  
+						  #{item}  
+			</foreach>
+		</if>
+	</select>
+	
+	<!-- 查询一段时间内充值的充值记录 -->
+	<select id="queryAccountRecharge" resultMap="BaseResultMap" parameterType="Map">
+		SELECT 
+  		*
+		FROM
+ 		 rb_account_recharge 
+		WHERE recharge_status=2
+		<if test="userId!=null">
+		and user_id = #{userId}
+		</if>
+		<if test="verifyTime!=null">
+  		 <![CDATA[	AND DATE_FORMAT(verify_time,'%Y%m%d')>= DATE_FORMAT(#{verifyTime}, '%Y%m%d')]]>
+		</if>
+		<if test="rechargeType!=null">
+			AND recharge_type IN 
+			<foreach item="item" index="index" collection="rechargeType" open="(" separator="," close=")">  
+						  #{item}  
+			</foreach>
+		</if>
+		order by verify_time asc
+	</select>
+	<select id="selectTotalCount" resultType="int"
+		parameterType="com.rbao.east.entity.AccountRecharge">
+		select
+		count(*)
+		from rb_account_recharge ar inner join rb_user u on ar.user_id = u.id
+		<where>
+			<if test="userAccount !=null and userAccount !=''">
+				u.user_account like CONCAT('%', #{userAccount}, '%')
+			</if>
+			<if test="userRealname !=null and userRealname !=''">
+				and u.user_realname like  CONCAT('%', #{userRealname}, '%')
+			</if>
+			<if test="userPhone !=null and userPhone !=''">
+				and u.user_phone like CONCAT('%', #{userPhone}, '%')
+			</if>
+			<if test="rechargeStatus !=null and rechargeStatus !=''">
+				and ar.recharge_status = #{rechargeStatus}
+			</if>
+			<if test="rechargeType !=null and rechargeType !=''">
+				and ar.recharge_type = #{rechargeType}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(ar.recharge_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+		    	<![CDATA[	and DATE_FORMAT(ar.recharge_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+		</where>
+	</select>
+	<select id="selectEntity" resultMap="BaseResultMap" parameterType="com.rbao.east.entity.AccountRecharge">
+		SELECT * FROM rb_account_recharge WHERE recharge_status=1
+		<if test="userId!=null and userId!=''">
+			and user_id=#{userId}
+		</if>
+		<if test="rechargeMoney!=null and rechargeMoney!=''">
+			and recharge_money=#{rechargeMoney}
+		</if>
+		<if test="rechargeTradeNo!=null and rechargeTradeNo!=''">
+			and recharge_trade_no=#{rechargeTradeNo}
+		</if>
+	</select>
+	<select id="selectByEntity" resultType="Map"
+		parameterType="com.rbao.east.entity.AccountRecharge">
+		select u.user_account userAccount,
+		u.user_realname userRealname,
+		u.user_phone userPhone,
+		ar.id id,
+		ar.recharge_trade_no rechargeTradeNo,
+		ar.user_id userId,
+		ar.recharge_status rechargeStatus,
+		ar.recharge_money rechargeMoney,
+		ar.recharge_payment rechargePayment,
+		ar.recharge_return rechargeReturn,
+		ar.recharge_type rechargeType,
+		ar.recharge_remark rechargeRemark,
+		ar.recharge_fee rechargeFee,
+		ar.verify_userid verifyUserid,
+		ar.verify_time verifyTime,
+		ar.verify_remark verifyRemark,
+		ar.recharge_addtime rechargeAddtime,
+		ar.recharge_addip rechargeAddip
+		from rb_account_recharge ar inner join rb_user u on ar.user_id = u.id
+		<where>
+			<if test="userAccount !=null and userAccount !=''">
+				u.user_account like CONCAT('%', #{userAccount}, '%')
+			</if>
+			<if test="userRealname !=null and userRealname !=''">
+				and u.user_realname like CONCAT('%', #{userRealname}, '%')
+			</if>
+			<if test="userPhone !=null and userPhone !=''">
+				and u.user_phone like CONCAT('%', #{userPhone}, '%')
+			</if>
+			<if test="rechargeStatus !=null and rechargeStatus !=''">
+				and ar.recharge_status = #{rechargeStatus}
+			</if>
+			<if test="rechargeType !=null and rechargeType !=''">
+				and ar.recharge_type = #{rechargeType}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(ar.recharge_addtime,'%Y-%m-%d') >=  #{beginTime }  ]]>
+			</if>
+			<if test="endTime !=null and endTime !=''">
+		    	<![CDATA[	and DATE_FORMAT(ar.recharge_addtime,'%Y-%m-%d') <=  #{endTime }  ]]>
+			</if>
+		</where>
+		order by ar.recharge_addtime desc
+	</select>
+
+	<resultMap id="ResultMapWithBLOBs" type="com.rbao.east.entity.AccountRecharge"
+		extends="BaseResultMap">
+		<result column="recharge_return" property="rechargeReturn"
+			jdbcType="LONGVARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, recharge_trade_no, user_id, recharge_status, recharge_money,
+		recharge_payment,
+		recharge_type, recharge_remark, recharge_fee, verify_userid, verify_time,
+		verify_remark,
+		recharge_addtime, recharge_addip
+	</sql>
+	<sql id="Blob_Column_List">
+		recharge_return
+	</sql>
+	
+	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from rb_account_recharge
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectByPrimaryKeyForUpdate" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from rb_account_recharge
+		where id = #{id,jdbcType=INTEGER} for update
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_account_recharge
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.AccountRecharge">
+		insert into rb_account_recharge (id, recharge_trade_no, user_id,
+		recharge_status, recharge_money, recharge_payment,
+		recharge_type, recharge_remark, recharge_fee,
+		verify_userid, verify_time, verify_remark,
+		recharge_addtime, recharge_addip, recharge_return
+		)
+		values (#{id,jdbcType=INTEGER}, #{rechargeTradeNo,jdbcType=VARCHAR},
+		#{userId,jdbcType=INTEGER},
+		#{rechargeStatus,jdbcType=INTEGER}, #{rechargeMoney,jdbcType=DECIMAL},
+		#{rechargePayment,jdbcType=VARCHAR},
+		#{rechargeType,jdbcType=VARCHAR}, #{rechargeRemark,jdbcType=VARCHAR}, #{rechargeFee,jdbcType=DECIMAL},
+		#{verifyUserid,jdbcType=INTEGER}, #{verifyTime,jdbcType=TIMESTAMP},
+		#{verifyRemark,jdbcType=VARCHAR},
+		#{rechargeAddtime,jdbcType=TIMESTAMP},
+		#{rechargeAddip,jdbcType=VARCHAR},
+		#{rechargeReturn,jdbcType=LONGVARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.AccountRecharge">
+		insert into rb_account_recharge
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="rechargeTradeNo != null">
+				recharge_trade_no,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="rechargeStatus != null">
+				recharge_status,
+			</if>
+			<if test="rechargeMoney != null">
+				recharge_money,
+			</if>
+			<if test="rechargePayment != null">
+				recharge_payment,
+			</if>
+			<if test="rechargeType != null">
+				recharge_type,
+			</if>
+			<if test="rechargeRemark != null">
+				recharge_remark,
+			</if>
+			<if test="rechargeFee != null">
+				recharge_fee,
+			</if>
+			<if test="verifyUserid != null">
+				verify_userid,
+			</if>
+			<if test="verifyTime != null">
+				verify_time,
+			</if>
+			<if test="verifyRemark != null">
+				verify_remark,
+			</if>
+			<if test="rechargeAddtime != null">
+				recharge_addtime,
+			</if>
+			<if test="rechargeAddip != null">
+				recharge_addip,
+			</if>
+			<if test="rechargeReturn != null">
+				recharge_return,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="rechargeTradeNo != null">
+				#{rechargeTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="rechargeStatus != null">
+				#{rechargeStatus,jdbcType=INTEGER},
+			</if>
+			<if test="rechargeMoney != null">
+				#{rechargeMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="rechargePayment != null">
+				#{rechargePayment,jdbcType=VARCHAR},
+			</if>
+			<if test="rechargeType != null">
+				#{rechargeType,jdbcType=VARCHAR},
+			</if>
+			<if test="rechargeRemark != null">
+				#{rechargeRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="rechargeFee != null">
+				#{rechargeFee,jdbcType=DECIMAL},
+			</if>
+			<if test="verifyUserid != null">
+				#{verifyUserid,jdbcType=INTEGER},
+			</if>
+			<if test="verifyTime != null">
+				#{verifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="verifyRemark != null">
+				#{verifyRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="rechargeAddtime != null">
+				#{rechargeAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="rechargeAddip != null">
+				#{rechargeAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="rechargeReturn != null">
+				#{rechargeReturn,jdbcType=LONGVARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.AccountRecharge">
+		update rb_account_recharge
+		<set>
+			<if test="rechargeTradeNo != null">
+				recharge_trade_no = #{rechargeTradeNo,jdbcType=VARCHAR},
+			</if>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="rechargeStatus != null">
+				recharge_status = #{rechargeStatus,jdbcType=INTEGER},
+			</if>
+			<if test="rechargeMoney != null">
+				recharge_money = #{rechargeMoney,jdbcType=DECIMAL},
+			</if>
+			<if test="rechargePayment != null">
+				recharge_payment = #{rechargePayment,jdbcType=VARCHAR},
+			</if>
+			<if test="rechargeType != null">
+				recharge_type = #{rechargeType,jdbcType=VARCHAR},
+			</if>
+			<if test="rechargeRemark != null">
+				recharge_remark = #{rechargeRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="rechargeFee != null">
+				recharge_fee = #{rechargeFee,jdbcType=DECIMAL},
+			</if>
+			<if test="verifyUserid != null">
+				verify_userid = #{verifyUserid,jdbcType=INTEGER},
+			</if>
+			<if test="verifyTime != null">
+				verify_time = #{verifyTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="verifyRemark != null">
+				verify_remark = #{verifyRemark,jdbcType=VARCHAR},
+			</if>
+			<if test="rechargeAddtime != null">
+				recharge_addtime = #{rechargeAddtime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="rechargeAddip != null">
+				recharge_addip = #{rechargeAddip,jdbcType=VARCHAR},
+			</if>
+			<if test="rechargeReturn != null">
+				recharge_return = #{rechargeReturn,jdbcType=LONGVARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="com.rbao.east.entity.AccountRecharge">
+		update rb_account_recharge
+		set recharge_trade_no = #{rechargeTradeNo,jdbcType=VARCHAR},
+		user_id = #{userId,jdbcType=INTEGER},
+		recharge_status = #{rechargeStatus,jdbcType=INTEGER},
+		recharge_money = #{rechargeMoney,jdbcType=DECIMAL},
+		recharge_payment = #{rechargePayment,jdbcType=VARCHAR},
+		recharge_type = #{rechargeType,jdbcType=VARCHAR},
+		recharge_remark = #{rechargeRemark,jdbcType=VARCHAR},
+		recharge_fee = #{rechargeFee,jdbcType=DECIMAL},
+		verify_userid = #{verifyUserid,jdbcType=INTEGER},
+		verify_time = #{verifyTime,jdbcType=TIMESTAMP},
+		verify_remark = #{verifyRemark,jdbcType=VARCHAR},
+		recharge_addtime = #{rechargeAddtime,jdbcType=TIMESTAMP},
+		recharge_addip = #{rechargeAddip,jdbcType=VARCHAR},
+		recharge_return = #{rechargeReturn,jdbcType=LONGVARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.AccountRecharge">
+		update rb_account_recharge
+		set recharge_trade_no = #{rechargeTradeNo,jdbcType=VARCHAR},
+		user_id = #{userId,jdbcType=INTEGER},
+		recharge_status = #{rechargeStatus,jdbcType=INTEGER},
+		recharge_money = #{rechargeMoney,jdbcType=DECIMAL},
+		recharge_payment = #{rechargePayment,jdbcType=VARCHAR},
+		recharge_type = #{rechargeType,jdbcType=VARCHAR},
+		recharge_remark = #{rechargeRemark,jdbcType=VARCHAR},
+		recharge_fee = #{rechargeFee,jdbcType=DECIMAL},
+		verify_userid = #{verifyUserid,jdbcType=INTEGER},
+		verify_time = #{verifyTime,jdbcType=TIMESTAMP},
+		verify_remark = #{verifyRemark,jdbcType=VARCHAR},
+		recharge_addtime = #{rechargeAddtime,jdbcType=TIMESTAMP},
+		recharge_addip = #{rechargeAddip,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<!-- 按时间段统计充值笔数 -->
+	<select id="selectTimeTotalCount" resultType="int"
+		parameterType="com.rbao.east.entity.AccountRecharge">
+		select
+		count(*)
+		from rb_account_recharge ar 
+		<where>
+			<if test="rechargeStatus !=null and rechargeStatus !=''">
+				and ar.recharge_status = #{rechargeStatus}
+			</if>
+			<if test="rechargeType !=null and rechargeType !=''">
+				and ar.recharge_type = #{rechargeType}
+			</if>
+			<if test="startDate !=null and startDate !=''">
+	    		<![CDATA[	and ar.recharge_addtime >=#{startDate }  ]]>
+			</if>
+			<if test="endDate !=null and endDate !=''">
+		    	<![CDATA[	and ar.recharge_addtime <= #{endDate }  ]]>
+			</if>
+		</where>
+	</select>
+</mapper>

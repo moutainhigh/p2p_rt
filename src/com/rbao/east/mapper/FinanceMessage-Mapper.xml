@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.FinanceMessageMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.FinanceMessage">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="refund_money" property="refundMoney" jdbcType="VARCHAR" />
+		<result column="house_freedom" property="houseFreedom"
+			jdbcType="INTEGER" />
+		<result column="jiejin_money" property="jiejinMoney" jdbcType="VARCHAR" />
+		<result column="car_freedom" property="carFreedom" jdbcType="INTEGER" />
+		<result column="car_jiejin" property="carJiejin" jdbcType="VARCHAR" />
+		<result column="refund_xinyong" property="refundXinyong"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, refund_money, house_freedom, jiejin_money, car_freedom,
+		car_jiejin,
+		refund_xinyong
+	</sql>
+	<select id="selectByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_finance_message
+		where user_id = #{userId}
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_finance_message
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_finance_message
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.FinanceMessage">
+		insert into rb_finance_message (id, user_id, refund_money,
+		house_freedom, jiejin_money, car_freedom,
+		car_jiejin, refund_xinyong)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{refundMoney,jdbcType=VARCHAR},
+		#{houseFreedom,jdbcType=INTEGER}, #{jiejinMoney,jdbcType=VARCHAR}, #{carFreedom,jdbcType=INTEGER},
+		#{carJiejin,jdbcType=VARCHAR}, #{refundXinyong,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.FinanceMessage">
+		insert into rb_finance_message
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="refundMoney != null">
+				refund_money,
+			</if>
+			<if test="houseFreedom != null">
+				house_freedom,
+			</if>
+			<if test="jiejinMoney != null">
+				jiejin_money,
+			</if>
+			<if test="carFreedom != null">
+				car_freedom,
+			</if>
+			<if test="carJiejin != null">
+				car_jiejin,
+			</if>
+			<if test="refundXinyong != null">
+				refund_xinyong,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="refundMoney != null">
+				#{refundMoney,jdbcType=VARCHAR},
+			</if>
+			<if test="houseFreedom != null">
+				#{houseFreedom,jdbcType=INTEGER},
+			</if>
+			<if test="jiejinMoney != null">
+				#{jiejinMoney,jdbcType=VARCHAR},
+			</if>
+			<if test="carFreedom != null">
+				#{carFreedom,jdbcType=INTEGER},
+			</if>
+			<if test="carJiejin != null">
+				#{carJiejin,jdbcType=VARCHAR},
+			</if>
+			<if test="refundXinyong != null">
+				#{refundXinyong,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.FinanceMessage">
+		update rb_finance_message
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="refundMoney != null">
+				refund_money = #{refundMoney,jdbcType=VARCHAR},
+			</if>
+			<if test="houseFreedom != null">
+				house_freedom = #{houseFreedom,jdbcType=INTEGER},
+			</if>
+			<if test="jiejinMoney != null">
+				jiejin_money = #{jiejinMoney,jdbcType=VARCHAR},
+			</if>
+			<if test="carFreedom != null">
+				car_freedom = #{carFreedom,jdbcType=INTEGER},
+			</if>
+			<if test="carJiejin != null">
+				car_jiejin = #{carJiejin,jdbcType=VARCHAR},
+			</if>
+			<if test="refundXinyong != null">
+				refund_xinyong = #{refundXinyong,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.FinanceMessage">
+		update rb_finance_message
+		set user_id = #{userId,jdbcType=INTEGER},
+		refund_money = #{refundMoney,jdbcType=VARCHAR},
+		house_freedom = #{houseFreedom,jdbcType=INTEGER},
+		jiejin_money = #{jiejinMoney,jdbcType=VARCHAR},
+		car_freedom = #{carFreedom,jdbcType=INTEGER},
+		car_jiejin = #{carJiejin,jdbcType=VARCHAR},
+		refund_xinyong = #{refundXinyong,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

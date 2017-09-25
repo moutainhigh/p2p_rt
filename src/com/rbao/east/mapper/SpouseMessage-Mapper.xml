@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.SpouseMessageMapper">
+		<!-- <cache type="org.mybatis.caches.ehcache.EhcacheCache" /> -->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.SpouseMessage">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="spouse_name" property="spouseName" jdbcType="VARCHAR" />
+		<result column="monthly_pay" property="monthlyPay" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="unit_phone" property="unitPhone" jdbcType="VARCHAR" />
+		<result column="unit_type" property="unitType" jdbcType="INTEGER" />
+		<result column="post_type" property="postType" jdbcType="INTEGER" />
+		<result column="unit_address" property="unitAddress" jdbcType="VARCHAR" />
+		<result column="unit_income" property="unitIncome" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, spouse_name, monthly_pay, phone, unit_phone, unit_type,
+		post_type, unit_address,
+		unit_income
+	</sql>
+	<select id="selectByUserId" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_spouse_message
+		where user_id = #{userId}
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_spouse_message
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_spouse_message
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.SpouseMessage">
+		insert into rb_spouse_message (id, user_id, spouse_name,
+		monthly_pay, phone, unit_phone,
+		unit_type, post_type, unit_address,
+		unit_income)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{spouseName,jdbcType=VARCHAR},
+		#{monthlyPay,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{unitPhone,jdbcType=VARCHAR},
+		#{unitType,jdbcType=INTEGER}, #{postType,jdbcType=INTEGER},
+		#{unitAddress,jdbcType=VARCHAR},
+		#{unitIncome,jdbcType=VARCHAR})
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.SpouseMessage">
+		insert into rb_spouse_message
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="spouseName != null">
+				spouse_name,
+			</if>
+			<if test="monthlyPay != null">
+				monthly_pay,
+			</if>
+			<if test="phone != null">
+				phone,
+			</if>
+			<if test="unitPhone != null">
+				unit_phone,
+			</if>
+			<if test="unitType != null">
+				unit_type,
+			</if>
+			<if test="postType != null">
+				post_type,
+			</if>
+			<if test="unitAddress != null">
+				unit_address,
+			</if>
+			<if test="unitIncome != null">
+				unit_income,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="spouseName != null">
+				#{spouseName,jdbcType=VARCHAR},
+			</if>
+			<if test="monthlyPay != null">
+				#{monthlyPay,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				#{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="unitPhone != null">
+				#{unitPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="unitType != null">
+				#{unitType,jdbcType=INTEGER},
+			</if>
+			<if test="postType != null">
+				#{postType,jdbcType=INTEGER},
+			</if>
+			<if test="unitAddress != null">
+				#{unitAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="unitIncome != null">
+				#{unitIncome,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.SpouseMessage">
+		update rb_spouse_message
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="spouseName != null">
+				spouse_name = #{spouseName,jdbcType=VARCHAR},
+			</if>
+			<if test="monthlyPay != null">
+				monthly_pay = #{monthlyPay,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+				phone = #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="unitPhone != null">
+				unit_phone = #{unitPhone,jdbcType=VARCHAR},
+			</if>
+			<if test="unitType != null">
+				unit_type = #{unitType,jdbcType=INTEGER},
+			</if>
+			<if test="postType != null">
+				post_type = #{postType,jdbcType=INTEGER},
+			</if>
+			<if test="unitAddress != null">
+				unit_address = #{unitAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="unitIncome != null">
+				unit_income = #{unitIncome,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.SpouseMessage">
+		update rb_spouse_message
+		set user_id = #{userId,jdbcType=INTEGER},
+		spouse_name = #{spouseName,jdbcType=VARCHAR},
+		monthly_pay = #{monthlyPay,jdbcType=VARCHAR},
+		phone = #{phone,jdbcType=VARCHAR},
+		unit_phone = #{unitPhone,jdbcType=VARCHAR},
+		unit_type = #{unitType,jdbcType=INTEGER},
+		post_type = #{postType,jdbcType=INTEGER},
+		unit_address = #{unitAddress,jdbcType=VARCHAR},
+		unit_income = #{unitIncome,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

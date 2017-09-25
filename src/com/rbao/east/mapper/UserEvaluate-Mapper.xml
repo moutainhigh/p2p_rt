@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.UserEvaluateMapper">
+		<!--  <cache type="org.mybatis.caches.ehcache.EhcacheCache" />-->
+	<resultMap id="BaseResultMap" type="com.rbao.east.entity.UserEvaluate">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="credit" property="credit" jdbcType="DECIMAL" />
+		<result column="credit_available" property="creditAvailable"
+			jdbcType="DECIMAL" />
+		<result column="credit_unavailable" property="creditUnavailable"
+			jdbcType="DECIMAL" />
+		<result column="borrow_vouch" property="borrowVouch" jdbcType="DECIMAL" />
+		<result column="borrow_vouch_available" property="borrowVouchAvailable"
+			jdbcType="DECIMAL" />
+		<result column="borrow_vouch_unavailable" property="borrowVouchUnavailable"
+			jdbcType="DECIMAL" />
+		<result column="tender_vouch" property="tenderVouch" jdbcType="DECIMAL" />
+		<result column="tender_vouch_available" property="tenderVouchAvailable"
+			jdbcType="DECIMAL" />
+		<result column="tender_vouch_unavailable" property="tenderVouchUnavailable"
+			jdbcType="DECIMAL" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, user_id, credit, credit_available, credit_unavailable, borrow_vouch,
+		borrow_vouch_available,
+		borrow_vouch_unavailable, tender_vouch, tender_vouch_available, tender_vouch_unavailable
+	</sql>
+
+	<select id="selectUserEvaluateByUserId" resultMap="BaseResultMap"
+		parameterType="int">
+		select
+		*
+		from
+		rb_user_evaluate where 
+				user_id = #{userId}
+	</select>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from rb_user_evaluate
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from rb_user_evaluate
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByUserId" parameterType="java.lang.Integer">
+		delete from rb_user_evaluate
+		where user_id = #{userId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.rbao.east.entity.UserEvaluate">
+		insert into rb_user_evaluate (id, user_id, credit,
+		credit_available, credit_unavailable, borrow_vouch,
+		borrow_vouch_available, borrow_vouch_unavailable,
+		tender_vouch, tender_vouch_available, tender_vouch_unavailable
+		)
+		values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER},
+		#{credit,jdbcType=DECIMAL},
+		#{creditAvailable,jdbcType=DECIMAL}, #{creditUnavailable,jdbcType=DECIMAL},
+		#{borrowVouch,jdbcType=DECIMAL},
+		#{borrowVouchAvailable,jdbcType=DECIMAL},
+		#{borrowVouchUnavailable,jdbcType=DECIMAL},
+		#{tenderVouch,jdbcType=DECIMAL},
+		#{tenderVouchAvailable,jdbcType=DECIMAL},
+		#{tenderVouchUnavailable,jdbcType=DECIMAL}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.rbao.east.entity.UserEvaluate">
+		insert into rb_user_evaluate
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="credit != null">
+				credit,
+			</if>
+			<if test="creditAvailable != null">
+				credit_available,
+			</if>
+			<if test="creditUnavailable != null">
+				credit_unavailable,
+			</if>
+			<if test="borrowVouch != null">
+				borrow_vouch,
+			</if>
+			<if test="borrowVouchAvailable != null">
+				borrow_vouch_available,
+			</if>
+			<if test="borrowVouchUnavailable != null">
+				borrow_vouch_unavailable,
+			</if>
+			<if test="tenderVouch != null">
+				tender_vouch,
+			</if>
+			<if test="tenderVouchAvailable != null">
+				tender_vouch_available,
+			</if>
+			<if test="tenderVouchUnavailable != null">
+				tender_vouch_unavailable,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="userId != null">
+				#{userId,jdbcType=INTEGER},
+			</if>
+			<if test="credit != null">
+				#{credit,jdbcType=DECIMAL},
+			</if>
+			<if test="creditAvailable != null">
+				#{creditAvailable,jdbcType=DECIMAL},
+			</if>
+			<if test="creditUnavailable != null">
+				#{creditUnavailable,jdbcType=DECIMAL},
+			</if>
+			<if test="borrowVouch != null">
+				#{borrowVouch,jdbcType=DECIMAL},
+			</if>
+			<if test="borrowVouchAvailable != null">
+				#{borrowVouchAvailable,jdbcType=DECIMAL},
+			</if>
+			<if test="borrowVouchUnavailable != null">
+				#{borrowVouchUnavailable,jdbcType=DECIMAL},
+			</if>
+			<if test="tenderVouch != null">
+				#{tenderVouch,jdbcType=DECIMAL},
+			</if>
+			<if test="tenderVouchAvailable != null">
+				#{tenderVouchAvailable,jdbcType=DECIMAL},
+			</if>
+			<if test="tenderVouchUnavailable != null">
+				#{tenderVouchUnavailable,jdbcType=DECIMAL},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.UserEvaluate">
+		update rb_user_evaluate
+		<set>
+			<if test="userId != null">
+				user_id = #{userId,jdbcType=INTEGER},
+			</if>
+			<if test="credit != null">
+				credit = #{credit,jdbcType=DECIMAL},
+			</if>
+			<if test="creditAvailable != null">
+				credit_available = #{creditAvailable,jdbcType=DECIMAL},
+			</if>
+			<if test="creditUnavailable != null">
+				credit_unavailable = #{creditUnavailable,jdbcType=DECIMAL},
+			</if>
+			<if test="borrowVouch != null">
+				borrow_vouch = #{borrowVouch,jdbcType=DECIMAL},
+			</if>
+			<if test="borrowVouchAvailable != null">
+				borrow_vouch_available = #{borrowVouchAvailable,jdbcType=DECIMAL},
+			</if>
+			<if test="borrowVouchUnavailable != null">
+				borrow_vouch_unavailable =
+				#{borrowVouchUnavailable,jdbcType=DECIMAL},
+			</if>
+			<if test="tenderVouch != null">
+				tender_vouch = #{tenderVouch,jdbcType=DECIMAL},
+			</if>
+			<if test="tenderVouchAvailable != null">
+				tender_vouch_available = #{tenderVouchAvailable,jdbcType=DECIMAL},
+			</if>
+			<if test="tenderVouchUnavailable != null">
+				tender_vouch_unavailable =
+				#{tenderVouchUnavailable,jdbcType=DECIMAL},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.UserEvaluate">
+		update rb_user_evaluate
+		set user_id = #{userId,jdbcType=INTEGER},
+		credit = #{credit,jdbcType=DECIMAL},
+		credit_available = #{creditAvailable,jdbcType=DECIMAL},
+		credit_unavailable = #{creditUnavailable,jdbcType=DECIMAL},
+		borrow_vouch = #{borrowVouch,jdbcType=DECIMAL},
+		borrow_vouch_available = #{borrowVouchAvailable,jdbcType=DECIMAL},
+		borrow_vouch_unavailable = #{borrowVouchUnavailable,jdbcType=DECIMAL},
+		tender_vouch = #{tenderVouch,jdbcType=DECIMAL},
+		tender_vouch_available = #{tenderVouchAvailable,jdbcType=DECIMAL},
+		tender_vouch_unavailable = #{tenderVouchUnavailable,jdbcType=DECIMAL}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

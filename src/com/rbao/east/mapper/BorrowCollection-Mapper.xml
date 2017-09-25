@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.BorrowCollectionMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.BorrowCollection" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="borrow_id" property="borrowId" jdbcType="INTEGER" />
+    <result column="collection_type" property="collectionType" jdbcType="INTEGER" />
+    <result column="collection_user" property="collectionUser" jdbcType="VARCHAR" />
+    <result column="collection_time" property="collectionTime" jdbcType="TIMESTAMP" />
+    <result column="collection_result" property="collectionResult" jdbcType="VARCHAR" />
+    <result column="collection_remark" property="collectionRemark" jdbcType="VARCHAR" />
+    <result column="add_userid" property="addUserid" jdbcType="INTEGER" />
+    <result column="add_time" property="addTime" jdbcType="TIMESTAMP" />
+    <result column="add_ip" property="addIp" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, borrow_id, collection_type, collection_user, collection_time, collection_result, 
+    collection_remark, add_userid, add_time, add_ip
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_borrow_collection
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="findBorrowCollectionById" resultType="Map" parameterType="Map">
+  select 
+  b.id borrowId,
+  u.id userId,
+  u.user_account userAccount,
+  u.user_realname userRealName 
+  from rb_borrow b inner join rb_borrow_repayment br on b.id = br.borrow_id
+  inner join rb_user u on b.user_id = u.id
+  <where>
+  	<if test="borrowId!=null and borrowId != ''">
+  		b.id=#{borrowId}
+  	</if>
+  </where>
+  </select>
+  
+  <select id="findBorrowCollection" resultType="Map" parameterType="Map">
+  	select
+  	b.id borrowId,
+  	b.borrow_title borrowTitle,
+  	b.user_id userId,
+  	u.user_account userAccount,
+  	bc.collection_type collectionType,
+  	bc.collection_user collectionUser,
+  	bc.collection_time collectionTime,
+  	bc.collection_result collectionResult,
+  	bc.collection_remark collectionRemark
+  	from rb_borrow b inner join rb_borrow_collection bc on b.id=bc.borrow_id
+    inner join rb_user u on b.user_id = u.id
+  	<where>
+  	
+  		<if test="userAccount !=null and userAccount !=''">
+  			and u.user_account like CONCAT('%', #{userAccount}, '%')
+  		</if>
+  		<if test="collectionType !=null and collectionType !=''">
+  			and bc.collection_type=#{collectionType}
+  		</if>
+  		<if test="beginTime !=null and beginTime !=''">
+	    		<![CDATA[	and DATE_FORMAT(bc.collection_time,'%Y-%m-%d') >=  #{beginTime }  ]]>
+	    </if>
+	    <if test="endTime !=null and endTime !=''">
+	    	<![CDATA[	and DATE_FORMAT(bc.collection_time,'%Y-%m-%d') <=  #{endTime }  ]]>
+	    </if>
+  	</where>
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_borrow_collection
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.BorrowCollection" >
+    insert into rb_borrow_collection (id, borrow_id, collection_type, 
+      collection_user, collection_time, collection_result, 
+      collection_remark, add_userid, add_time, 
+      add_ip)
+    values (#{id,jdbcType=INTEGER}, #{borrowId,jdbcType=INTEGER}, #{collectionType,jdbcType=INTEGER}, 
+      #{collectionUser,jdbcType=VARCHAR}, #{collectionTime,jdbcType=TIMESTAMP}, #{collectionResult,jdbcType=VARCHAR}, 
+      #{collectionRemark,jdbcType=VARCHAR}, #{addUserid,jdbcType=INTEGER}, #{addTime,jdbcType=TIMESTAMP}, 
+      #{addIp,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.BorrowCollection" >
+    insert into rb_borrow_collection
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="borrowId != null" >
+        borrow_id,
+      </if>
+      <if test="collectionType != null" >
+        collection_type,
+      </if>
+      <if test="collectionUser != null" >
+        collection_user,
+      </if>
+      <if test="collectionTime != null" >
+        collection_time,
+      </if>
+      <if test="collectionResult != null" >
+        collection_result,
+      </if>
+      <if test="collectionRemark != null" >
+        collection_remark,
+      </if>
+      <if test="addUserid != null" >
+        add_userid,
+      </if>
+      <if test="addTime != null" >
+        add_time,
+      </if>
+      <if test="addIp != null" >
+        add_ip,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="borrowId != null" >
+        #{borrowId,jdbcType=INTEGER},
+      </if>
+      <if test="collectionType != null" >
+        #{collectionType,jdbcType=INTEGER},
+      </if>
+      <if test="collectionUser != null" >
+        #{collectionUser,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionTime != null" >
+        #{collectionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="collectionResult != null" >
+        #{collectionResult,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionRemark != null" >
+        #{collectionRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="addUserid != null" >
+        #{addUserid,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        #{addIp,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.BorrowCollection" >
+    update rb_borrow_collection
+    <set >
+      <if test="borrowId != null" >
+        borrow_id = #{borrowId,jdbcType=INTEGER},
+      </if>
+      <if test="collectionType != null" >
+        collection_type = #{collectionType,jdbcType=INTEGER},
+      </if>
+      <if test="collectionUser != null" >
+        collection_user = #{collectionUser,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionTime != null" >
+        collection_time = #{collectionTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="collectionResult != null" >
+        collection_result = #{collectionResult,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionRemark != null" >
+        collection_remark = #{collectionRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="addUserid != null" >
+        add_userid = #{addUserid,jdbcType=INTEGER},
+      </if>
+      <if test="addTime != null" >
+        add_time = #{addTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addIp != null" >
+        add_ip = #{addIp,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.BorrowCollection" >
+    update rb_borrow_collection
+    set borrow_id = #{borrowId,jdbcType=INTEGER},
+      collection_type = #{collectionType,jdbcType=INTEGER},
+      collection_user = #{collectionUser,jdbcType=VARCHAR},
+      collection_time = #{collectionTime,jdbcType=TIMESTAMP},
+      collection_result = #{collectionResult,jdbcType=VARCHAR},
+      collection_remark = #{collectionRemark,jdbcType=VARCHAR},
+      add_userid = #{addUserid,jdbcType=INTEGER},
+      add_time = #{addTime,jdbcType=TIMESTAMP},
+      add_ip = #{addIp,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

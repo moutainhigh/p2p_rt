@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.rbao.east.mapper.QuickinvestmentApplicationsMapper" >
+  <resultMap id="BaseResultMap" type="com.rbao.east.entity.QuickinvestmentApplications" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="invest_user_name" property="investUserName" jdbcType="VARCHAR" />
+    <result column="invest_user_tel" property="investUserTel" jdbcType="VARCHAR" />
+    <result column="invest_user_sex" property="investUserSex" jdbcType="CHAR" />
+    <result column="invest_user_area" property="investUserArea" jdbcType="VARCHAR" />
+    <result column="invest_user_cycle" property="investUserCycle" jdbcType="INTEGER" />
+    <result column="invest_money" property="investMoney" jdbcType="INTEGER" />
+    <result column="invest_begin_time" property="investBeginTime" jdbcType="CHAR" />
+    <result column="invest_end_time" property="investEndTime" jdbcType="CHAR" />
+    <result column="invest_add_datetime" property="investAddDatetime" jdbcType="TIMESTAMP" />
+    <result column="invest_add_ip" property="investAddIp" jdbcType="VARCHAR" />
+    <result column="invest_verify_user" property="investVerifyUser" jdbcType="INTEGER" />
+    <result column="invest_verify_remark" property="investVerifyRemark" jdbcType="VARCHAR" />
+    <result column="invest_verify_datetime" property="investVerifyDatetime" jdbcType="TIMESTAMP" />
+    <result column="invest_verify_status" property="investVerifyStatus" jdbcType="INTEGER" />
+    <result column="invest_products_id" property="investProductsId" jdbcType="INTEGER" />
+    <association property="virifyUser" column="invest_verify_user" javaType="com.rbao.east.entity.User" 
+  		select="com.rbao.east.mapper.UserMapper.selectByPrimaryKey" />
+  	<association property="investProduct" column="invest_products_id" javaType="com.rbao.east.entity.FinancialProducts" 
+  		select="com.rbao.east.mapper.FinancialProductsMapper.selectByPrimaryKey" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, invest_user_name, invest_user_tel, invest_user_sex, invest_user_area, invest_user_cycle, 
+    invest_money, invest_begin_time, invest_end_time, invest_add_datetime, invest_add_ip, 
+    invest_verify_user, invest_verify_remark, invest_verify_datetime, invest_verify_status, 
+    invest_products_id
+  </sql>
+  
+  <select id="selectQuickInvestmentCount" parameterType="Map" resultType="int">
+  SELECT count(*) FROM rb_quickinvestment_applications q INNER JOIN rb_financial_products f ON q.invest_products_id = f.id left JOIN rb_user u ON q.invest_verify_user = u.id WHERE 1=1
+  	<if test="investProductsId != null and investProductsId !=''">
+  		and q.invest_products_id = #{investProductsId}
+  	</if>
+  	<if test="investVerifyStatus != null and investVerifyStatus !=''">
+  		and q.invest_verify_status = #{investVerifyStatus}
+  	</if>
+  </select>
+  
+  <select id="selectQuickInvestmentList" parameterType="Map" resultType="Map">
+  	SELECT 
+		q.id id,
+		q.invest_user_name investUserName,
+		q.invest_user_tel investUserTel,
+		q.invest_user_sex investUserSex,
+		q.invest_user_area investUserArea,
+		q.invest_user_cycle investUserCycle,
+		q.invest_money investMoney,
+		q.invest_begin_time investBeginTime,
+		q.invest_end_time investEndTime,
+		q.invest_add_datetime investAddDatetime,
+		q.invest_add_ip investAddIp,
+		q.invest_verify_user investVerifyUser,
+		q.invest_verify_remark investVerifyRemark,
+		q.invest_verify_datetime investVerifyDatetime,
+		q.invest_verify_status investVerifyStatus,
+		q.invest_products_id investProductsId,
+		f.products_title productsTitle,
+		u.user_account userAccount
+	FROM rb_quickinvestment_applications q INNER JOIN rb_financial_products f ON q.invest_products_id = f.id left JOIN rb_user u ON q.invest_verify_user = u.id WHERE 1=1
+  	<if test="investProductsId != null and investProductsId !=''">
+  		and q.invest_products_id = #{investProductsId}
+  	</if>
+  	<if test="investVerifyStatus != null and investVerifyStatus !=''">
+  		and q.invest_verify_status = #{investVerifyStatus}
+  	</if>
+  	ORDER BY q.invest_verify_status,q.invest_add_datetime DESC
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from rb_quickinvestment_applications
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from rb_quickinvestment_applications
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.rbao.east.entity.QuickinvestmentApplications" >
+    insert into rb_quickinvestment_applications (id, invest_user_name, invest_user_tel, 
+      invest_user_sex, invest_user_area, invest_user_cycle, 
+      invest_money, invest_begin_time, invest_end_time, 
+      invest_add_datetime, invest_add_ip, invest_verify_user, 
+      invest_verify_remark, invest_verify_datetime, 
+      invest_verify_status, invest_products_id)
+    values (#{id,jdbcType=INTEGER}, #{investUserName,jdbcType=VARCHAR}, #{investUserTel,jdbcType=VARCHAR}, 
+      #{investUserSex,jdbcType=CHAR}, #{investUserArea,jdbcType=VARCHAR}, #{investUserCycle,jdbcType=INTEGER}, 
+      #{investMoney,jdbcType=INTEGER}, #{investBeginTime,jdbcType=CHAR}, #{investEndTime,jdbcType=CHAR}, 
+      #{investAddDatetime,jdbcType=TIMESTAMP}, #{investAddIp,jdbcType=VARCHAR}, #{investVerifyUser,jdbcType=INTEGER}, 
+      #{investVerifyRemark,jdbcType=VARCHAR}, #{investVerifyDatetime,jdbcType=TIMESTAMP}, 
+      #{investVerifyStatus,jdbcType=INTEGER}, #{investProductsId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.rbao.east.entity.QuickinvestmentApplications" >
+    insert into rb_quickinvestment_applications
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="investUserName != null" >
+        invest_user_name,
+      </if>
+      <if test="investUserTel != null" >
+        invest_user_tel,
+      </if>
+      <if test="investUserSex != null" >
+        invest_user_sex,
+      </if>
+      <if test="investUserArea != null" >
+        invest_user_area,
+      </if>
+      <if test="investUserCycle != null" >
+        invest_user_cycle,
+      </if>
+      <if test="investMoney != null" >
+        invest_money,
+      </if>
+      <if test="investBeginTime != null" >
+        invest_begin_time,
+      </if>
+      <if test="investEndTime != null" >
+        invest_end_time,
+      </if>
+      <if test="investAddDatetime != null" >
+        invest_add_datetime,
+      </if>
+      <if test="investAddIp != null" >
+        invest_add_ip,
+      </if>
+      <if test="investVerifyUser != null" >
+        invest_verify_user,
+      </if>
+      <if test="investVerifyRemark != null" >
+        invest_verify_remark,
+      </if>
+      <if test="investVerifyDatetime != null" >
+        invest_verify_datetime,
+      </if>
+      <if test="investVerifyStatus != null" >
+        invest_verify_status,
+      </if>
+      <if test="investProductsId != null" >
+        invest_products_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="investUserName != null" >
+        #{investUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="investUserTel != null" >
+        #{investUserTel,jdbcType=VARCHAR},
+      </if>
+      <if test="investUserSex != null" >
+        #{investUserSex,jdbcType=CHAR},
+      </if>
+      <if test="investUserArea != null" >
+        #{investUserArea,jdbcType=VARCHAR},
+      </if>
+      <if test="investUserCycle != null" >
+        #{investUserCycle,jdbcType=INTEGER},
+      </if>
+      <if test="investMoney != null" >
+        #{investMoney,jdbcType=INTEGER},
+      </if>
+      <if test="investBeginTime != null" >
+        #{investBeginTime,jdbcType=CHAR},
+      </if>
+      <if test="investEndTime != null" >
+        #{investEndTime,jdbcType=CHAR},
+      </if>
+      <if test="investAddDatetime != null" >
+        #{investAddDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="investAddIp != null" >
+        #{investAddIp,jdbcType=VARCHAR},
+      </if>
+      <if test="investVerifyUser != null" >
+        #{investVerifyUser,jdbcType=INTEGER},
+      </if>
+      <if test="investVerifyRemark != null" >
+        #{investVerifyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="investVerifyDatetime != null" >
+        #{investVerifyDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="investVerifyStatus != null" >
+        #{investVerifyStatus,jdbcType=INTEGER},
+      </if>
+      <if test="investProductsId != null" >
+        #{investProductsId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.rbao.east.entity.QuickinvestmentApplications" >
+    update rb_quickinvestment_applications
+    <set >
+      <if test="investUserName != null" >
+        invest_user_name = #{investUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="investUserTel != null" >
+        invest_user_tel = #{investUserTel,jdbcType=VARCHAR},
+      </if>
+      <if test="investUserSex != null" >
+        invest_user_sex = #{investUserSex,jdbcType=CHAR},
+      </if>
+      <if test="investUserArea != null" >
+        invest_user_area = #{investUserArea,jdbcType=VARCHAR},
+      </if>
+      <if test="investUserCycle != null" >
+        invest_user_cycle = #{investUserCycle,jdbcType=INTEGER},
+      </if>
+      <if test="investMoney != null" >
+        invest_money = #{investMoney,jdbcType=INTEGER},
+      </if>
+      <if test="investBeginTime != null" >
+        invest_begin_time = #{investBeginTime,jdbcType=CHAR},
+      </if>
+      <if test="investEndTime != null" >
+        invest_end_time = #{investEndTime,jdbcType=CHAR},
+      </if>
+      <if test="investAddDatetime != null" >
+        invest_add_datetime = #{investAddDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="investAddIp != null" >
+        invest_add_ip = #{investAddIp,jdbcType=VARCHAR},
+      </if>
+      <if test="investVerifyUser != null" >
+        invest_verify_user = #{investVerifyUser,jdbcType=INTEGER},
+      </if>
+      <if test="investVerifyRemark != null" >
+        invest_verify_remark = #{investVerifyRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="investVerifyDatetime != null" >
+        invest_verify_datetime = #{investVerifyDatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="investVerifyStatus != null" >
+        invest_verify_status = #{investVerifyStatus,jdbcType=INTEGER},
+      </if>
+      <if test="investProductsId != null" >
+        invest_products_id = #{investProductsId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.rbao.east.entity.QuickinvestmentApplications" >
+    update rb_quickinvestment_applications
+    set invest_user_name = #{investUserName,jdbcType=VARCHAR},
+      invest_user_tel = #{investUserTel,jdbcType=VARCHAR},
+      invest_user_sex = #{investUserSex,jdbcType=CHAR},
+      invest_user_area = #{investUserArea,jdbcType=VARCHAR},
+      invest_user_cycle = #{investUserCycle,jdbcType=INTEGER},
+      invest_money = #{investMoney,jdbcType=INTEGER},
+      invest_begin_time = #{investBeginTime,jdbcType=CHAR},
+      invest_end_time = #{investEndTime,jdbcType=CHAR},
+      invest_add_datetime = #{investAddDatetime,jdbcType=TIMESTAMP},
+      invest_add_ip = #{investAddIp,jdbcType=VARCHAR},
+      invest_verify_user = #{investVerifyUser,jdbcType=INTEGER},
+      invest_verify_remark = #{investVerifyRemark,jdbcType=VARCHAR},
+      invest_verify_datetime = #{investVerifyDatetime,jdbcType=TIMESTAMP},
+      invest_verify_status = #{investVerifyStatus,jdbcType=INTEGER},
+      invest_products_id = #{investProductsId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
